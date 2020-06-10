@@ -18,6 +18,7 @@ function getPlayedCards() {
 
 function buildCardNode(playerName, card) {
     let cardName = card.cardName;
+    let cardNodeContainer = document.createElement("div");
     let cardNode = document.createElement("img");
     cardNode.className = 'Card';
     cardNode.src = "resources/images/Cards/" + cardName + ".png";
@@ -25,7 +26,9 @@ function buildCardNode(playerName, card) {
     cardNode.playerName = playerName;
     cardNode.cardObj = card;
 
-    return cardNode;
+    cardNodeContainer.appendChild(cardNode);
+
+    return cardNodeContainer;
 }
 
 function showPlayedCard(playerName, cardNode) {

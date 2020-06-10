@@ -1,18 +1,40 @@
-body {
-    background-color: #006000;
-    color: white;
+@media (prefers-color-scheme: dark) {
+    body { background-color: #333; color:  white; }
 }
 
-#gameContainer {
-    width: min(100vw, 550px);
-    position: absolute;
-    top: 0%;
-    left: 0vw;
-    transform: tranlate(-50%, -100%)
+@media (prefers-color-scheme: light) {
+    body { background-color: white; color:  black; }
 }
 
 a {
     color: white;
+}
+
+#contentContainer {
+    max-width: 550px;
+    position: relative;
+    top: 0%;
+    left: 0vw;
+    margin: auto;
+    color: white;
+    background-color: #006000;
+}
+
+#menuContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    padding-bottom: 8px;
+}
+
+#gameContainer {
+    max-width: 550px;
+    position: relative;
+    top: 0%;
+    left: 0vw;
+    margin: auto;
+    background-color: #006000;
 }
 
 #playedCardsContainer {
@@ -28,6 +50,9 @@ a {
 .PlayedCardContainer {
     display: inline-block;
     max-width:100px;
+    background-color: rgba(77, 99, 77, 0.7);
+    padding: 1px;
+    margin: 1px;
 }
 
 #playersScoreContainer {
@@ -39,9 +64,17 @@ a {
 .PlayerScoreContainer {
     display: flex;
     flex-direction: column;
+    flex: 1;
     align-items: center;
-    min-width: 20vw;
     border-style: solid;
     border-color: black;
     border-width: 1.5px;
+}
+
+.playerCardsContainer {
+    display: grid;
+    justify-items: center;
+    grid-gap: 0px;
+    grid-template-columns: repeat(auto-fit, 95px);
+    grid-template-rows: repeat(1, 100px);
 }

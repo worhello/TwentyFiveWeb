@@ -11,28 +11,34 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
-        <div id="gameContainer">
-            <button id="startGameButton">Start Game</button>
-            <select name="numPlayers" id="numPlayersSelect">
-                <option value="2" selected>2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-                <option value="10">10</option>
-              </select>
-            <a href="https://github.com/worhello/TwentyFiveWeb/wiki/Game-Rules" target="_blank">GitHub URL for Game Rules</a>
-            <div id="playersScoreContainer"></div>
-            <div id="playedCardsContainer"></div>
-            <div id="playerInfoContainer">
-                <div id="playerInfo">
-                    <span id="playerName"></span>
-                    <span id="selfPlayerScore"></span>
+        <div id="contentContainer">
+            <div id="menuContainer">
+                <div id="startGameContainer">
+                    <button id="startGameButton">Start Game</button>
+                    <select name="numPlayers" id="numPlayersSelect">
+                        <option value="2" selected>2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                    </select>
                 </div>
-                <div id="playerCardsContainer"></div>
+                <div><a href="https://github.com/worhello/TwentyFiveWeb/wiki/Game-Rules" target="_blank">Game Rules</a></div>
+            </div>
+            <div id="gameContainer">
+                <div id="playersScoreContainer"></div>
+                <div id="playedCardsContainer"></div>
+                <div id="playerInfoContainer">
+                    <div id="playerInfo">
+                        <span id="playerName"></span>
+                        <span id="selfPlayerScore"></span>
+                    </div>
+                    <div id="playerCardsContainer"></div>
+                </div>
             </div>
         </div>
     </body>
