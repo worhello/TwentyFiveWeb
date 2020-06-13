@@ -12,14 +12,35 @@ function setupPlayers(numPlayers) {
     return players;
 }
 
+function waitForCardsToBeRendered() {
+    window.setTimeout(function() {
+        if (allPlayedCardsVisible()) {
+            window.gameContext.evaluateRoundEnd();
+        } else {
+            window.alert("error happened loading cards!");
+        }
+    }, 400);
+}
+
+function getSelfPlayer(players) {
+    return players.find(function(p) {
+        return p.name == "You";
+    });
+}
+
 class GameContext {
     constructor(numPlayers) {
         this.deck = new Deck();
         this.players = setupPlayers(numPlayers);
+        this.trumpCard = new TrumpCard();
+        this.selfPlayer = getSelfPlayer(this.players);
     }
 
     dealAllPlayerCards() {
-        this.deck = new Deck();
+        if (this.deck.cards.length === 0) {
+            this.deck = new Deck();
+        }
+
         this.players.forEach(function(player) {
             player.cards = window.gameContext.drawCards(5);
         });
@@ -28,6 +49,10 @@ class GameContext {
     getBestCard(cards) {
         //TODO
         return cards[0];
+    }
+
+    rotatePlayersArray(lastRoundWinningPlayer) {
+        //TODO
     }
 
     evaluateRoundEnd() {
@@ -39,12 +64,22 @@ class GameContext {
 
         redrawPlayerScores();
 
-        let highestPlayerScore = Math.max.apply(Math, this.players.map(function(p) { return p.score; }));
-        if (highestPlayerScore >= 25) {
-            window.alert("someone won");
+        var winnerWithHighestScore = this.players[0];
+        this.players.map(function(p) {
+            if (p.score > winnerWithHighestScore.score) {
+                winnerWithHighestScore = p;
+            }
+        });
+
+        //if (winnerWithHighestScore.score >= 25) {
+        if (winnerWithHighestScore.score >= 30) {
+            window.alert(winnerWithHighestScore.name + " won!");
+            resetPlayedCardsState();
+            resetSelfPlayerState();
         } else {
             // start next round
-            window.alert("someone didn't win");
+            //window.alert(winnerWithHighestScore.name + " has highest score but didn't win, starting next round");
+            this.rotatePlayersArray(winnerWithHighestScore);
             this.startRound();
         }
     }
@@ -54,37 +89,39 @@ class GameContext {
             if (player.name == "You") {
                 break;
             }
-            playCard(player.name, player.playCard());
+            playCard(player.name, player.aiPlayCard());
         }
     }
 
     playCardsAfterSelf() {
-        var played = true;
-        for (let player of this.players) {
-            if (!played) {
-                playCard(player.name, player.playCard());
-            }
-            if (player.name == "You") {
-                played = false; // works for the next one
+        let selfPlayerIndex = this.players.findIndex(p => p.name == "You");
+        if (selfPlayerIndex >= 0) {
+            for (var i = selfPlayerIndex + 1; i < this.players.length; i++) {
+                let player = this.players[i];
+                playCard(player.name, player.aiPlayCard());
             }
         }
 
-        this.evaluateRoundEnd();
+        waitForCardsToBeRendered();
     }
-
     startRound() {
-        if (this.getSelfPlayer().cards.length == 0) {
+        if (this.selfPlayer.cards.length == 0) {
             this.dealAllPlayerCards();
+            showSelfPlayerHand();
         }
+
+        this.trumpCard.card = this.drawCards(1)[0];
+        this.trumpCard.hasBeenStolen = false;
+        redrawTrumpCard();
 
         resetPlayedCardsState();
-
-        showSelfPlayerHand();
+        drawPlayedCardsPlaceholders();
 
         this.playCardsBeforeSelf();
     }
     
     startGame() {
+        resetSelfPlayerState();
         redrawPlayerScores();
         this.startRound();
     }
@@ -95,11 +132,5 @@ class GameContext {
             cards.push(this.deck.cards.pop());
         }
         return cards;
-    }
-
-    getSelfPlayer = function() {
-        return this.players.find(function(p) {
-            return p.name == "You";
-        });
     }
 }

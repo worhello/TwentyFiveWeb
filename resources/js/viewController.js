@@ -16,12 +16,24 @@ function getPlayedCards() {
     return playedCards;
 }
 
+function allPlayedCardsVisible() {
+    for (let player of window.gameContext.players) {
+        let playerName = player.name;
+        let playedCardContainer = document.getElementById('playedCard_' + playerName);
+        if (playedCardContainer.getElementsByTagName('img').length == 0) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 function buildCardNode(playerName, card) {
     let cardName = card.cardName;
     let cardNodeContainer = document.createElement("div");
     let cardNode = document.createElement("img");
     cardNode.className = 'Card';
-    cardNode.src = "resources/images/Cards/" + cardName + ".png";
+    cardNode.src = "resources/images/Cards/" + cardName + ".svg";
     cardNode.id = cardName;
     cardNode.playerName = playerName;
     cardNode.cardObj = card;
@@ -32,25 +44,18 @@ function buildCardNode(playerName, card) {
 }
 
 function showPlayedCard(playerName, cardNode) {
-    let playedCardArea = document.getElementById("playedCardsContainer");
-    let playedCardContainer = document.createElement("span");
-    playedCardContainer.className = 'PlayedCardContainer';
-    let playerNameLabel = document.createElement("div");
-    playerNameLabel.textContent = playerName;
-    playedCardContainer.appendChild(playerNameLabel);
+    let playedCardContainer = document.getElementById('playedCard_' + playerName);
     playedCardContainer.appendChild(cardNode);
-    playedCardArea.appendChild(playedCardContainer);
 }
 
 function playCard(playerName, card) {
-    // use context
     let cardNode = buildCardNode(playerName, card);
     showPlayedCard(playerName, cardNode);
 }
 
-function playSelfCard(card) {
-    let selfPlayer = window.gameContext.getSelfPlayer();
-    let cardNode = document.getElementById(card.cardName);
+function playSelfCard(cardNode, cardName) {
+    var selfPlayer = window.gameContext.selfPlayer;
+    selfPlayer.playCard(cardName);
 
     showPlayedCard(selfPlayer.name, cardNode);
 
@@ -66,6 +71,7 @@ function redrawPlayerScores() {
         playerNode.className = "PlayerScoreContainer";
         let playerName = document.createElement("div");
         let playerScore = document.createElement("div");
+        playerScore.className = "PlayerScoreNumber";
         playerNode.appendChild(playerName);
         playerNode.appendChild(playerScore);
 
@@ -73,6 +79,20 @@ function redrawPlayerScores() {
         playerScore.textContent = player.score;
 
         playersContainer.appendChild(playerNode);
+    }
+}
+
+function drawPlayedCardsPlaceholders() {
+    let playedCardArea = document.getElementById("playedCardsContainer");
+
+    for (let player of window.gameContext.players) {
+        let playedCardContainer = document.createElement("span");
+        playedCardContainer.className = 'PlayedCardContainer';
+        playedCardContainer.id = 'playedCard_' + player.name;
+        let playerNameLabel = document.createElement("div");
+        playerNameLabel.textContent = player.name;
+        playedCardContainer.appendChild(playerNameLabel);
+        playedCardArea.appendChild(playedCardContainer);
     }
 }
 
@@ -85,17 +105,26 @@ function resetSelfPlayerState() {
 }
 
 function showSelfPlayerHand() {
-    resetSelfPlayerState();
-
-    let selfPlayer = window.gameContext.getSelfPlayer();
-    let cardNames = selfPlayer.cards;
+    let selfPlayer = window.gameContext.selfPlayer;
+    let cards = selfPlayer.cards;
     let playerName = selfPlayer.name;
     
-    cardNames.forEach(function(card) {
+    cards.forEach(function(card) {
         let cardNode = buildCardNode(playerName, card);
         cardNode.addEventListener("click", function(ev) {
-            playSelfCard(card);
+            playSelfCard(cardNode, card.cardName);
         })
         document.getElementById("playerCardsContainer").appendChild(cardNode);
     });
+}
+
+function redrawTrumpCard() {
+    clearChildrenOfElementById("trumpCardImgContainer");
+
+    let trumpCard = window.gameContext.trumpCard;
+    var trumpCardContainer = document.getElementById("trumpCardImgContainer");
+    trumpCardContainer.className = trumpCard.hasBeenStolen ? "TrumpCardStolen" : "TrumpCardNotStolen";
+
+    let cardNode = buildCardNode("Trump Card", trumpCard.card);
+    trumpCardContainer.appendChild(cardNode);
 }

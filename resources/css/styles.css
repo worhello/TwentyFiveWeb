@@ -1,9 +1,9 @@
 @media (prefers-color-scheme: dark) {
-    body { background-color: #333; color:  white; }
+    body { background-color: rgb(0, 60, 18); color:  white; }
 }
 
 @media (prefers-color-scheme: light) {
-    body { background-color: white; color:  black; }
+    body { background-color: rgb(0, 175, 38); color:  black; }
 }
 
 a {
@@ -37,44 +37,64 @@ a {
     background-color: #006000;
 }
 
-#playedCardsContainer {
-    background-color: #008800;
-    min-height: 300px;
-}
-
-.Card {
-    max-width: 100px;
-    max-height: 150px;
-}
-
-.PlayedCardContainer {
-    display: inline-block;
-    max-width:100px;
-    background-color: rgba(77, 99, 77, 0.7);
-    padding: 1px;
-    margin: 1px;
-}
-
 #playersScoreContainer {
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 4px 8px 4px;
 }
 
 .PlayerScoreContainer {
     display: flex;
     flex-direction: column;
-    flex: 1;
+    flex-grow: 1;
     align-items: center;
+    justify-content: center;
     border-style: solid;
     border-color: black;
     border-width: 1.5px;
+    margin: 2px;
 }
 
-.playerCardsContainer {
+.PlayerScoreNumber {
+    font-size: 24px;
+}
+
+#playedCardsContainer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    background-color: #008800;
+}
+
+.Card {
+    width: 100px;
+    height: 150px;
+}
+
+.PlayedCardContainer {
     display: grid;
-    justify-items: center;
-    grid-gap: 0px;
-    grid-template-columns: repeat(auto-fit, 95px);
-    grid-template-rows: repeat(1, 100px);
+    width: 102px;
+    height: 170px;
+    background-color: rgba(00, 99, 37, 0.7);
+    padding: 2px;
+    margin: 1px;
+}
+
+#playerCardsContainer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    margin-top: 8px;
+    padding: 4px;
+}
+
+#playerCardsContainer .Card {
+    margin: 2px;
 }

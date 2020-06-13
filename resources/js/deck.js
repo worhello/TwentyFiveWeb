@@ -55,3 +55,10 @@ class Deck {
         });
     }
 }
+
+class TrumpCard {
+    constructor() {
+        this.card = new Card();
+        this.hasBeenStolen = false;
+    }
+}
