@@ -37,10 +37,6 @@ class GameContext {
     }
 
     dealAllPlayerCards() {
-        if (this.deck.cards.length === 0) {
-            this.deck = new Deck();
-        }
-
         this.players.forEach(function(player) {
             player.cards = window.gameContext.drawCards(5);
         });
@@ -104,7 +100,16 @@ class GameContext {
 
         waitForCardsToBeRendered();
     }
+
+    resetDeckIfNeeded() {
+        let numCardsNeeded = (this.players.length * 5) + 1;
+        if (this.deck.cards.length < numCardsNeeded) {
+            this.deck = new Deck();
+        }
+    }
+
     startRound() {
+        this.resetDeckIfNeeded();
         if (this.selfPlayer.cards.length == 0) {
             this.dealAllPlayerCards();
             showSelfPlayerHand();
