@@ -6,7 +6,6 @@ function getWinningCard(trumpCard, playedCards) {
     return playedCards[0]; // TODO
 }
 
-
 if (typeof module !== 'undefined' && module.exports != null) {
     let gameLogicExports = {};
     gameLogicExports.getBestCardFromOptions = getBestCardFromOptions;

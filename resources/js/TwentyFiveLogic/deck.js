@@ -62,3 +62,13 @@ class TrumpCard {
         this.hasBeenStolen = false;
     }
 }
+
+if (typeof module !== 'undefined' && module.exports != null) {
+    let deckExports = {};
+    deckExports.CardSuits = CardSuits;
+    deckExports.CardValues = CardValues;
+    deckExports.Card = Card;
+    deckExports.Deck = Deck;
+    deckExports.TrumpCard = TrumpCard;
+    module.exports = deckExports;
+}
