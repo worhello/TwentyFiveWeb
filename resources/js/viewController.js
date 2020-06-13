@@ -87,7 +87,7 @@ function drawPlayedCardsPlaceholders() {
 
     for (let player of window.gameContext.players) {
         let playedCardContainer = document.createElement("span");
-        playedCardContainer.className = 'PlayedCardContainer';
+        playedCardContainer.className = 'CardContainer PlayedCardContainer';
         playedCardContainer.id = 'playedCard_' + player.name;
         let playerNameLabel = document.createElement("div");
         playerNameLabel.textContent = player.name;
