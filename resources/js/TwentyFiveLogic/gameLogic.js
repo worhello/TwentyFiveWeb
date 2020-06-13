@@ -1,14 +1,191 @@
+"use strict";
+
+const CardSuits = Object.freeze({
+    hearts: 0,
+    diamonds: 1,
+    clubs: 2,
+    spades: 3
+});
+
+const CardValues = Object.freeze({
+    ace : 1,
+    two : 2,
+    three : 3,
+    four : 4,
+    five : 5,
+    six : 6,
+    seven : 7,
+    eight : 8,
+    nine : 9,
+    ten : 10,
+    jack : 11,
+    queen : 12,
+    king : 13,
+});
+
+function convertSuitName(s) {
+    switch(s) {
+        case CardSuits.hearts: return "hearts";
+        case CardSuits.diamonds: return "diamonds";
+        case CardSuits.clubs: return "clubs";
+        case CardSuits.spades: return "spades";
+    }
+    return "hearts";
+}
+
+function convertValueName(v) {
+    switch(v) {
+        case CardValues.ace: return "ace";
+        case CardValues.jack: return "jack";
+        case CardValues.queen: return "queen";
+        case CardValues.king: return "king";
+        default: return String(v);
+    }
+    return v;
+}
+
+function buildCardName(s, v) {
+    return convertValueName(v) + "_of_" + convertSuitName(s);
+}
+
+class Card {
+    constructor(suit, value) {
+        this.suit = suit;
+        this.value = value;
+        this.cardName = buildCardName(suit, value);
+    }
+}
+
+function buildDeck() {
+    var cards = [];
+    for (let [_, s] of Object.entries(CardSuits)) {
+        for (let [_1, v] of Object.entries(CardValues)) {
+            cards.push(new Card(s, v));
+        }
+    }
+    return cards;
+}
+
+class Deck {
+    constructor() {
+        this.cards = buildDeck();
+        this.cards.sort(function() {
+            return .5 - Math.random();
+        });
+    }
+}
+
+class TrumpCard {
+    constructor() {
+        this.card = new Card();
+        this.hasBeenStolen = false;
+    }
+}
+
+const RedNormalCardsRanking = Object.freeze([
+    CardValues.ace,
+    CardValues.two,
+    CardValues.three,
+    CardValues.four,
+    CardValues.five,
+    CardValues.six,
+    CardValues.seven,
+    CardValues.eight,
+    CardValues.nine,
+    CardValues.ten,
+    CardValues.jack,
+    CardValues.queen,
+    CardValues.king
+]);
+
+const BlackNormalCardsRanking = Object.freeze([
+    CardValues.ten,
+    CardValues.nine,
+    CardValues.eight,
+    CardValues.seven,
+    CardValues.six,
+    CardValues.five,
+    CardValues.four,
+    CardValues.three,
+    CardValues.two,
+    CardValues.ace,
+    CardValues.jack,
+    CardValues.queen,
+    CardValues.king
+]);
+
+function isRedCard(c) {
+    return c.suit == CardSuits.hearts || c.suit == CardSuits.diamonds;
+}
+
+function isAceOfHearts() {
+    return false;
+}
+
+function isTopTrumpCard(cardA, trumpCard) {
+    // TODO
+    return false;
+}
+
+function isTrumpCard(cardA, trumpCard) {
+    // TODO
+    return false;
+}
+
+function compareCards(cardA, cardB, trumpCard) {
+    if (cardA.suit != cardB.suit) {
+        //TODO - add trump stuff
+        return cardA;
+    }
+
+    var orderedCards = [];
+    if (isRedCard(cardA)) {
+        orderedCards = RedNormalCardsRanking;
+    } else {
+        orderedCards = BlackNormalCardsRanking;
+    }
+
+    let cardAIdx = orderedCards.indexOf(cardA.value);
+    let cardBIdx = orderedCards.indexOf(cardB.value);
+
+    return cardAIdx > cardBIdx ? cardA : cardB;
+}
+
+
 function getBestCardFromOptions(cardOptions, trumpCard, playedCards) {
     return cardOptions[0]; // TODO
 }
 
 function getWinningCard(trumpCard, playedCards) {
-    return playedCards[0]; // TODO
+    if (playedCards.length == 0) {
+        return {};
+    }
+    if (playedCards.length == 1) {
+        return playedCards[0];
+    }
+
+    var currentWinningCard = playedCards[0];
+
+    for (var i = 1; i < playedCards.length; i++) {
+        let betterMove = compareCards(currentWinningCard, playedCards[i], trumpCard);
+        if (currentWinningCard.suit != betterMove.suit || currentWinningCard.value != betterMove.value) {
+            currentWinningCard = betterMove;
+        }
+    }
+
+    return currentWinningCard;
 }
 
 if (typeof module !== 'undefined' && module.exports != null) {
     let gameLogicExports = {};
     gameLogicExports.getBestCardFromOptions = getBestCardFromOptions;
     gameLogicExports.getWinningCard = getWinningCard;
+    let deck = {};
+    deck.CardSuits = CardSuits;
+    deck.CardValues = CardValues;
+    deck.Card = Card;
+    deck.Deck = Deck;
+    deck.TrumpCard = TrumpCard;
+    gameLogicExports.deck = deck;
     module.exports = gameLogicExports;
 }
