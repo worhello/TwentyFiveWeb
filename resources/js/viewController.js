@@ -7,11 +7,20 @@ function clearChildrenOfElementById(elementId) {
     }
 }
 
-function getPlayedCards() {
+function getPlayersAndCards() {
     let playedCardsNode = document.getElementById("playedCardsContainer");
     var playedCards = [];
     for (let card of playedCardsNode.getElementsByClassName('Card')) {
         playedCards.push({"playerName": card.playerName, "card": card.cardObj });
+    }
+    return playedCards;
+}
+
+function getPlayedCards() {
+    let playedCardsNode = document.getElementById("playedCardsContainer");
+    var playedCards = [];
+    for (let card of playedCardsNode.getElementsByClassName('Card')) {
+        playedCards.push(card.cardObj);
     }
     return playedCards;
 }
@@ -24,7 +33,6 @@ function allPlayedCardsVisible() {
             return false;
         }
     }
-
     return true;
 }
 
@@ -62,7 +70,7 @@ function playSelfCard(cardNode, cardName) {
     window.gameContext.playCardsAfterSelf();
 }
 
-function redrawPlayerScores() {
+function drawPlayerScores() {
     clearChildrenOfElementById("playersScoreContainer");
     let players = window.gameContext.players;
     let playersContainer = document.getElementById("playersScoreContainer");
@@ -72,6 +80,7 @@ function redrawPlayerScores() {
         let playerName = document.createElement("div");
         let playerScore = document.createElement("div");
         playerScore.className = "PlayerScoreNumber";
+        playerScore.id = "playerScoreNode_" + player.name;
         playerNode.appendChild(playerName);
         playerNode.appendChild(playerScore);
 
@@ -79,6 +88,16 @@ function redrawPlayerScores() {
         playerScore.textContent = player.score;
 
         playersContainer.appendChild(playerNode);
+    }
+}
+
+function redrawPlayerScores() {
+    let playersContainer = document.getElementById("playersScoreContainer");
+    for (let player of window.gameContext.players) {
+        var playerScoreNode = document.getElementById("playerScoreNode_" + player.name);
+        if (playerScoreNode) {
+            playerScoreNode.textContent = player.score;
+        }
     }
 }
 

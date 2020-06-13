@@ -42,19 +42,18 @@ class GameContext {
         });
     }
 
-    getBestCard(cards) {
-        //TODO
-        return cards[0];
-    }
-
     rotatePlayersArray(lastRoundWinningPlayer) {
-        //TODO
+        let players = this.players;
+        let winningPlayerIndex = players.indexOf(lastRoundWinningPlayer);
+        let firstHalf = players.slice(winningPlayerIndex);
+        let secondHalf = players.slice(0, winningPlayerIndex);
+        this.players = firstHalf.concat(secondHalf);
     }
 
     evaluateRoundEnd() {
-        let playersAndCards = getPlayedCards();
+        let playersAndCards = getPlayersAndCards();
         let playedCards = playersAndCards.map(pAC => pAC.card);
-        let winningCard = this.getBestCard(playedCards);
+        let winningCard = getWinningCard(this.trumpCard, playedCards);
         let winningPlayerName = playersAndCards.find(function (pAC) { return pAC.card == winningCard }).playerName;
         this.players.find(function (p) { return p.name == winningPlayerName }).score += 5;
 
@@ -67,14 +66,12 @@ class GameContext {
             }
         });
 
-        //if (winnerWithHighestScore.score >= 25) {
-        if (winnerWithHighestScore.score >= 30) {
+        if (winnerWithHighestScore.score >= 25) {
             window.alert(winnerWithHighestScore.name + " won!");
             resetPlayedCardsState();
             resetSelfPlayerState();
         } else {
             // start next round
-            //window.alert(winnerWithHighestScore.name + " has highest score but didn't win, starting next round");
             this.rotatePlayersArray(winnerWithHighestScore);
             this.startRound();
         }
@@ -85,7 +82,7 @@ class GameContext {
             if (player.name == "You") {
                 break;
             }
-            playCard(player.name, player.aiPlayCard());
+            playCard(player.name, player.aiPlayCard(getPlayedCards()));
         }
     }
 
@@ -94,7 +91,7 @@ class GameContext {
         if (selfPlayerIndex >= 0) {
             for (var i = selfPlayerIndex + 1; i < this.players.length; i++) {
                 let player = this.players[i];
-                playCard(player.name, player.aiPlayCard());
+                playCard(player.name, player.aiPlayCard(getPlayedCards()));
             }
         }
 
@@ -127,7 +124,7 @@ class GameContext {
     
     startGame() {
         resetSelfPlayerState();
-        redrawPlayerScores();
+        drawPlayerScores();
         this.startRound();
     }
 

@@ -14,10 +14,9 @@ class Player {
         }
     }
 
-    aiPlayCard = function() {
-        // TODO - use context
-        let context = window.context;
-        let cardToPlay = this.cards[0];
+    aiPlayCard = function(playedCards) {
+        let trumpCard = window.gameContext.trumpCard;
+        let cardToPlay = getBestCardFromOptions(this.cards, trumpCard, playedCards);
         this.playCard(cardToPlay.cardName);
         return cardToPlay;
     }
