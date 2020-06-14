@@ -203,7 +203,48 @@ describe('Game Logic', function() {
             });
 
             describe('both cards are trumps', function() {
-                //
+                var trumpCard = new deck.TrumpCard();
+                let cardSuit = deck.CardSuits.diamonds;
+                trumpCard.card = new deck.Card(cardSuit, deck.CardValues.ten);
+                let normalCard = new deck.Card(cardSuit, deck.CardValues.queen);
+                let aceOfHearts = new deck.Card(deck.CardSuits.hearts, deck.CardValues.ace);
+                let jackOfTrumps = new deck.Card(cardSuit, deck.CardValues.jack);
+                let fiveOfTrumps = new deck.Card(cardSuit, deck.CardValues.five);
+                describe('one card is one of the special cases', function() {
+                    describe('ace of hearts', function() {
+                        it('should return the second card', function() {
+                            let cards = [ normalCard, aceOfHearts ];
+                            assert.equal(cards[1], gameLogic.getWinningCard(trumpCard, cards));
+                        });
+                    });
+                    describe('jack of trumps', function() {
+                        it('should return the second card', function() {
+                            let cards = [ normalCard, jackOfTrumps ];
+                            assert.equal(cards[1], gameLogic.getWinningCard(trumpCard, cards));
+                        });
+                    });
+                     describe('five of trumps', function() {
+                        it('should return the second card', function() {
+                            let cards = [ normalCard, fiveOfTrumps ];
+                            assert.equal(cards[1], gameLogic.getWinningCard(trumpCard, cards));
+                        });
+                    });
+                });
+                
+                describe('both cards are special cases', function() {
+                    describe('ace of hearts vs jack of trumps', function() {
+                        it ('should return the second card', function () {
+                            let cards = [ aceOfHearts, jackOfTrumps ];
+                            assert.equal(cards[1], gameLogic.getWinningCard(trumpCard, cards));
+                        });
+                    });
+                    describe('jack of trumps vs five of trumps', function() {
+                        it ('should return the second card', function () {
+                            let cards = [ jackOfTrumps, fiveOfTrumps ];
+                            assert.equal(cards[1], gameLogic.getWinningCard(trumpCard, cards));
+                        });
+                    });
+                });
             });
         });
     });

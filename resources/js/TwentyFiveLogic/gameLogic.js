@@ -118,26 +118,39 @@ function isRedCard(c) {
     return c.suit == CardSuits.hearts || c.suit == CardSuits.diamonds;
 }
 
-function isAceOfHearts() {
-    return false;
+function isTrumpSuit(cardA, trumpCard) {
+    return cardA.suit == trumpCard.card.suit;
 }
 
-function isTopTrumpCard(cardA, trumpCard) {
-    // TODO
-    return false;
+function isAceOfHearts(cardA) {
+    return cardA.suit == CardSuits.hearts && cardA.value == CardValues.ace;
+}
+
+function isFiveOfTrumps(cardA, trumpCard) {
+    return isTrumpSuit(cardA, trumpCard) && cardA.value == CardValues.five;
+}
+
+function isJackOfTrumps(cardA, trumpCard) {
+    return isTrumpSuit(cardA, trumpCard) && cardA.value == CardValues.jack;
+}
+
+function isAceOfTrumps(cardA, trumpCard) {
+    return isTrumpSuit(cardA, trumpCard) && cardA.value == CardValues.ace;
 }
 
 function isTrumpCard(cardA, trumpCard) {
-    // TODO
-    return false;
+    return isTrumpSuit(cardA, trumpCard) || isAceOfHearts(cardA);
 }
 
-function compareCards(cardA, cardB, trumpCard) {
-    if (cardA.suit != cardB.suit) {
-        //TODO - add trump stuff
-        return cardA;
+function isTopTrumpCard(cardA, trumpCard) {
+    if (!isTrumpCard(cardA, trumpCard)) {
+        return false;
     }
 
+    return isAceOfHearts(cardA) || isJackOfTrumps(cardA, trumpCard) || isFiveOfTrumps(cardA, trumpCard);
+}
+
+function compareNormalCards(cardA, cardB) {
     var orderedCards = [];
     if (isRedCard(cardA)) {
         orderedCards = RedNormalCardsRanking;
@@ -149,6 +162,57 @@ function compareCards(cardA, cardB, trumpCard) {
     let cardBIdx = orderedCards.indexOf(cardB.value);
 
     return cardAIdx > cardBIdx ? cardA : cardB;
+}
+
+function compareTrumpCards(cardA, cardB, trumpCard) {
+    if (isFiveOfTrumps(cardA, trumpCard)) {
+        return cardA;
+    }
+    if (isFiveOfTrumps(cardB, trumpCard)) {
+        return cardB;
+    }
+
+    if (isJackOfTrumps(cardA, trumpCard)) {
+        return cardA;
+    }
+    if (isJackOfTrumps(cardB, trumpCard)) {
+        return cardB;
+    }
+
+    if (isAceOfHearts(cardA)) {
+        return cardA;
+    }
+    if (isAceOfHearts(cardB)) {
+        return cardB;
+    }
+    
+    if (isAceOfTrumps(cardA, trumpCard)) {
+        return cardA;
+    }
+    if (isAceOfTrumps(cardB, trumpCard)) {
+        return cardB;
+    }
+
+    return compareNormalCards(cardA, cardB);
+}
+
+function compareCards(cardA, cardB, trumpCard) {
+    let cardATrump = isTrumpCard(cardA, trumpCard);
+    let cardBTrump = isTrumpCard(cardB, trumpCard);
+
+    if (cardATrump && !cardBTrump) {
+        return cardA;
+    }  else if (!cardATrump && cardBTrump) {
+        return cardB;
+    } else if (cardA.suit != cardB.suit && !cardATrump && !cardBTrump) {
+        return cardA;
+    }
+
+    if (cardATrump) {
+        return compareTrumpCards(cardA, cardB, trumpCard);
+    }
+
+    return compareNormalCards(cardA, cardB);
 }
 
 
