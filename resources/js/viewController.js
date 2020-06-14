@@ -147,3 +147,23 @@ function redrawTrumpCard() {
     let cardNode = buildCardNode("Trump Card", trumpCard.card);
     trumpCardContainer.appendChild(cardNode);
 }
+
+function showStartGameOverlay() {
+    document.getElementById("menuContainer").style.display = "block";
+}
+
+function hideStartGameOverlay() {
+    document.getElementById("menuContainer").style.display = "none";
+}
+
+function onStartButtonClicked() {
+    let numPlayersSelect = document.getElementById("numPlayersSelect");
+    let numPlayers = numPlayersSelect.options[numPlayersSelect.selectedIndex].value;
+
+    let isSinglePlayer = document.getElementById("singlePlayer").checked;
+
+    window.gameContext = new GameContext(numPlayers);
+    window.gameContext.startGame();
+
+    hideStartGameOverlay();
+}

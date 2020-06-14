@@ -12,24 +12,35 @@
     </head>
     <body>
         <div id="contentContainer">
-            <div id="menuContainer">
+            <div id="menuContainer" class="Overlay">
                 <div id="startGameContainer">
-                    <button id="startGameButton">Start Game</button>
-                    <select name="numPlayers" id="numPlayersSelect">
-                        <option value="2" selected>2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                        <option value="6">6</option>
-                        <option value="7">7</option>
-                        <option value="8">8</option>
-                        <option value="9">9</option>
-                        <option value="10">10</option>
-                    </select>
+                    <div>
+                        <select name="numPlayers" id="numPlayersSelect">
+                            <option value="2" selected>2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                        </select>
+                        <label for="numPlayersSelect"> players</label>
+                    </div>
+                    <div>
+                        <input type="radio" id="singlePlayer" value="singlePlayer" name="playMode" checked>
+                        <label for="singlePlayer">Single Player</label><br/>
+                        <input type="radio" id="multiPlayer" name="playMode" value="multiPlayer" disabled title="Multiplayer coming soon...">
+                        <label for="multiPlayer">Multiplayer (Coming soon)</label>
+                    </div>
+                    <div>
+                        <button id="startGameButton">Start Game</button>
+                    </div>
                 </div>
-                <div><a href="https://github.com/worhello/TwentyFiveWeb/wiki/Game-Rules" target="_blank">Game Rules</a></div>
             </div>
             <div id="gameContainer">
+                <div><a href="https://github.com/worhello/TwentyFiveWeb/wiki/Game-Rules" target="_blank">Game Rules</a></div>
                 <div id="gameInfoContainer">
                     <div id="playersScoreContainer"></div>
                     <div class="CardContainer TrumpCardContainer">
