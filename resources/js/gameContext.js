@@ -70,6 +70,7 @@ class GameContext {
             window.alert(winnerWithHighestScore.name + " won!");
             resetPlayedCardsState();
             resetSelfPlayerState();
+            showStartGameOverlay();
         } else {
             // start next round
             this.rotatePlayersArray(winnerWithHighestScore);
@@ -110,11 +111,10 @@ class GameContext {
         if (this.selfPlayer.cards.length == 0) {
             this.dealAllPlayerCards();
             showSelfPlayerHand();
+            this.trumpCard.card = this.drawCards(1)[0];
+            this.trumpCard.hasBeenStolen = false;
+            redrawTrumpCard();
         }
-
-        this.trumpCard.card = this.drawCards(1)[0];
-        this.trumpCard.hasBeenStolen = false;
-        redrawTrumpCard();
 
         resetPlayedCardsState();
         drawPlayedCardsPlaceholders();
