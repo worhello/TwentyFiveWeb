@@ -2,7 +2,120 @@
 
 let gameLogic = require('../gameLogic.js');
 let deck = gameLogic.deck;
+let testCases = require('./gameLogicTestCases.json');
 let assert = require('assert');
+
+function buildSuitFromString(suitAsString) {
+    if (suitAsString == "clubs") {
+        return deck.CardSuits.clubs;
+    } else if (suitAsString == "spades") {
+        return deck.CardSuits.spades;
+    } else if (suitAsString == "diamonds") {
+        return deck.CardSuits.diamonds;
+    } else {
+        return deck.CardSuits.hearts;
+    }
+}
+
+function buildValueFromString(valueAsString) {
+    if (valueAsString == "ace") {
+        return deck.CardValues.ace;
+    } else if (valueAsString == "two") {
+        return deck.CardValues.two;
+    } else  if (valueAsString == "three") {
+        return deck.CardValues.three;
+    } else  if (valueAsString == "four") {
+        return deck.CardValues.four;
+    } else  if (valueAsString == "five") {
+        return deck.CardValues.five;
+    } else  if (valueAsString == "six") {
+        return deck.CardValues.six;
+    } else  if (valueAsString == "seven") {
+        return deck.CardValues.seven;
+    } else  if (valueAsString == "eight") {
+        return deck.CardValues.eight;
+    } else  if (valueAsString == "nine") {
+        return deck.CardValues.nine;
+    } else  if (valueAsString == "ten") {
+        return deck.CardValues.ten;
+    } else  if (valueAsString == "jack") {
+        return deck.CardValues.jack;
+    } else  if (valueAsString == "queen") {
+        return deck.CardValues.queen;
+    } else  if (valueAsString == "king") {
+        return deck.CardValues.king;
+    }
+}
+
+function buildDeckCardFromJSON(cardAsJson) {
+    return new deck.Card(buildSuitFromString(cardAsJson.suit), buildValueFromString(cardAsJson.value));
+}
+
+function buildDeckCardsFromJSON(cardsAsJsonArray) {
+    var cards = [];
+    for (let cardAsJson of cardsAsJsonArray) {
+        cards.push(buildDeckCardFromJSON(cardAsJson));
+    }
+    return cards;
+}
+
+// this is only needed because I want the same test cases across two languages
+// (yes I like making things extra complicated for no reason!)
+describe('parse test JSON test', function() {
+    let testJson = {
+        "testCases": [
+            {
+                "name": "test test case",
+                "playedCards": [
+                    {
+                        "suit": "clubs",
+                        "value": "queen"
+                    },
+                    {
+                        "suit": "spades",
+                        "value": "queen"
+                    }
+                ],
+                "trumpCard": {
+                    "suit": "diamonds",
+                    "value": "two"
+                },
+                "expectedCardIndex": 0
+            }
+        ]
+    };
+    it ('should match test input', function() {
+        let testCase = testJson.testCases[0];
+        assert.equal("test test case", testCase.name);
+        assert.equal(0, testCase.expectedCardIndex);
+
+        let playedCards = buildDeckCardsFromJSON(testCase.playedCards);
+        assert.equal(2, playedCards.length);
+
+        let playedCard0 = playedCards[0];
+        assert.equal(deck.CardSuits.clubs, playedCard0.suit);
+        assert.equal(deck.CardValues.queen, playedCard0.value);
+
+        let playedCard1 = playedCards[1];
+        assert.equal(deck.CardSuits.spades, playedCard1.suit);
+        assert.equal(deck.CardValues.queen, playedCard1.value);
+
+        let trumpCard = buildDeckCardFromJSON(testCase.trumpCard);
+        assert.equal(deck.CardSuits.diamonds, trumpCard.suit);
+        assert.equal(deck.CardValues.two, trumpCard.value);
+    });
+})
+
+describe('Game Logic - using JSON', function() {
+    for (let testCase of testCases.testCases) {
+        it(testCase.name, function() {
+            let playedCards = buildDeckCardsFromJSON(testCase.playedCards);
+            var trumpCard = new deck.TrumpCard();
+            trumpCard.card = buildDeckCardFromJSON(testCase.trumpCard);
+            assert.equal(playedCards[testCase.expectedCardIndex], gameLogic.getWinningCard(trumpCard, playedCards));
+        });
+    }
+});
 
 describe('Game Logic', function() {
     describe('getWinningCard', function() {
@@ -17,235 +130,63 @@ describe('Game Logic', function() {
             let cards = [ new deck.Card() ];
             assert.equal(cards[0], gameLogic.getWinningCard(trumpCard, cards));
         });
+    });
+});
 
-        describe('two cards played', function() {
-            describe('neither of the cards are trumps', function() {
-                let trumpCard = new deck.TrumpCard();
-                describe('different suits', function() {
-                    let cardValue = deck.CardValues.queen;
-                    describe('play clubs first', function() {
-                        it('should return the first card', function() {
-                            let cards = [ new deck.Card(deck.CardSuits.clubs, cardValue), new deck.Card(deck.CardSuits.spades, cardValue) ];
-                            assert.equal(cards[0], gameLogic.getWinningCard(trumpCard, cards));
-                        });
-                    });
-                    describe('play spades first', function() {
-                        it('should return the first card', function() {
-                            let cards = [ new deck.Card(deck.CardSuits.spades, cardValue), new deck.Card(deck.CardSuits.clubs, cardValue) ];
-                            assert.equal(cards[0], gameLogic.getWinningCard(trumpCard, cards));
-                        });
-                    });
-                    describe('play hearts first', function() {
-                        it('should return the first card', function() {
-                            let cards = [ new deck.Card(deck.CardSuits.hearts, cardValue), new deck.Card(deck.CardSuits.clubs, cardValue) ];
-                            assert.equal(cards[0], gameLogic.getWinningCard(trumpCard, cards));
-                        });
-                    });
-                    describe('play diamonds first', function() {
-                        it('should return the first card', function() {
-                            let cards = [ new deck.Card(deck.CardSuits.diamonds, cardValue), new deck.Card(deck.CardSuits.clubs, cardValue) ];
-                            assert.equal(cards[0], gameLogic.getWinningCard(trumpCard, cards));
-                        });
-                    });
-                });
-
-                describe('same suits - picture cards (higher value is better)', function() {
-                    let queenVal = deck.CardValues.queen;
-                    let kingVal = deck.CardValues.king;
-                    describe('clubs', function() {
-                        it('should return the second card', function() {
-                            let cards = [ new deck.Card(deck.CardSuits.clubs, queenVal), new deck.Card(deck.CardSuits.clubs, kingVal) ];
-                            assert.equal(cards[1], gameLogic.getWinningCard(trumpCard, cards));
-                        });
-                    });
-                    describe('spades', function() {
-                        it('should return the second card', function() {
-                            let cards = [ new deck.Card(deck.CardSuits.spades, queenVal), new deck.Card(deck.CardSuits.spades, kingVal) ];
-                            assert.equal(cards[1], gameLogic.getWinningCard(trumpCard, cards));
-                        });
-                    });
-                    describe('hearts', function() {
-                        it('should return the second card', function() {
-                            let cards = [ new deck.Card(deck.CardSuits.hearts, queenVal), new deck.Card(deck.CardSuits.hearts, kingVal) ];
-                            assert.equal(cards[1], gameLogic.getWinningCard(trumpCard, cards));
-                        });
-                    });
-                    describe('diamonds', function() {
-                        it('should return the second card', function() {
-                            let cards = [ new deck.Card(deck.CardSuits.diamonds, queenVal), new deck.Card(deck.CardSuits.diamonds, kingVal) ];
-                            assert.equal(cards[1], gameLogic.getWinningCard(trumpCard, cards));
-                        });
-                    });
-                });
-                describe('same suits - number cards', function() {
-                    let highVal = deck.CardValues.ten;
-                    let lowVal = deck.CardValues.two;
-                    describe('clubs (lower values are better)', function() {
-                        it('should return the second card', function() {
-                            let cards = [ new deck.Card(deck.CardSuits.clubs, lowVal), new deck.Card(deck.CardSuits.clubs, highVal) ];
-                            assert.equal(cards[0], gameLogic.getWinningCard(trumpCard, cards));
-                        });
-                    });
-                     describe('spades (lower values are better)', function() {
-                         it('should return the second card', function() {
-                            let cards = [ new deck.Card(deck.CardSuits.spades, lowVal), new deck.Card(deck.CardSuits.spades, highVal) ];
-                            assert.equal(cards[0], gameLogic.getWinningCard(trumpCard, cards));
-                        });
-                    });
-                     describe('hearts (higher values are better)', function() {
-                         it('should return the second card', function() {
-                            let cards = [ new deck.Card(deck.CardSuits.hearts, lowVal), new deck.Card(deck.CardSuits.hearts, highVal) ];
-                            assert.equal(cards[1], gameLogic.getWinningCard(trumpCard, cards));
-                        });
-                    });
-                    describe('diamonds (higher values are better)', function() {
-                        it('should return the second card', function() {
-                            let cards = [ new deck.Card(deck.CardSuits.diamonds, lowVal), new deck.Card(deck.CardSuits.diamonds, highVal) ];
-                            assert.equal(cards[1], gameLogic.getWinningCard(trumpCard, cards));
-                        });
-                    });
-                });
-
-                describe('same suits - number vs picture cards', function() {
-                    let highVal = deck.CardValues.queen;
-                    let lowVal = deck.CardValues.two;
-                    describe('clubs', function() {
-                        it('should return the second card', function() {
-                            let cards = [ new deck.Card(deck.CardSuits.clubs, lowVal), new deck.Card(deck.CardSuits.clubs, highVal) ];
-                            assert.equal(cards[1], gameLogic.getWinningCard(trumpCard, cards));
-                        });
-                    });
-                     describe('spades', function() {
-                         it('should return the second card', function() {
-                            let cards = [ new deck.Card(deck.CardSuits.spades, lowVal), new deck.Card(deck.CardSuits.spades, highVal) ];
-                            assert.equal(cards[1], gameLogic.getWinningCard(trumpCard, cards));
-                        });
-                    });
-                     describe('hearts', function() {
-                         it('should return the second card', function() {
-                            let cards = [ new deck.Card(deck.CardSuits.hearts, lowVal), new deck.Card(deck.CardSuits.hearts, highVal) ];
-                            assert.equal(cards[1], gameLogic.getWinningCard(trumpCard, cards));
-                        });
-                    });
-                    describe('diamonds', function() {
-                        it('should return the second card', function() {
-                            let cards = [ new deck.Card(deck.CardSuits.diamonds, lowVal), new deck.Card(deck.CardSuits.diamonds, highVal) ];
-                            assert.equal(cards[1], gameLogic.getWinningCard(trumpCard, cards));
-                        });
-                    });
-                });
-            });
-
-            describe('first card played is trumps', function() {
-                var trumpCard = new deck.TrumpCard();
-                let cardValue = deck.CardValues.queen;
-                describe('clubs are trumps', function() {
-                    it('should return the first card', function() {
-                        trumpCard.card = new deck.Card(deck.CardSuits.clubs, deck.CardValues.two);
-                        let cards = [ new deck.Card(deck.CardSuits.clubs, cardValue), new deck.Card(deck.CardSuits.spades, cardValue) ];
-                        assert.equal(cards[0], gameLogic.getWinningCard(trumpCard, cards));
-                    });
-                });
-                describe('spades are trumps', function() {
-                    it('should return the first card', function() {
-                        trumpCard.card = new deck.Card(deck.CardSuits.spades, deck.CardValues.two);
-                        let cards = [ new deck.Card(deck.CardSuits.spades, cardValue), new deck.Card(deck.CardSuits.clubs, cardValue) ];
-                        assert.equal(cards[0], gameLogic.getWinningCard(trumpCard, cards));
-                    });
-                });
-                describe('hearts are trumps', function() {
-                    it('should return the first card', function() {
-                        trumpCard.card = new deck.Card(deck.CardSuits.hearts, deck.CardValues.two);
-                        let cards = [ new deck.Card(deck.CardSuits.hearts, cardValue), new deck.Card(deck.CardSuits.clubs, cardValue) ];
-                        assert.equal(cards[0], gameLogic.getWinningCard(trumpCard, cards));
-                    });
-                });
-                describe('diamonds are trumps', function() {
-                    it('should return the first card', function() {
-                        trumpCard.card = new deck.Card(deck.CardSuits.diamonds, deck.CardValues.two);
-                        let cards = [ new deck.Card(deck.CardSuits.diamonds, cardValue), new deck.Card(deck.CardSuits.clubs, cardValue) ];
-                        assert.equal(cards[0], gameLogic.getWinningCard(trumpCard, cards));
-                    });
-                });
-            });
-
-            describe('second card played is trumps', function() {
-                var trumpCard = new deck.TrumpCard();
-                let cardValue = deck.CardValues.queen;
-                describe('clubs are trumps', function() {
-                    it('should return the second card', function() {
-                        trumpCard.card = new deck.Card(deck.CardSuits.clubs, deck.CardValues.two);
-                        let cards = [ new deck.Card(deck.CardSuits.spades, cardValue), new deck.Card(deck.CardSuits.clubs, cardValue) ];
-                        assert.equal(cards[1], gameLogic.getWinningCard(trumpCard, cards));
-                    });
-                });
-                describe('spades are trumps', function() {
-                    it('should return the second card', function() {
-                        trumpCard.card = new deck.Card(deck.CardSuits.spades, deck.CardValues.two);
-                        let cards = [ new deck.Card(deck.CardSuits.clubs, cardValue), new deck.Card(deck.CardSuits.spades, cardValue) ];
-                        assert.equal(cards[1], gameLogic.getWinningCard(trumpCard, cards));
-                    });
-                });
-                describe('hearts are trumps', function() {
-                    it('should return the second card', function() {
-                        trumpCard.card = new deck.Card(deck.CardSuits.hearts, deck.CardValues.two);
-                        let cards = [ new deck.Card(deck.CardSuits.clubs, cardValue), new deck.Card(deck.CardSuits.hearts, cardValue) ];
-                        assert.equal(cards[1], gameLogic.getWinningCard(trumpCard, cards));
-                    });
-                });
-                describe('diamonds are trumps', function() {
-                    it('should return the second card', function() {
-                        trumpCard.card = new deck.Card(deck.CardSuits.diamonds, deck.CardValues.two);
-                        let cards = [ new deck.Card(deck.CardSuits.clubs, cardValue), new deck.Card(deck.CardSuits.diamonds, cardValue) ];
-                        assert.equal(cards[1], gameLogic.getWinningCard(trumpCard, cards));
-                    });
-                });
-            });
-
-            describe('both cards are trumps', function() {
-                var trumpCard = new deck.TrumpCard();
-                let cardSuit = deck.CardSuits.diamonds;
-                trumpCard.card = new deck.Card(cardSuit, deck.CardValues.ten);
-                let normalCard = new deck.Card(cardSuit, deck.CardValues.queen);
-                let aceOfHearts = new deck.Card(deck.CardSuits.hearts, deck.CardValues.ace);
-                let jackOfTrumps = new deck.Card(cardSuit, deck.CardValues.jack);
-                let fiveOfTrumps = new deck.Card(cardSuit, deck.CardValues.five);
-                describe('one card is one of the special cases', function() {
-                    describe('ace of hearts', function() {
-                        it('should return the second card', function() {
-                            let cards = [ normalCard, aceOfHearts ];
-                            assert.equal(cards[1], gameLogic.getWinningCard(trumpCard, cards));
-                        });
-                    });
-                    describe('jack of trumps', function() {
-                        it('should return the second card', function() {
-                            let cards = [ normalCard, jackOfTrumps ];
-                            assert.equal(cards[1], gameLogic.getWinningCard(trumpCard, cards));
-                        });
-                    });
-                     describe('five of trumps', function() {
-                        it('should return the second card', function() {
-                            let cards = [ normalCard, fiveOfTrumps ];
-                            assert.equal(cards[1], gameLogic.getWinningCard(trumpCard, cards));
-                        });
-                    });
-                });
-                
-                describe('both cards are special cases', function() {
-                    describe('ace of hearts vs jack of trumps', function() {
-                        it ('should return the second card', function () {
-                            let cards = [ aceOfHearts, jackOfTrumps ];
-                            assert.equal(cards[1], gameLogic.getWinningCard(trumpCard, cards));
-                        });
-                    });
-                    describe('jack of trumps vs five of trumps', function() {
-                        it ('should return the second card', function () {
-                            let cards = [ jackOfTrumps, fiveOfTrumps ];
-                            assert.equal(cards[1], gameLogic.getWinningCard(trumpCard, cards));
-                        });
-                    });
-                });
+describe('Game Logic (Client only)', function() {
+    describe('getBestCardFromOptions', function() {
+        describe('no cards available', function() {
+            it('should not crash', function() {
+                assert.ok(gameLogic.getBestCardFromOptions([]));
             });
         });
+        describe('one card available', function() {
+            it('should return the first card', function() {
+                let cardOptions = [ new deck.Card() ];
+                assert.equal(cardOptions[0], gameLogic.getBestCardFromOptions(cardOptions));
+            });
+        });
+        describe('no cards played', function() {
+            it('should play the first card', function() {
+                let cardOptions = [ new deck.Card() ];
+                assert.equal(cardOptions[0], gameLogic.getBestCardFromOptions(cardOptions, {}, []));
+            });
+        });
+        describe('one card played', function() {
+            var trumpCard = new deck.TrumpCard();
+            trumpCard.card = new deck.Card(deck.CardSuits.diamonds, deck.CardValues.eight);
+            let availableNormalCard = new deck.Card(deck.CardSuits.hearts, deck.CardValues.eight);
+            let availableOtherCard = new deck.Card(deck.CardSuits.spades, deck.CardValues.eight);
+            let availableTrumpCard = new deck.Card(deck.CardSuits.diamonds, deck.CardValues.nine);
+            let playedNormalCard = new deck.Card(deck.CardSuits.hearts, deck.CardValues.eight);
+            let playedTrumpCard = new deck.Card(deck.CardSuits.diamonds, deck.CardValues.seven);
+
+            let playedCards = [ new deck.Card(deck.CardSuits.hearts, deck.CardValues.two) ];
+            describe('no cards of that suit and no trumps available', function () {
+                it ('should return the first card', function() {
+                    let cardOptions = [ availableOtherCard ];
+                    assert.equal(cardOptions[0], gameLogic.getBestCardFromOptions(cardOptions, trumpCard, playedCards));
+                });
+            });
+            describe('one card of that suit and no trumps available', function () {
+                it ('should return the card of played suit', function() {
+                    let cardOptions = [ availableOtherCard, availableNormalCard ];
+                    assert.equal(cardOptions[1], gameLogic.getBestCardFromOptions(cardOptions, trumpCard, playedCards));
+                });
+            });
+            describe('no cards of that suit and one trump card available', function () {
+                it ('should return the trump card', function() {
+                    let cardOptions = [ availableOtherCard, availableTrumpCard ];
+                    assert.equal(cardOptions[1], gameLogic.getBestCardFromOptions(cardOptions, trumpCard, playedCards));
+                });
+            });
+            describe('played card is trumps', function() {
+                it('should return the only trump card', function() {
+                    let playedCardsTrumps = [ new deck.Card(deck.CardSuits.diamonds, deck.CardValues.six) ];
+                    let cardOptions = [ availableOtherCard, availableNormalCard, availableTrumpCard ];
+                    assert.equal(cardOptions[2], gameLogic.getBestCardFromOptions(cardOptions, trumpCard, playedCardsTrumps));
+                });
+            });
+        })
     });
 });

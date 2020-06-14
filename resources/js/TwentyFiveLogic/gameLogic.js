@@ -217,7 +217,30 @@ function compareCards(cardA, cardB, trumpCard) {
 
 
 function getBestCardFromOptions(cardOptions, trumpCard, playedCards) {
-    return cardOptions[0]; // TODO
+    if (cardOptions.length == 0) {
+        return {};
+    }
+    if (cardOptions.length == 1) {
+        return cardOptions[0];
+    }
+
+    if (playedCards.length == 0) {
+        return cardOptions[0];
+    }
+
+    let firstCardSuit = playedCards[0].suit;
+    let optionWithFirstCardSuit = cardOptions.find(c => c.suit == firstCardSuit);
+    if (optionWithFirstCardSuit) {
+        return optionWithFirstCardSuit;
+    }
+    
+    let trumpCardSuit = trumpCard.card.suit;
+    let optionWithTrumpCardSuit = cardOptions.find(c => c.suit == trumpCardSuit);
+    if (optionWithTrumpCardSuit) {
+        return optionWithTrumpCardSuit;
+    }
+
+    return cardOptions[0];
 }
 
 function getWinningCard(trumpCard, playedCards) {
