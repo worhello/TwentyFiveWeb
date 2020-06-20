@@ -61,13 +61,12 @@ function playCard(playerName, card) {
     showPlayedCard(playerName, cardNode);
 }
 
-function playSelfCard(cardNode, cardName) {
-    var selfPlayer = window.gameContext.selfPlayer;
-    selfPlayer.playCard(cardName);
-
-    showPlayedCard(selfPlayer.name, cardNode);
-
-    window.gameContext.playCardsAfterSelf();
+async function playSelfCard(cardNode, cardName) {
+    if (window.gameContext.selfPlayerCardsEnabled)
+    {
+        showPlayedCard(window.gameContext.selfPlayer.name, cardNode);
+        window.gameContext.playSelfCard(cardName);
+    }
 }
 
 function drawPlayerScores() {
@@ -162,7 +161,14 @@ function onStartButtonClicked() {
 
     let isSinglePlayer = document.getElementById("singlePlayer").checked;
 
-    window.gameContext = new GameContext(numPlayers);
+    let cardDisplayDelay = 500;
+
+    if (isSinglePlayer) {
+        window.gameContext = new SinglePlayerGameContext(numPlayers, cardDisplayDelay);
+    } else {
+        window.gameContext = new SinglePlayerGameContext(numPlayers, cardDisplayDelay); // TODO change
+    }
+
     window.gameContext.startGame();
 
     hideStartGameOverlay();

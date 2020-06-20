@@ -1,5 +1,9 @@
 "use strict";
 
+function sleepFor(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 function setupPlayers(numPlayers) {
     var players = [];
     players.push(new Player("You"));
@@ -28,12 +32,14 @@ function getSelfPlayer(players) {
     });
 }
 
-class GameContext {
-    constructor(numPlayers) {
+class SinglePlayerGameContext {
+    constructor(numPlayers, cardDisplayDelay) {
         this.deck = new Deck();
         this.players = setupPlayers(numPlayers);
         this.trumpCard = new TrumpCard();
         this.selfPlayer = getSelfPlayer(this.players);
+        this.selfPlayerCardsEnabled = false;
+        this.cardDisplayDelay = cardDisplayDelay;
     }
 
     dealAllPlayerCards() {
@@ -42,9 +48,9 @@ class GameContext {
         });
     }
 
-    rotatePlayersArray(lastRoundWinningPlayer) {
+    rotatePlayersArray(lastRoundWinningPlayerName) {
         let players = this.players;
-        let winningPlayerIndex = players.indexOf(lastRoundWinningPlayer);
+        let winningPlayerIndex = players.findIndex(p => p.name == lastRoundWinningPlayerName);;
         let firstHalf = players.slice(winningPlayerIndex);
         let secondHalf = players.slice(0, winningPlayerIndex);
         this.players = firstHalf.concat(secondHalf);
@@ -73,22 +79,61 @@ class GameContext {
             showStartGameOverlay();
         } else {
             // start next round
-            this.rotatePlayersArray(winnerWithHighestScore);
+            this.rotatePlayersArray(winningPlayerName);
             this.startRound();
         }
     }
 
-    playCardsBeforeSelf() {
-        for (let player of this.players) {
-            if (player.name == "You") {
-                break;
+    getCardIndexByName(name) {
+        return this.players.findIndex(p => p.name == name);
+    }
+
+    async playCardAsync(playerName, playedCard) {
+        await sleepFor(500);
+        playCard(playerName, playedCard);
+    }
+
+    async playCardsBeforeSelfAsync() {
+        let selfPlayerIndex = this.getCardIndexByName("You");
+        if (selfPlayerIndex >= 0) {
+            for (var i = 0; i < selfPlayerIndex; i++) {
+                let player = this.players[i];
+                await this.playCardAsync(player.name, player.aiPlayCard(getPlayedCards()));
             }
-            playCard(player.name, player.aiPlayCard(getPlayedCards()));
         }
     }
 
+    async playCardsAfterSelfAsync() {
+        this.selfPlayerCardsEnabled = false;
+        let selfPlayerIndex = this.getCardIndexByName("You");
+        if (selfPlayerIndex >= 0) {
+            for (var i = selfPlayerIndex + 1; i < this.players.length; i++) {
+                let player = this.players[i];
+                await this.playCardAsync(player.name, player.aiPlayCard(getPlayedCards()));
+            }
+        }
+
+        waitForCardsToBeRendered();
+    }
+
+    playCardsBeforeSelf() {
+        let selfPlayerIndex = this.getCardIndexByName("You");
+        if (selfPlayerIndex >= 0) {
+            for (var i = 0; i < selfPlayerIndex; i++) {
+                let player = this.players[i];
+                playCard(player.name, player.aiPlayCard(getPlayedCards()));
+            }
+        }
+    }
+
+    async playSelfCard(cardName) {
+        this.selfPlayer.playCard(cardName);
+        await window.gameContext.playCardsAfterSelfAsync();
+    }
+
     playCardsAfterSelf() {
-        let selfPlayerIndex = this.players.findIndex(p => p.name == "You");
+        this.selfPlayerCardsEnabled = false;
+        let selfPlayerIndex = this.getCardIndexByName("You");
         if (selfPlayerIndex >= 0) {
             for (var i = selfPlayerIndex + 1; i < this.players.length; i++) {
                 let player = this.players[i];
@@ -106,7 +151,7 @@ class GameContext {
         }
     }
 
-    startRound() {
+    async startRound() {
         this.resetDeckIfNeeded();
         if (this.selfPlayer.cards.length == 0) {
             this.dealAllPlayerCards();
@@ -116,10 +161,14 @@ class GameContext {
             redrawTrumpCard();
         }
 
+        this.selfPlayerCardsEnabled = false;
+
         resetPlayedCardsState();
         drawPlayedCardsPlaceholders();
 
-        this.playCardsBeforeSelf();
+        await this.playCardsBeforeSelfAsync();
+
+        this.selfPlayerCardsEnabled = true;
     }
     
     startGame() {
