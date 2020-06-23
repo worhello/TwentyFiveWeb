@@ -7,35 +7,6 @@ function clearChildrenOfElementById(elementId) {
     }
 }
 
-function getPlayersAndCards() {
-    let playedCardsNode = document.getElementById("playedCardsContainer");
-    var playedCards = [];
-    for (let card of playedCardsNode.getElementsByClassName('Card')) {
-        playedCards.push({"playerName": card.playerName, "card": card.cardObj });
-    }
-    return playedCards;
-}
-
-function getPlayedCards() {
-    let playedCardsNode = document.getElementById("playedCardsContainer");
-    var playedCards = [];
-    for (let card of playedCardsNode.getElementsByClassName('Card')) {
-        playedCards.push(card.cardObj);
-    }
-    return playedCards;
-}
-
-function allPlayedCardsVisible() {
-    for (let player of window.gameContext.players) {
-        let playerName = player.name;
-        let playedCardContainer = document.getElementById('playedCard_' + playerName);
-        if (playedCardContainer.getElementsByTagName('img').length == 0) {
-            return false;
-        }
-    }
-    return true;
-}
-
 function buildCardNode(playerName, card) {
     let cardName = card.cardName;
     let cardNodeContainer = document.createElement("div");
@@ -51,125 +22,152 @@ function buildCardNode(playerName, card) {
     return cardNodeContainer;
 }
 
-function showPlayedCard(playerName, cardNode) {
-    let playedCardContainer = document.getElementById('playedCard_' + playerName);
-    playedCardContainer.appendChild(cardNode);
-}
-
-function playCard(playerName, card) {
-    let cardNode = buildCardNode(playerName, card);
-    showPlayedCard(playerName, cardNode);
-}
-
-async function playSelfCard(cardNode, cardName) {
-    if (window.gameContext.selfPlayerCardsEnabled)
-    {
-        showPlayedCard(window.gameContext.selfPlayer.name, cardNode);
-        window.gameContext.playSelfCard(cardName);
+class ViewController {
+    constructor() {
+        this.selfPlayerCardsEnabled = true; //TODO change to false
     }
-}
 
-function drawPlayerScores() {
-    clearChildrenOfElementById("playersScoreContainer");
-    let players = window.gameContext.players;
-    let playersContainer = document.getElementById("playersScoreContainer");
-    for (let player of players) {
-        let playerNode = document.createElement("span");
-        playerNode.className = "PlayerScoreContainer";
-        let playerName = document.createElement("div");
-        let playerScore = document.createElement("div");
-        playerScore.className = "PlayerScoreNumber";
-        playerScore.id = "playerScoreNode_" + player.name;
-        playerNode.appendChild(playerName);
-        playerNode.appendChild(playerScore);
-
-        playerName.textContent = player.name;
-        playerScore.textContent = player.score;
-
-        playersContainer.appendChild(playerNode);
+    getPlayersAndCards() {
+        let playedCardsNode = document.getElementById("playedCardsContainer");
+        var playedCards = [];
+        for (let card of playedCardsNode.getElementsByClassName('Card')) {
+            playedCards.push({ "playerName": card.playerName, "card": card.cardObj });
+        }
+        return playedCards;
     }
-}
 
-function redrawPlayerScores() {
-    let playersContainer = document.getElementById("playersScoreContainer");
-    for (let player of window.gameContext.players) {
-        var playerScoreNode = document.getElementById("playerScoreNode_" + player.name);
-        if (playerScoreNode) {
-            playerScoreNode.textContent = player.score;
+    getPlayedCards() {
+        let playedCardsNode = document.getElementById("playedCardsContainer");
+        var playedCards = [];
+        for (let card of playedCardsNode.getElementsByClassName('Card')) {
+            playedCards.push(card.cardObj);
+        }
+        return playedCards;
+    }
+
+    // TODO - check if any better way so as to not need this function
+    allPlayedCardsVisible() {
+        for (let player of window.gameContext.players) {
+            let playerName = player.name;
+            let playedCardContainer = document.getElementById('playedCard_' + playerName);
+            if (playedCardContainer.getElementsByTagName('img').length == 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    showPlayedCard(playerName, cardNode) {
+        let playedCardContainer = document.getElementById('playedCard_' + playerName);
+        playedCardContainer.appendChild(cardNode);
+    }
+
+    playCard(playerName, card) {
+        let cardNode = buildCardNode(playerName, card);
+        this.showPlayedCard(playerName, cardNode);
+    }
+
+    async playSelfCard(cardNode, cardName) {
+        if (window.gameContext.selfPlayerCardsEnabled)
+        {
+            this.showPlayedCard(window.gameContext.selfPlayer.name, cardNode);
+            window.gameContext.playSelfCard(cardName); // TODO - make this an event too so both classes can be totally separate
         }
     }
-}
 
-function drawPlayedCardsPlaceholders() {
-    let playedCardArea = document.getElementById("playedCardsContainer");
+    _drawPlayerScores(players) {
+        clearChildrenOfElementById("playersScoreContainer");
 
-    for (let player of window.gameContext.players) {
-        let playedCardContainer = document.createElement("span");
-        playedCardContainer.className = 'CardContainer PlayedCardContainer';
-        playedCardContainer.id = 'playedCard_' + player.name;
-        let playerNameLabel = document.createElement("div");
-        playerNameLabel.textContent = player.name;
-        playedCardContainer.appendChild(playerNameLabel);
-        playedCardArea.appendChild(playedCardContainer);
-    }
-}
+        let playersContainer = document.getElementById("playersScoreContainer");
+        for (let player of players) {
+            let playerNode = document.createElement("span");
+            playerNode.className = "PlayerScoreContainer";
+            let playerName = document.createElement("div");
+            let playerScore = document.createElement("div");
+            playerScore.className = "PlayerScoreNumber";
+            playerScore.id = "playerScoreNode_" + player.name;
+            playerNode.appendChild(playerName);
+            playerNode.appendChild(playerScore);
 
-function resetPlayedCardsState() {
-    clearChildrenOfElementById("playedCardsContainer");
-}
+            playerName.textContent = player.name;
+            playerScore.textContent = player.score;
 
-function resetSelfPlayerState() {
-    clearChildrenOfElementById("playerCardsContainer");
-}
-
-function showSelfPlayerHand() {
-    let selfPlayer = window.gameContext.selfPlayer;
-    let cards = selfPlayer.cards;
-    let playerName = selfPlayer.name;
-    
-    cards.forEach(function(card) {
-        let cardNode = buildCardNode(playerName, card);
-        cardNode.addEventListener("click", function(ev) {
-            playSelfCard(cardNode, card.cardName);
-        })
-        document.getElementById("playerCardsContainer").appendChild(cardNode);
-    });
-}
-
-function redrawTrumpCard() {
-    clearChildrenOfElementById("trumpCardImgContainer");
-
-    let trumpCard = window.gameContext.trumpCard;
-    var trumpCardContainer = document.getElementById("trumpCardImgContainer");
-    trumpCardContainer.className = trumpCard.hasBeenStolen ? "TrumpCardStolen" : "TrumpCardNotStolen";
-
-    let cardNode = buildCardNode("Trump Card", trumpCard.card);
-    trumpCardContainer.appendChild(cardNode);
-}
-
-function showStartGameOverlay() {
-    document.getElementById("menuContainer").style.display = "block";
-}
-
-function hideStartGameOverlay() {
-    document.getElementById("menuContainer").style.display = "none";
-}
-
-function onStartButtonClicked() {
-    let numPlayersSelect = document.getElementById("numPlayersSelect");
-    let numPlayers = numPlayersSelect.options[numPlayersSelect.selectedIndex].value;
-
-    let isSinglePlayer = document.getElementById("singlePlayer").checked;
-
-    let cardDisplayDelay = 500;
-
-    if (isSinglePlayer) {
-        window.gameContext = new SinglePlayerGameContext(numPlayers, cardDisplayDelay);
-    } else {
-        window.gameContext = new SinglePlayerGameContext(numPlayers, cardDisplayDelay); // TODO change
+            playersContainer.appendChild(playerNode);
+        }
     }
 
-    window.gameContext.startGame();
+    event_drawPlayerScores() {
+        this._drawPlayerScores(window.gameContext.players);
+    }
 
-    hideStartGameOverlay();
+    _redrawPlayerScores(players) {
+        for (let player of players) {
+            var playerScoreNode = document.getElementById("playerScoreNode_" + player.name);
+            if (playerScoreNode) {
+                playerScoreNode.textContent = player.score;
+            }
+        }
+    }
+
+    event_redrawPlayerScores() {
+        this._redrawPlayerScores(window.gameContext.players);
+    }
+
+    event_drawPlayedCardsPlaceholders() {
+        let playedCardArea = document.getElementById("playedCardsContainer");
+
+        for (let player of window.gameContext.players) {
+            let playedCardContainer = document.createElement("span");
+            playedCardContainer.className = 'CardContainer PlayedCardContainer';
+            playedCardContainer.id = 'playedCard_' + player.name;
+            let playerNameLabel = document.createElement("div");
+            playerNameLabel.textContent = player.name;
+            playedCardContainer.appendChild(playerNameLabel);
+            playedCardArea.appendChild(playedCardContainer);
+        }
+    }
+
+    event_resetPlayedCardsState() {
+        clearChildrenOfElementById("playedCardsContainer");
+    }
+
+    event_resetSelfPlayerState() {
+        clearChildrenOfElementById("playerCardsContainer");
+    }
+
+    _showSelfPlayerHand(selfPlayer) {
+        let cards = selfPlayer.cards;
+        let playerName = selfPlayer.name;
+
+        cards.forEach(function(card) {
+            let cardNode = buildCardNode(playerName, card);
+            cardNode.addEventListener("click", function(ev) {
+                window.gameViewController.playSelfCard(cardNode, card.cardName);
+            })
+            document.getElementById("playerCardsContainer").appendChild(cardNode);
+        });
+    }
+
+    event_showSelfPlayerHand() {
+        this._showSelfPlayerHand(window.gameContext.selfPlayer);
+    }
+
+    _redrawTrumpCard(trumpCard) {
+        clearChildrenOfElementById("trumpCardImgContainer");
+
+        var trumpCardContainer = document.getElementById("trumpCardImgContainer");
+        trumpCardContainer.className = trumpCard.hasBeenStolen ? "TrumpCardStolen" : "TrumpCardNotStolen";
+
+        let cardNode = buildCardNode("Trump Card", trumpCard.card);
+        trumpCardContainer.appendChild(cardNode);
+    }
+
+    event_redrawTrumpCard() {
+        this._redrawTrumpCard(window.gameContext.trumpCard);
+    }
+
+    event_highlightWinningCard(winningPlayerName) {
+        let winningCardContainer = document.getElementById('playedCard_' + winningPlayerName);
+        winningCardContainer.className += ' WinningCardAnimation';
+    }
 }

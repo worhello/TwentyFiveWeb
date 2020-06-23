@@ -107,6 +107,11 @@ a {
     background-color: rgba(00, 99, 37, 0.9);
 }
 
+.WinningCardAnimation {
+    transition: background-color 0.5s ease;
+    background-color: rgba(51, 255, 5, 0.9);
+}
+
 #playerCardsContainer {
     display: flex;
     flex-direction: row;
