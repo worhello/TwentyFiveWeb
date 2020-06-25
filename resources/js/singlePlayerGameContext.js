@@ -38,7 +38,6 @@ class SinglePlayerGameContext {
         this.players = setupPlayers(numPlayers);
         this.trumpCard = new TrumpCard();
         this.selfPlayer = getSelfPlayer(this.players);
-        this.selfPlayerCardsEnabled = false;
         this.cardDisplayDelay = cardDisplayDelay;
     }
 
@@ -117,7 +116,7 @@ class SinglePlayerGameContext {
     }
 
     async playCardsAfterSelfAsync() {
-        this.selfPlayerCardsEnabled = false;
+        window.gameViewController.event_setSelfPlayerCardsEnabled(false);
         let selfPlayerIndex = this.getCardIndexByName("You");
         if (selfPlayerIndex >= 0) {
             await this.playCardsInRange(selfPlayerIndex + 1, this.players.length);
@@ -139,7 +138,7 @@ class SinglePlayerGameContext {
     }
 
     playCardsAfterSelf() {
-        this.selfPlayerCardsEnabled = false;
+        window.gameViewController.event_setSelfPlayerCardsEnabled(false);
         let selfPlayerIndex = this.getCardIndexByName("You");
         if (selfPlayerIndex >= 0) {
             for (var i = selfPlayerIndex + 1; i < this.players.length; i++) {
@@ -168,14 +167,14 @@ class SinglePlayerGameContext {
             window.gameViewController.event_redrawTrumpCard();
         }
 
-        this.selfPlayerCardsEnabled = false;
+        window.gameViewController.event_setSelfPlayerCardsEnabled(false);
 
         window.gameViewController.event_resetPlayedCardsState();
         window.gameViewController.event_drawPlayedCardsPlaceholders();
 
         await this.playCardsBeforeSelfAsync();
 
-        this.selfPlayerCardsEnabled = true;
+        window.gameViewController.event_setSelfPlayerCardsEnabled(true);
     }
     
     startGame() {

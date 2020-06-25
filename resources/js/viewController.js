@@ -68,7 +68,7 @@ class ViewController {
     }
 
     async playSelfCard(cardNode, cardName) {
-        if (window.gameContext.selfPlayerCardsEnabled)
+        if (this.selfPlayerCardsEnabled)
         {
             this.showPlayedCard(window.gameContext.selfPlayer.name, cardNode);
             window.gameContext.playSelfCard(cardName); // TODO - make this an event too so both classes can be totally separate
@@ -94,6 +94,21 @@ class ViewController {
 
             playersContainer.appendChild(playerNode);
         }
+    }
+
+    _setSelfPlayerCardsEnabled(isEnabled) {
+        this.selfPlayerCardsEnabled = isEnabled;
+        if (this.selfPlayerCardsEnabled) {
+            document.getElementById("playerCardsContainer").classList.remove('DisabledSelfPlayerCards');
+        } else {
+            document.getElementById("playerCardsContainer").classList.add('DisabledSelfPlayerCards');
+        }
+        document.getElementById('playedCardsContainerWrapper').style.display = 'none';
+        document.getElementById('playedCardsContainerWrapper').style.display = 'block';
+    }
+
+    event_setSelfPlayerCardsEnabled(isEnabled) {
+        this._setSelfPlayerCardsEnabled(isEnabled);
     }
 
     event_drawPlayerScores() {
@@ -168,6 +183,6 @@ class ViewController {
 
     event_highlightWinningCard(winningPlayerName) {
         let winningCardContainer = document.getElementById('playedCard_' + winningPlayerName);
-        winningCardContainer.className += ' WinningCardAnimation';
+        winningCardContainer.classList.add('WinningCardAnimation');
     }
 }
