@@ -5,6 +5,6 @@
     "mocha": "8.0.1"
   },
   "scripts": {
-      "test": "mocha resources/js/TwentyFiveLogic/test/*.js"
+      "test": "mocha resources/js/test/*.js"
     }
 }
