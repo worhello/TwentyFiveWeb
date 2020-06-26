@@ -28,15 +28,19 @@ class SinglePlayerGameContext {
         this.roundPlayerAndCards = [];
     }
 
+    async defaultSleep() {
+        await sleepFor(this.cardDisplayDelay);
+    }
+
     dealAllPlayerCards() {
         this.players.forEach(function(player) {
             player.cards = window.gameContext.drawCards(5);
         });
     }
 
-    rotatePlayersArray(lastRoundWinningPlayerName) {
+    rotatePlayersArray(lastRoundWinningPlayerId) {
         let players = this.players;
-        let winningPlayerIndex = players.findIndex(p => p.name == lastRoundWinningPlayerName);;
+        let winningPlayerIndex = players.findIndex(p => p.id == lastRoundWinningPlayerId);
         let firstHalf = players.slice(winningPlayerIndex);
         let secondHalf = players.slice(0, winningPlayerIndex);
         this.players = firstHalf.concat(secondHalf);
@@ -49,12 +53,13 @@ class SinglePlayerGameContext {
     async evaluateRoundEnd() {
         let playedCards = this.getPlayedCards();
         let winningCard = getWinningCard(this.trumpCard, playedCards);
-        let winningPlayerName = this.roundPlayerAndCards.find(function (pAC) { return pAC.card == winningCard }).player.name;
+        let winningPlayer = this.roundPlayerAndCards.find(function (pAC) { return pAC.card == winningCard }).player;
+        let winningPlayerId = winningPlayer.id;
 
-        this.eventsHandler.sendEventToViewController('highlightWinningPlayer', { "winningPlayerName": winningPlayerName });
-        await sleepFor(500);
+        this.eventsHandler.sendEventToViewController('highlightWinningPlayer', { "winningPlayerId": winningPlayerId });
+        await this.defaultSleep();
 
-        this.players.find(function (p) { return p.name == winningPlayerName }).score += 5;
+        this.players.find(function (p) { return p.id == winningPlayerId }).score += 5;
         this.eventsHandler.sendEventToViewController('redrawPlayerScores', { "players": this.players });
 
         var winnerWithHighestScore = this.players[0];
@@ -65,13 +70,13 @@ class SinglePlayerGameContext {
         });
 
         if (winnerWithHighestScore.score >= 25) {
-            window.alert(winnerWithHighestScore.name + " won!");
+            this.eventsHandler.sendEventToViewController('showWinningPlayer', { "winningPlayer": winnerWithHighestScore });
             this.eventsHandler.sendEventToViewController('resetPlayedCardsState', {});
             this.eventsHandler.sendEventToViewController('resetSelfPlayerState', {});
             this.eventsHandler.sendGameOverlayEvent('showStartGameOverlay', {});
         } else {
             // start next round
-            this.rotatePlayersArray(winningPlayerName);
+            this.rotatePlayersArray(winningPlayerId);
             this.startRound();
         }
     }
@@ -81,9 +86,9 @@ class SinglePlayerGameContext {
     }
 
     async playCardAsync(player, playedCard) {
-        this.eventsHandler.sendEventToViewController('playCard', { "playerName": player.name, "playedCard": playedCard });
+        this.eventsHandler.sendEventToViewController('playCard', { "player": player, "playedCard": playedCard });
         this.roundPlayerAndCards.push({ "player": player, "card": playedCard });
-        await sleepFor(500);
+        await this.defaultSleep();
     }
 
     async playCardsInRange(begin, end) {
