@@ -15,15 +15,16 @@ function onStartButtonClicked() {
 
     let cardDisplayDelay = 500;
 
+    window.eventsHandler = new EventsHandler();
+
     if (isSinglePlayer) {
-        window.gameContext = new SinglePlayerGameContext(numPlayers, cardDisplayDelay);
+        window.gameContext = new SinglePlayerGameContext(window.eventsHandler, numPlayers, cardDisplayDelay);
     } else {
-        window.gameContext = new SinglePlayerGameContext(numPlayers, cardDisplayDelay); // TODO change
+        window.gameContext = new SinglePlayerGameContext(window.eventsHandler, numPlayers, cardDisplayDelay); // TODO change
     }
 
-    window.gameViewController = new ViewController();
+    window.gameViewController = new ViewController(window.eventsHandler);
 
-    window.eventsHandler = new EventsHandler();
 
     window.gameContext.startGame();
 

@@ -23,7 +23,8 @@ function buildCardNode(playerName, card) {
 }
 
 class ViewController {
-    constructor() {
+    constructor(eventsHandler) {
+        this.eventsHandler = eventsHandler;
         this.selfPlayerCardsEnabled = true; //TODO change to false
     }
 
@@ -59,7 +60,7 @@ class ViewController {
         if (this.selfPlayerCardsEnabled)
         {
             document.getElementById("playerCardsContainer").removeChild(cardNode);
-            window.eventsHandler.sendEventToGameContext('playSelfCard', { "cardName": cardName });
+            this.eventsHandler.sendEventToGameContext('playSelfCard', { "cardName": cardName });
         }
     }
 
