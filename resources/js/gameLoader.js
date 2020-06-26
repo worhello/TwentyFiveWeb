@@ -31,6 +31,8 @@ function onStartButtonClicked() {
 
     window.gameViewController = new ViewController();
 
+    window.eventsHandler = new EventsHandler();
+
     window.gameContext.startGame();
 
     hideStartGameOverlay();
