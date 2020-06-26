@@ -4,7 +4,11 @@
   "dependencies": {
     "mocha": "8.0.1"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/worhello/TwentyFiveWeb.git"
+  },
   "scripts": {
-      "test": "mocha resources/js/test/*.js"
-    }
+    "test": "mocha resources/js/test/*.js"
+  }
 }
