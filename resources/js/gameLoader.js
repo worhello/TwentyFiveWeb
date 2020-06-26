@@ -31,8 +31,8 @@ function onStartButtonClicked() {
     hideStartGameOverlay();
 }
 
-window.onload = function(event) {
-    this.document.getElementById("startGameButton").addEventListener("click", function(ev) {
+window.onload = function() {
+    this.document.getElementById("startGameButton").addEventListener("click", function() {
         onStartButtonClicked();
     });
     showStartGameOverlay();

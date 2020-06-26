@@ -113,7 +113,7 @@ class ViewController {
 
         cards.forEach(function(card) {
             let cardNode = buildCardNode(selfPlayer.id, card);
-            cardNode.addEventListener("click", function(ev) {
+            cardNode.addEventListener("click", function() {
                 window.gameViewController.playSelfCard(cardNode, card.cardName);
             })
             document.getElementById("playerCardsContainer").appendChild(cardNode);

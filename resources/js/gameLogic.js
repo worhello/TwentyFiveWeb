@@ -41,7 +41,6 @@ function convertValueName(v) {
         case CardValues.king: return "king";
         default: return String(v);
     }
-    return v;
 }
 
 function buildCardName(s, v) {
@@ -140,14 +139,6 @@ function isAceOfTrumps(cardA, trumpCard) {
 
 function isTrumpCard(cardA, trumpCard) {
     return isTrumpSuit(cardA, trumpCard) || isAceOfHearts(cardA);
-}
-
-function isTopTrumpCard(cardA, trumpCard) {
-    if (!isTrumpCard(cardA, trumpCard)) {
-        return false;
-    }
-
-    return isAceOfHearts(cardA) || isJackOfTrumps(cardA, trumpCard) || isFiveOfTrumps(cardA, trumpCard);
 }
 
 function compareNormalCards(cardA, cardB) {

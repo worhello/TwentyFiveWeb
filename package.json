@@ -2,6 +2,7 @@
   "name": "twentyfiveweb",
   "version": "0.0.1",
   "dependencies": {
+    "assert": "2.0.0",
     "mocha": "8.0.1"
   },
   "repository": {

@@ -86,23 +86,23 @@ describe('parse test JSON test', function() {
     };
     it ('should match test input', function() {
         let testCase = testJson.testCases[0];
-        assert.equal("test test case", testCase.name);
-        assert.equal(0, testCase.expectedCardIndex);
+        assert.strictEqual("test test case", testCase.name);
+        assert.strictEqual(0, testCase.expectedCardIndex);
 
         let playedCards = buildDeckCardsFromJSON(testCase.playedCards);
-        assert.equal(2, playedCards.length);
+        assert.strictEqual(2, playedCards.length);
 
         let playedCard0 = playedCards[0];
-        assert.equal(deck.CardSuits.clubs, playedCard0.suit);
-        assert.equal(deck.CardValues.queen, playedCard0.value);
+        assert.strictEqual(deck.CardSuits.clubs, playedCard0.suit);
+        assert.strictEqual(deck.CardValues.queen, playedCard0.value);
 
         let playedCard1 = playedCards[1];
-        assert.equal(deck.CardSuits.spades, playedCard1.suit);
-        assert.equal(deck.CardValues.queen, playedCard1.value);
+        assert.strictEqual(deck.CardSuits.spades, playedCard1.suit);
+        assert.strictEqual(deck.CardValues.queen, playedCard1.value);
 
         let trumpCard = buildDeckCardFromJSON(testCase.trumpCard);
-        assert.equal(deck.CardSuits.diamonds, trumpCard.suit);
-        assert.equal(deck.CardValues.two, trumpCard.value);
+        assert.strictEqual(deck.CardSuits.diamonds, trumpCard.suit);
+        assert.strictEqual(deck.CardValues.two, trumpCard.value);
     });
 })
 
@@ -112,7 +112,10 @@ describe('Game Logic - using JSON', function() {
             let playedCards = buildDeckCardsFromJSON(testCase.playedCards);
             var trumpCard = new deck.TrumpCard();
             trumpCard.card = buildDeckCardFromJSON(testCase.trumpCard);
-            assert.equal(playedCards[testCase.expectedCardIndex], gameLogic.getWinningCard(trumpCard, playedCards));
+            let expectedCard = playedCards[testCase.expectedCardIndex];
+            let actualCard = gameLogic.getWinningCard(trumpCard, playedCards);
+            assert.strictEqual(actualCard.suit, expectedCard.suit);
+            assert.strictEqual(actualCard.value, expectedCard.value);
         });
     }
 });
@@ -128,7 +131,10 @@ describe('Game Logic', function() {
         it('should return the first card if a single card passed in', function() {
             let trumpCard = new deck.TrumpCard();
             let cards = [ new deck.Card() ];
-            assert.equal(cards[0], gameLogic.getWinningCard(trumpCard, cards));
+            let expectedCard = cards[0];
+            let actualCard = gameLogic.getWinningCard(trumpCard, cards);
+            assert.strictEqual(expectedCard.suit, actualCard.suit);
+            assert.strictEqual(expectedCard.value, actualCard.value);
         });
     });
 });
@@ -143,13 +149,19 @@ describe('Game Logic (Client only)', function() {
         describe('one card available', function() {
             it('should return the first card', function() {
                 let cardOptions = [ new deck.Card() ];
-                assert.equal(cardOptions[0], gameLogic.getBestCardFromOptions(cardOptions));
+                let expectedCard = cardOptions[0];
+                let actualCard = gameLogic.getBestCardFromOptions(cardOptions);
+                assert.strictEqual(expectedCard.suit, actualCard.suit);
+                assert.strictEqual(expectedCard.value, actualCard.value);
             });
         });
         describe('no cards played', function() {
             it('should play the first card', function() {
                 let cardOptions = [ new deck.Card() ];
-                assert.equal(cardOptions[0], gameLogic.getBestCardFromOptions(cardOptions, {}, []));
+                let expectedCard = cardOptions[0];
+                let actualCard = gameLogic.getBestCardFromOptions(cardOptions, {}, []);
+                assert.strictEqual(expectedCard.suit, actualCard.suit);
+                assert.strictEqual(expectedCard.value, actualCard.value);
             });
         });
         describe('one card played', function() {
@@ -158,33 +170,43 @@ describe('Game Logic (Client only)', function() {
             let availableNormalCard = new deck.Card(deck.CardSuits.hearts, deck.CardValues.eight);
             let availableOtherCard = new deck.Card(deck.CardSuits.spades, deck.CardValues.eight);
             let availableTrumpCard = new deck.Card(deck.CardSuits.diamonds, deck.CardValues.nine);
-            let playedNormalCard = new deck.Card(deck.CardSuits.hearts, deck.CardValues.eight);
-            let playedTrumpCard = new deck.Card(deck.CardSuits.diamonds, deck.CardValues.seven);
 
             let playedCards = [ new deck.Card(deck.CardSuits.hearts, deck.CardValues.two) ];
             describe('no cards of that suit and no trumps available', function () {
                 it ('should return the first card', function() {
                     let cardOptions = [ availableOtherCard ];
-                    assert.equal(cardOptions[0], gameLogic.getBestCardFromOptions(cardOptions, trumpCard, playedCards));
+                    let expectedCard = cardOptions[0];
+                    let actualCard = gameLogic.getBestCardFromOptions(cardOptions, trumpCard, playedCards);
+                    assert.strictEqual(expectedCard.suit, actualCard.suit);
+                    assert.strictEqual(expectedCard.value, actualCard.value);
                 });
             });
             describe('one card of that suit and no trumps available', function () {
                 it ('should return the card of played suit', function() {
                     let cardOptions = [ availableOtherCard, availableNormalCard ];
-                    assert.equal(cardOptions[1], gameLogic.getBestCardFromOptions(cardOptions, trumpCard, playedCards));
+                    let expectedCard = cardOptions[1];
+                    let actualCard = gameLogic.getBestCardFromOptions(cardOptions, trumpCard, playedCards);
+                    assert.strictEqual(expectedCard.suit, actualCard.suit);
+                    assert.strictEqual(expectedCard.value, actualCard.value);
                 });
             });
             describe('no cards of that suit and one trump card available', function () {
                 it ('should return the trump card', function() {
                     let cardOptions = [ availableOtherCard, availableTrumpCard ];
-                    assert.equal(cardOptions[1], gameLogic.getBestCardFromOptions(cardOptions, trumpCard, playedCards));
+                    let expectedCard = cardOptions[1];
+                    let actualCard = gameLogic.getBestCardFromOptions(cardOptions, trumpCard, playedCards);
+                    assert.strictEqual(expectedCard.suit, actualCard.suit);
+                    assert.strictEqual(expectedCard.value, actualCard.value);
                 });
             });
             describe('played card is trumps', function() {
                 it('should return the only trump card', function() {
                     let playedCardsTrumps = [ new deck.Card(deck.CardSuits.diamonds, deck.CardValues.six) ];
                     let cardOptions = [ availableOtherCard, availableNormalCard, availableTrumpCard ];
-                    assert.equal(cardOptions[2], gameLogic.getBestCardFromOptions(cardOptions, trumpCard, playedCardsTrumps));
+                    let expectedCard = cardOptions[2];
+                    let actualCard = gameLogic.getBestCardFromOptions(cardOptions, trumpCard, playedCardsTrumps);
+                    assert.strictEqual(expectedCard.suit, actualCard.suit);
+                    assert.strictEqual(expectedCard.value, actualCard.value);
                 });
             });
         })
