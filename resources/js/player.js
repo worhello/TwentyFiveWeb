@@ -10,7 +10,7 @@ class Player {
         this.isSelfPlayer = isSelfPlayer;
     }
 
-    playCard = function(cardName) {
+    playCard(cardName) {
         let cardIndex = this.cards.findIndex(card => card.cardName == cardName);
         if (cardIndex > -1) {
             let playedCard = this.cards[cardIndex];
@@ -20,7 +20,7 @@ class Player {
         return this.cards[0];
     }
 
-    aiPlayCard = function(playedCards) {
+    aiPlayCard(playedCards) {
         let trumpCard = window.gameContext.trumpCard;
         let cardToPlay = getBestCardFromOptions(this.cards, trumpCard, playedCards);
         this.playCard(cardToPlay.cardName);

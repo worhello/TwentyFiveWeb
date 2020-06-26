@@ -157,7 +157,7 @@ class SinglePlayerGameContext {
 
     drawCards(num) {
         var cards = [];
-        for (const i of Array(num).keys()) {
+        for (const _ of Array(num).keys()) {
             cards.push(this.deck.cards.pop());
         }
         return cards;
