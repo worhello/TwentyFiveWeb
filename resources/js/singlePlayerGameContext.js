@@ -23,7 +23,7 @@ class SinglePlayerGameContext {
         this.deck = new Deck();
         this.players = setupPlayers(numPlayers);
         this.trumpCard = new TrumpCard();
-        this.selfPlayer = this.players.find(function(p) { return p.isSelfPlayer == true; });
+        this.selfPlayer = this.players.find(p => p.isSelfPlayer == true );
         this.cardDisplayDelay = cardDisplayDelay;
         this.roundPlayerAndCards = [];
     }
@@ -53,13 +53,13 @@ class SinglePlayerGameContext {
     async evaluateRoundEnd() {
         let playedCards = this.getPlayedCards();
         let winningCard = getWinningCard(this.trumpCard, playedCards);
-        let winningPlayer = this.roundPlayerAndCards.find(function (pAC) { return pAC.card == winningCard }).player;
+        let winningPlayer = this.roundPlayerAndCards.find(pAC => pAC.card == winningCard).player;
         let winningPlayerId = winningPlayer.id;
 
         this.eventsHandler.sendEventToViewController('highlightWinningPlayer', { "winningPlayerId": winningPlayerId });
         await this.defaultSleep();
 
-        this.players.find(function (p) { return p.id == winningPlayerId }).score += 5;
+        this.players.find(p => p.id == winningPlayerId).score += 5;
         this.eventsHandler.sendEventToViewController('redrawPlayerScores', { "players": this.players });
 
         var winnerWithHighestScore = this.players[0];
@@ -155,7 +155,7 @@ class SinglePlayerGameContext {
         this.startRound();
     }
 
-    drawCards = function(num) {
+    drawCards(num) {
         var cards = [];
         for (const i of Array(num).keys()) {
             cards.push(this.deck.cards.pop());
