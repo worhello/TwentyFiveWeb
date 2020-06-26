@@ -24,6 +24,7 @@ class SinglePlayerGameContext {
         this.trumpCard = new TrumpCard();
         this.selfPlayer = this.players.find(function(p) { return p.isSelfPlayer == true; });
         this.cardDisplayDelay = cardDisplayDelay;
+        this.roundPlayerAndCards = [];
     }
 
     dealAllPlayerCards() {
@@ -40,18 +41,20 @@ class SinglePlayerGameContext {
         this.players = firstHalf.concat(secondHalf);
     }
 
-    async evaluateRoundEnd() {
-        let playersAndCards = window.gameViewController.getPlayersAndCards();
-        let playedCards = playersAndCards.map(pAC => pAC.card);
-        let winningCard = getWinningCard(this.trumpCard, playedCards);
-        let winningPlayerName = playersAndCards.find(function (pAC) { return pAC.card == winningCard }).playerName;
+    getPlayedCards() {
+        return this.roundPlayerAndCards.map(pAC => pAC.card);
+    }
 
-        window.gameViewController.event_highlightWinningCard(winningPlayerName);
+    async evaluateRoundEnd() {
+        let playedCards = this.getPlayedCards();
+        let winningCard = getWinningCard(this.trumpCard, playedCards);
+        let winningPlayerName = this.roundPlayerAndCards.find(function (pAC) { return pAC.card == winningCard }).player.name;
+
+        window.eventsHandler.sendEventToViewController('highlightWinningPlayer', { "winningPlayerName": winningPlayerName });
         await sleepFor(500);
 
-
         this.players.find(function (p) { return p.name == winningPlayerName }).score += 5;
-        window.gameViewController.event_redrawPlayerScores();
+        window.eventsHandler.sendEventToViewController('redrawPlayerScores', { "players": this.players });
 
         var winnerWithHighestScore = this.players[0];
         this.players.map(function(p) {
@@ -62,9 +65,9 @@ class SinglePlayerGameContext {
 
         if (winnerWithHighestScore.score >= 25) {
             window.alert(winnerWithHighestScore.name + " won!");
-            window.gameViewController.event_resetPlayedCardsState();
-            window.gameViewController.event_resetSelfPlayerState();
-            event_showStartGameOverlay();
+            window.eventsHandler.sendEventToViewController('resetPlayedCardsState', {});
+            window.eventsHandler.sendEventToViewController('resetSelfPlayerState', {});
+            window.eventsHandler.sendGameOverlayEvent('showStartGameOverlay', {});
         } else {
             // start next round
             this.rotatePlayersArray(winningPlayerName);
@@ -76,21 +79,22 @@ class SinglePlayerGameContext {
         return this.players.findIndex(p => p.isSelfPlayer == true);
     }
 
-    async playCardAsync(playerName, playedCard) {
-        window.gameViewController.playCard(playerName, playedCard);
+    async playCardAsync(player, playedCard) {
+        window.eventsHandler.sendEventToViewController('playCard', { "playerName": player.name, "playedCard": playedCard });
+        this.roundPlayerAndCards.push({ "player": player, "card": playedCard });
         await sleepFor(500);
     }
 
     async playCardsInRange(begin, end) {
         for (var i = begin; i < end; i++) {
             let player = this.players[i];
-            let playedCards = window.gameViewController.getPlayedCards();
-            await this.playCardAsync(player.name, player.aiPlayCard(playedCards));
+            let playedCards = this.getPlayedCards();
+            await this.playCardAsync(player, player.aiPlayCard(playedCards));
         }
     }
 
     async playCardsAfterSelfAsync() {
-        window.gameViewController.event_setSelfPlayerCardsEnabled(false);
+        window.eventsHandler.sendEventToViewController('setSelfPlayerCardsEnabled', { "isEnabled": false });
         let selfPlayerIndex = this.getSelfPlayerIndex();
         await this.playCardsInRange(selfPlayerIndex + 1, this.players.length);
 
@@ -104,10 +108,10 @@ class SinglePlayerGameContext {
 
     async playSelfCard(cardName) {
         let playedCard = this.selfPlayer.playCard(cardName);
-        window.gameViewController.event_resetSelfPlayerState();
-        window.gameViewController.event_showSelfPlayerHand();
-        window.gameViewController.event_setSelfPlayerCardsEnabled(false);
-        await this.playCardAsync(this.selfPlayer.name, playedCard);
+        window.eventsHandler.sendEventToViewController('resetSelfPlayerState', {});
+        window.eventsHandler.sendEventToViewController('showSelfPlayerHand', { "selfPlayer": this.selfPlayer });
+        window.eventsHandler.sendEventToViewController('setSelfPlayerCardsEnabled', { "isEnabled": false });
+        await this.playCardAsync(this.selfPlayer, playedCard);
 
         await window.gameContext.playCardsAfterSelfAsync();
     }
@@ -123,25 +127,25 @@ class SinglePlayerGameContext {
         this.resetDeckIfNeeded();
         if (this.selfPlayer.cards.length == 0) {
             this.dealAllPlayerCards();
-            window.gameViewController.event_showSelfPlayerHand();
+            this.roundPlayerAndCards = [];
+            window.eventsHandler.sendEventToViewController('showSelfPlayerHand', { "selfPlayer": this.selfPlayer });
             this.trumpCard.card = this.drawCards(1)[0];
             this.trumpCard.hasBeenStolen = false;
-            window.gameViewController.event_redrawTrumpCard();
+            window.eventsHandler.sendEventToViewController('redrawTrumpCard', { "trumpCard": this.trumpCard });
         }
 
-        window.gameViewController.event_setSelfPlayerCardsEnabled(false);
-
-        window.gameViewController.event_resetPlayedCardsState();
-        window.gameViewController.event_drawPlayedCardsPlaceholders();
+        window.eventsHandler.sendEventToViewController('setSelfPlayerCardsEnabled', { "isEnabled": false });
+        window.eventsHandler.sendEventToViewController('resetPlayedCardsState', {});
+        window.eventsHandler.sendEventToViewController('drawPlayedCardsPlaceholders', { "players": this.players });
 
         await this.playCardsBeforeSelf();
 
-        window.gameViewController.event_setSelfPlayerCardsEnabled(true);
+        window.eventsHandler.sendEventToViewController('setSelfPlayerCardsEnabled', { "isEnabled": true });
     }
-    
+
     startGame() {
-        window.gameViewController.event_resetSelfPlayerState();
-        window.gameViewController.event_drawPlayerScores();
+        window.eventsHandler.sendEventToViewController('resetSelfPlayerState', {});
+        window.eventsHandler.sendEventToViewController('drawPlayerScores', { "players": this.players });
         this.startRound();
     }
 

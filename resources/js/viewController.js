@@ -55,15 +55,15 @@ class ViewController {
         this.showPlayedCard(playerName, cardNode);
     }
 
-    async playSelfCard(cardNode, cardName) {
+    playSelfCard(cardNode, cardName) {
         if (this.selfPlayerCardsEnabled)
         {
             document.getElementById("playerCardsContainer").removeChild(cardNode);
-            window.eventsHandler.sendEventToGameContext('playSelfCard', { detail: { "cardName": cardName } });
+            window.eventsHandler.sendEventToGameContext('playSelfCard', { "cardName": cardName });
         }
     }
 
-    _drawPlayerScores(players) {
+    drawPlayerScores(players) {
         clearChildrenOfElementById("playersScoreContainer");
 
         let playersContainer = document.getElementById("playersScoreContainer");
@@ -84,7 +84,7 @@ class ViewController {
         }
     }
 
-    _setSelfPlayerCardsEnabled(isEnabled) {
+    setSelfPlayerCardsEnabled(isEnabled) {
         this.selfPlayerCardsEnabled = isEnabled;
         if (this.selfPlayerCardsEnabled) {
             document.getElementById("playerCardsContainer").classList.remove('DisabledSelfPlayerCards');
@@ -95,15 +95,7 @@ class ViewController {
         document.getElementById('playedCardsContainerWrapper').style.display = 'block';
     }
 
-    event_setSelfPlayerCardsEnabled(isEnabled) {
-        this._setSelfPlayerCardsEnabled(isEnabled);
-    }
-
-    event_drawPlayerScores() {
-        this._drawPlayerScores(window.gameContext.players);
-    }
-
-    _redrawPlayerScores(players) {
+    redrawPlayerScores(players) {
         for (let player of players) {
             var playerScoreNode = document.getElementById("playerScoreNode_" + player.name);
             if (playerScoreNode) {
@@ -112,11 +104,7 @@ class ViewController {
         }
     }
 
-    event_redrawPlayerScores() {
-        this._redrawPlayerScores(window.gameContext.players);
-    }
-
-    _drawPlayedCardsPlaceholders(players) {
+    drawPlayedCardsPlaceholders(players) {
         let playedCardArea = document.getElementById("playedCardsContainer");
         
         for (let player of players) {
@@ -130,19 +118,15 @@ class ViewController {
         }
     }
 
-    event_drawPlayedCardsPlaceholders() {
-        this._drawPlayedCardsPlaceholders(window.gameContext.players);
-    }
-
-    event_resetPlayedCardsState() {
+    resetPlayedCardsState() {
         clearChildrenOfElementById("playedCardsContainer");
     }
 
-    event_resetSelfPlayerState() {
+    resetSelfPlayerState() {
         clearChildrenOfElementById("playerCardsContainer");
     }
 
-    _showSelfPlayerHand(selfPlayer) {
+    showSelfPlayerHand(selfPlayer) {
         let cards = selfPlayer.cards;
         let playerName = selfPlayer.name;
 
@@ -155,11 +139,7 @@ class ViewController {
         });
     }
 
-    event_showSelfPlayerHand() {
-        this._showSelfPlayerHand(window.gameContext.selfPlayer);
-    }
-
-    _redrawTrumpCard(trumpCard) {
+    redrawTrumpCard(trumpCard) {
         clearChildrenOfElementById("trumpCardImgContainer");
 
         var trumpCardContainer = document.getElementById("trumpCardImgContainer");
@@ -169,16 +149,32 @@ class ViewController {
         trumpCardContainer.appendChild(cardNode);
     }
 
-    event_redrawTrumpCard() {
-        this._redrawTrumpCard(window.gameContext.trumpCard);
-    }
-
-    event_highlightWinningCard(winningPlayerName) {
+    highlightWinningCard(winningPlayerName) {
         let winningCardContainer = document.getElementById('playedCard_' + winningPlayerName);
         winningCardContainer.classList.add('WinningCardAnimation');
     }
-
+    
     handleEvent(eventName, eventDetails) {
-        //TODO
+        if (eventName === 'highlightWinningPlayer') {
+            this.highlightWinningCard(eventDetails.winningPlayerName);
+        } else if (eventName === 'redrawTrumpCard') {
+            this.redrawTrumpCard(eventDetails.trumpCard);
+        } else if (eventName === 'showSelfPlayerHand') {
+            this.showSelfPlayerHand(eventDetails.selfPlayer);
+        } else if (eventName === 'drawPlayerScores') {
+            this.drawPlayerScores(eventDetails.players);
+        } else if (eventName === 'redrawPlayerScores') {
+            this.redrawPlayerScores(eventDetails.players);
+        } else if (eventName === 'resetSelfPlayerState') {
+            this.resetSelfPlayerState();
+        } else if (eventName === 'resetPlayedCardsState') {
+            this.resetPlayedCardsState();
+        } else if (eventName === 'drawPlayedCardsPlaceholders') {
+            this.drawPlayedCardsPlaceholders(eventDetails.players);
+        } else if (eventName === 'setSelfPlayerCardsEnabled') {
+            this.setSelfPlayerCardsEnabled(eventDetails.isEnabled);
+        } else if (eventName === 'playCard') {
+            this.playCard(eventDetails.playerName, eventDetails.playedCard);
+        }
     }
 }
