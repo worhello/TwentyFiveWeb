@@ -15,7 +15,6 @@ function buildCardNode(playerId, card) {
     cardNode.src = "resources/images/Cards/" + cardName + ".svg";
     cardNode.id = cardName;
     cardNode.playerId = playerId;
-    cardNode.cardObj = card;
 
     cardNodeContainer.appendChild(cardNode);
 
@@ -26,24 +25,6 @@ class ViewController {
     constructor(eventsHandler) {
         this.eventsHandler = eventsHandler;
         this.selfPlayerCardsEnabled = true; //TODO change to false
-    }
-
-    getPlayersAndCards() {
-        let playedCardsNode = document.getElementById("playedCardsContainer");
-        var playedCards = [];
-        for (let card of playedCardsNode.getElementsByClassName('Card')) {
-            playedCards.push({ "playerId": card.playerId, "card": card.cardObj });
-        }
-        return playedCards;
-    }
-
-    getPlayedCards() {
-        let playedCardsNode = document.getElementById("playedCardsContainer");
-        var playedCards = [];
-        for (let card of playedCardsNode.getElementsByClassName('Card')) {
-            playedCards.push(card.cardObj);
-        }
-        return playedCards;
     }
 
     showPlayedCard(playerId, cardNode) {
