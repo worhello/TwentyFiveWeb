@@ -7,14 +7,14 @@ function clearChildrenOfElementById(elementId) {
     }
 }
 
-function buildCardNode(playerName, card) {
+function buildCardNode(playerId, card) {
     let cardName = card.cardName;
     let cardNodeContainer = document.createElement("div");
     let cardNode = document.createElement("img");
     cardNode.className = 'Card';
     cardNode.src = "resources/images/Cards/" + cardName + ".svg";
     cardNode.id = cardName;
-    cardNode.playerName = playerName;
+    cardNode.playerId = playerId;
     cardNode.cardObj = card;
 
     cardNodeContainer.appendChild(cardNode);
@@ -32,7 +32,7 @@ class ViewController {
         let playedCardsNode = document.getElementById("playedCardsContainer");
         var playedCards = [];
         for (let card of playedCardsNode.getElementsByClassName('Card')) {
-            playedCards.push({ "playerName": card.playerName, "card": card.cardObj });
+            playedCards.push({ "playerId": card.playerId, "card": card.cardObj });
         }
         return playedCards;
     }
@@ -46,14 +46,14 @@ class ViewController {
         return playedCards;
     }
 
-    showPlayedCard(playerName, cardNode) {
-        let playedCardContainer = document.getElementById('playedCard_' + playerName);
+    showPlayedCard(playerId, cardNode) {
+        let playedCardContainer = document.getElementById('playedCard_' + playerId);
         playedCardContainer.appendChild(cardNode);
     }
 
-    playCard(playerName, card) {
-        let cardNode = buildCardNode(playerName, card);
-        this.showPlayedCard(playerName, cardNode);
+    playCard(player, card) {
+        let cardNode = buildCardNode(player.id, card);
+        this.showPlayedCard(player.id, cardNode);
     }
 
     playSelfCard(cardNode, cardName) {
@@ -74,7 +74,7 @@ class ViewController {
             let playerName = document.createElement("div");
             let playerScore = document.createElement("div");
             playerScore.className = "PlayerScoreNumber";
-            playerScore.id = "playerScoreNode_" + player.name;
+            playerScore.id = "playerScoreNode_" + player.id;
             playerNode.appendChild(playerName);
             playerNode.appendChild(playerScore);
 
@@ -98,7 +98,7 @@ class ViewController {
 
     redrawPlayerScores(players) {
         for (let player of players) {
-            var playerScoreNode = document.getElementById("playerScoreNode_" + player.name);
+            var playerScoreNode = document.getElementById("playerScoreNode_" + player.id);
             if (playerScoreNode) {
                 playerScoreNode.textContent = player.score;
             }
@@ -111,7 +111,7 @@ class ViewController {
         for (let player of players) {
             let playedCardContainer = document.createElement("span");
             playedCardContainer.className = 'CardContainer PlayedCardContainer';
-            playedCardContainer.id = 'playedCard_' + player.name;
+            playedCardContainer.id = 'playedCard_' + player.id;
             let playerNameLabel = document.createElement("div");
             playerNameLabel.textContent = player.name;
             playedCardContainer.appendChild(playerNameLabel);
@@ -129,10 +129,9 @@ class ViewController {
 
     showSelfPlayerHand(selfPlayer) {
         let cards = selfPlayer.cards;
-        let playerName = selfPlayer.name;
 
         cards.forEach(function(card) {
-            let cardNode = buildCardNode(playerName, card);
+            let cardNode = buildCardNode(selfPlayer.id, card);
             cardNode.addEventListener("click", function(ev) {
                 window.gameViewController.playSelfCard(cardNode, card.cardName);
             })
@@ -150,14 +149,18 @@ class ViewController {
         trumpCardContainer.appendChild(cardNode);
     }
 
-    highlightWinningCard(winningPlayerName) {
-        let winningCardContainer = document.getElementById('playedCard_' + winningPlayerName);
+    highlightWinningCard(winningPlayerId) {
+        let winningCardContainer = document.getElementById('playedCard_' + winningPlayerId);
         winningCardContainer.classList.add('WinningCardAnimation');
+    }
+
+    showWinningPlayer(winningPlayer) {
+        window.alert(winningPlayer.name + " won!");
     }
     
     handleEvent(eventName, eventDetails) {
         if (eventName === 'highlightWinningPlayer') {
-            this.highlightWinningCard(eventDetails.winningPlayerName);
+            this.highlightWinningCard(eventDetails.winningPlayerId);
         } else if (eventName === 'redrawTrumpCard') {
             this.redrawTrumpCard(eventDetails.trumpCard);
         } else if (eventName === 'showSelfPlayerHand') {
@@ -175,7 +178,9 @@ class ViewController {
         } else if (eventName === 'setSelfPlayerCardsEnabled') {
             this.setSelfPlayerCardsEnabled(eventDetails.isEnabled);
         } else if (eventName === 'playCard') {
-            this.playCard(eventDetails.playerName, eventDetails.playedCard);
+            this.playCard(eventDetails.player, eventDetails.playedCard);
+        } else if (eventName === 'showWinningPlayer') {
+            this.showWinningPlayer(eventDetails.winningPlayer);
         }
     }
 }

@@ -3,6 +3,8 @@
 class Player {
     constructor(name, isSelfPlayer = false) {
         this.name = name;
+        //Just adding the ID for now, to make it available in the rest of the app
+        this.id = "playerId_" + name;
         this.cards = [];
         this.score = 0;
         this.isSelfPlayer = isSelfPlayer;
