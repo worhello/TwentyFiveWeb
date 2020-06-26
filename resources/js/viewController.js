@@ -45,18 +45,6 @@ class ViewController {
         return playedCards;
     }
 
-    // TODO - check if any better way so as to not need this function
-    allPlayedCardsVisible() {
-        for (let player of window.gameContext.players) {
-            let playerName = player.name;
-            let playedCardContainer = document.getElementById('playedCard_' + playerName);
-            if (playedCardContainer.getElementsByTagName('img').length == 0) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     showPlayedCard(playerName, cardNode) {
         let playedCardContainer = document.getElementById('playedCard_' + playerName);
         playedCardContainer.appendChild(cardNode);
@@ -70,8 +58,8 @@ class ViewController {
     async playSelfCard(cardNode, cardName) {
         if (this.selfPlayerCardsEnabled)
         {
-            this.showPlayedCard(window.gameContext.selfPlayer.name, cardNode);
-            window.gameContext.playSelfCard(cardName); // TODO - make this an event too so both classes can be totally separate
+            document.getElementById("playerCardsContainer").removeChild(cardNode);
+            window.eventsHandler.sendEventToGameContext('playSelfCard', { detail: { "cardName": cardName } });
         }
     }
 
@@ -128,10 +116,10 @@ class ViewController {
         this._redrawPlayerScores(window.gameContext.players);
     }
 
-    event_drawPlayedCardsPlaceholders() {
+    _drawPlayedCardsPlaceholders(players) {
         let playedCardArea = document.getElementById("playedCardsContainer");
-
-        for (let player of window.gameContext.players) {
+        
+        for (let player of players) {
             let playedCardContainer = document.createElement("span");
             playedCardContainer.className = 'CardContainer PlayedCardContainer';
             playedCardContainer.id = 'playedCard_' + player.name;
@@ -140,6 +128,10 @@ class ViewController {
             playedCardContainer.appendChild(playerNameLabel);
             playedCardArea.appendChild(playedCardContainer);
         }
+    }
+
+    event_drawPlayedCardsPlaceholders() {
+        this._drawPlayedCardsPlaceholders(window.gameContext.players);
     }
 
     event_resetPlayedCardsState() {
@@ -184,5 +176,9 @@ class ViewController {
     event_highlightWinningCard(winningPlayerName) {
         let winningCardContainer = document.getElementById('playedCard_' + winningPlayerName);
         winningCardContainer.classList.add('WinningCardAnimation');
+    }
+
+    handleEvent(eventName, eventDetails) {
+        //TODO
     }
 }
