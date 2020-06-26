@@ -7,14 +7,6 @@ function hideStartGameOverlay() {
     document.getElementById("menuContainer").style.display = "none";
 }
 
-function event_showStartGameOverlay() {
-    showStartGameOverlay();
-}
-
-function event_hideStartGameOverlay() {
-    hideStartGameOverlay();
-}
-
 function onStartButtonClicked() {
     let numPlayersSelect = document.getElementById("numPlayersSelect");
     let numPlayers = numPlayersSelect.options[numPlayersSelect.selectedIndex].value;
