@@ -60,7 +60,6 @@ class SinglePlayerGameContext {
         await this.defaultSleep();
 
         this.players.find(p => p.id == winningPlayerId).score += 5;
-        this.eventsHandler.sendEventToViewController('redrawPlayerScores', { "players": this.players });
 
         var winnerWithHighestScore = this.players[0];
         this.players.map(function(p) {
@@ -70,13 +69,18 @@ class SinglePlayerGameContext {
         });
 
         if (winnerWithHighestScore.score >= 25) {
-            this.eventsHandler.sendEventToViewController('showWinningPlayer', { "winningPlayer": winnerWithHighestScore });
             this.eventsHandler.sendEventToViewController('resetPlayedCardsState', {});
             this.eventsHandler.sendEventToViewController('resetSelfPlayerState', {});
-            this.eventsHandler.sendGameOverlayEvent('showStartGameOverlay', {});
+            this.eventsHandler.sendEventToViewController('showStartGameOverlay', {});
+
+            let orderedPlayers = this.players;
+            orderedPlayers.sort(p => p.score);
+            this.eventsHandler.sendEventToViewController('showEndGameStats', { "sortedPlayers": orderedPlayers });
+
         } else {
             // start next round
             this.rotatePlayersArray(winningPlayerId);
+            this.eventsHandler.sendEventToViewController('drawPlayerScores', { "players": this.players });
             this.startRound();
         }
     }

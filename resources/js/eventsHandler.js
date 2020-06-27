@@ -10,12 +10,4 @@ class EventsHandler {
     sendEventToViewController(eventName, eventDetails) {
         window.gameViewController.handleEvent(eventName, eventDetails);
     }
-
-    sendGameOverlayEvent(eventName, eventDetails) {
-        if (eventName === 'showStartGameOverlay') {
-            showStartGameOverlay();
-        } else if (eventName === 'hideStartGameOverlay') {
-            hideStartGameOverlay();
-        }
-    }
 }
