@@ -81,6 +81,7 @@ class ViewController {
         startNewGameButton.textContent = "Start New Game";
         startNewGameButton.addEventListener("click", function() {
             showStartGameOverlay();
+            clearChildrenOfElementById("endGameStatsContainer");
         });
         startButtonCtr.appendChild(startNewGameButton);
         document.getElementById("endGameStatsContainer").appendChild(startButtonCtr);

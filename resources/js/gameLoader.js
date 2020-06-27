@@ -1,12 +1,24 @@
 "use strict";
 
+function getCardDisplayDelay() {
+    if (document.getElementById("slow").checked) {
+        return 600;
+    } else if (document.getElementById("medium").checked) {
+        return 400;
+    } else if (document.getElementById("fast").checked) {
+        return 200;
+    }
+
+    return 400;
+}
+
 function onStartButtonClicked() {
     let numPlayersSelect = document.getElementById("numPlayersSelect");
     let numPlayers = numPlayersSelect.options[numPlayersSelect.selectedIndex].value;
 
     let isSinglePlayer = document.getElementById("singlePlayer").checked;
 
-    let cardDisplayDelay = 500;
+    let cardDisplayDelay = getCardDisplayDelay();
 
     window.eventsHandler = new EventsHandler();
 
