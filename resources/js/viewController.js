@@ -22,10 +22,68 @@ function buildCardNode(playerId, card) {
     return cardNodeContainer;
 }
 
+function showStartGameOverlay() {
+    document.getElementById("menuContainer").style.display = "block";
+    document.getElementById("endGameStatsContainer").style.display = "none";
+}
+
 class ViewController {
     constructor(eventsHandler) {
         this.eventsHandler = eventsHandler;
         this.selfPlayerCardsEnabled = false;
+    }
+
+    hideStartGameOverlay() {
+        document.getElementById("menuContainer").style.display = "none";
+    }
+
+    showEndGameStats(eventDetails) {
+        document.getElementById("menuContainer").style.display = "none";
+        document.getElementById("endGameStatsContainer").style.display = "block";
+
+        var first = true;
+
+        for (let player of eventDetails.sortedPlayers) {
+            let isWinner = first;
+            if (first) {
+                first = false;
+            }
+
+            let outer = document.createElement("div");
+            outer.classList.add("EndGamePlayerInfoContainer");
+            let playerNameCtr = document.createElement("div");
+            playerNameCtr.textContent = player.name;
+            let playerScoreCtr = document.createElement("div");
+            playerScoreCtr.textContent = player.score;
+
+            if (isWinner) {
+                outer.classList.add("EndGameWinningPlayer");
+                let rightStar = document.createElement("div");
+                rightStar.textContent = "🎉";
+                outer.appendChild(rightStar);
+            }
+
+            if (player.isSelfPlayer) {
+                outer.classList.add("EndGameSelfPlayer");
+            }
+
+            outer.appendChild(playerNameCtr);
+            outer.appendChild(playerScoreCtr);
+
+            document.getElementById("endGameStatsContainer").appendChild(outer);
+        }
+
+        let startButtonCtr = document.createElement("div");
+        startButtonCtr.classList.add("EndGamePlayerInfoContainer");
+        startButtonCtr.classList.add("EndGameStartNewGameButtonContainer");
+
+        var startNewGameButton = document.createElement("button");
+        startNewGameButton.textContent = "Start New Game";
+        startNewGameButton.addEventListener("click", function() {
+            showStartGameOverlay();
+        });
+        startButtonCtr.appendChild(startNewGameButton);
+        document.getElementById("endGameStatsContainer").appendChild(startButtonCtr);
     }
 
     cardDragStartHandler(ev) {
@@ -208,6 +266,12 @@ class ViewController {
             this.playCard(eventDetails.player, eventDetails.playedCard);
         } else if (eventName === 'showWinningPlayer') {
             this.showWinningPlayer(eventDetails.winningPlayer);
+        } else if (eventName === 'showStartGameOverlay') {
+            showStartGameOverlay();
+        } else if (eventName === 'hideStartGameOverlay') {
+            this.hideStartGameOverlay();
+        } else if (eventName === 'showEndGameStats') {
+            this.showEndGameStats(eventDetails);
         }
     }
 }

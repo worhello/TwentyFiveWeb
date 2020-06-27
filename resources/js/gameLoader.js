@@ -1,12 +1,5 @@
 "use strict";
 
-function showStartGameOverlay() {
-    document.getElementById("menuContainer").style.display = "block";
-}
-function hideStartGameOverlay() {
-    document.getElementById("menuContainer").style.display = "none";
-}
-
 function onStartButtonClicked() {
     let numPlayersSelect = document.getElementById("numPlayersSelect");
     let numPlayers = numPlayersSelect.options[numPlayersSelect.selectedIndex].value;
@@ -28,7 +21,7 @@ function onStartButtonClicked() {
 
     window.gameContext.startGame();
 
-    hideStartGameOverlay();
+    window.gameViewController.hideStartGameOverlay();
 }
 
 window.onload = function() {
