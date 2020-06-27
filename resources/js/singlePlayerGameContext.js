@@ -50,6 +50,21 @@ class SinglePlayerGameContext {
         return this.roundPlayerAndCards.map(pAC => pAC.card);
     }
 
+    getSortedListOfPlayers() {
+        let playersCopy = this.players;
+        let cmpFunc = function(a, b) {
+            if (a.score < b.score) {
+                return 1;
+            }
+            if (a.score > b.score) {
+                return -1;
+            }
+            return 0;
+        }
+        playersCopy.sort(cmpFunc);
+        return playersCopy;
+    }
+
     async evaluateRoundEnd() {
         let playedCards = this.getPlayedCards();
         let winningCard = getWinningCard(this.trumpCard, playedCards);
@@ -73,8 +88,7 @@ class SinglePlayerGameContext {
             this.eventsHandler.sendEventToViewController('resetSelfPlayerState', {});
             this.eventsHandler.sendEventToViewController('showStartGameOverlay', {});
 
-            let orderedPlayers = this.players;
-            orderedPlayers.sort(p => p.score);
+            let orderedPlayers = this.getSortedListOfPlayers();
             this.eventsHandler.sendEventToViewController('showEndGameStats', { "sortedPlayers": orderedPlayers });
 
         } else {
