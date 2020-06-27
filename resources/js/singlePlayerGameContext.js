@@ -14,6 +14,7 @@ function setupPlayers(numPlayers) {
     players.sort(function() {
         return .5 - Math.random();
     });
+    players[0].isDealer = true;
     return players;
 }
 
@@ -92,7 +93,7 @@ class SinglePlayerGameContext {
             this.eventsHandler.sendEventToViewController('showEndGameStats', { "sortedPlayers": orderedPlayers });
 
         } else {
-            // start next round
+            this.rotateDealer();
             this.rotatePlayersArray(winningPlayerId);
             this.eventsHandler.sendEventToViewController('drawPlayerScores', { "players": this.players });
             this.startRound();
@@ -145,6 +146,17 @@ class SinglePlayerGameContext {
         if (this.deck.cards.length < numCardsNeeded) {
             this.deck = new Deck();
         }
+    }
+
+    rotateDealer() {
+        var dealerIndex = this.players.findIndex(p => p.isDealer === true);
+        if (dealerIndex == -1) {
+            dealerIndex = 0;
+        } else {
+            this.players[dealerIndex].isDealer = false;
+        }
+        dealerIndex = (dealerIndex + 1) % this.players.length;
+        this.players[dealerIndex].isDealer = true;
     }
 
     async startRound() {

@@ -52,7 +52,7 @@ class ViewController {
             let outer = document.createElement("div");
             outer.classList.add("EndGamePlayerInfoContainer");
             let playerNameCtr = document.createElement("div");
-            playerNameCtr.textContent = player.name;
+            playerNameCtr.textContent = player.getName();
             playerNameCtr.classList.add("RightAlign");
             let playerScoreCtr = document.createElement("div");
             playerScoreCtr.textContent = player.score;
@@ -150,7 +150,7 @@ class ViewController {
             playerNode.appendChild(playerName);
             playerNode.appendChild(playerScore);
 
-            playerName.textContent = player.name;
+            playerName.textContent = player.getName();
             playerScore.textContent = player.score;
 
             playersContainer.appendChild(playerNode);
@@ -185,7 +185,7 @@ class ViewController {
             playedCardContainer.className = 'CardContainer PlayedCardContainer';
             playedCardContainer.id = 'playedCard_' + player.id;
             let playerNameLabel = document.createElement("div");
-            playerNameLabel.textContent = player.name;
+            playerNameLabel.textContent = player.getName();
             playedCardContainer.appendChild(playerNameLabel);
             playedCardArea.appendChild(playedCardContainer);
         }
