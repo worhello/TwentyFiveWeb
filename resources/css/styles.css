@@ -90,6 +90,12 @@ a {
     background-color: #008800;
 }
 
+.DroppableTargetHighlight {
+    border-style: dashed;
+    border-color: azure;
+    border-width: 2px;
+}
+
 .Card {
     width: 100px;
     height: 150px;
