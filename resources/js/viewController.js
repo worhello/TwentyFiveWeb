@@ -13,10 +13,11 @@ function buildCardNode(playerId, card) {
     let cardNode = document.createElement("img");
     cardNode.className = 'Card';
     cardNode.src = "resources/images/Cards/" + cardName + ".svg";
-    cardNode.id = cardName;
     cardNode.playerId = playerId;
 
     cardNodeContainer.appendChild(cardNode);
+    cardNodeContainer.id = cardName;
+    cardNodeContainer.draggable = true;
 
     return cardNodeContainer;
 }
@@ -24,7 +25,36 @@ function buildCardNode(playerId, card) {
 class ViewController {
     constructor(eventsHandler) {
         this.eventsHandler = eventsHandler;
-        this.selfPlayerCardsEnabled = true; //TODO change to false
+        this.selfPlayerCardsEnabled = false;
+    }
+
+    cardDragStartHandler(ev) {
+        if (this.selfPlayerCardsEnabled)
+        {
+            document.getElementById("playedCardsContainer").classList.add("DroppableTargetHighlight");
+            ev.dataTransfer.effectAllowed = "move";
+            ev.dataTransfer.setData("text", ev.target.parentElement.id);
+        }
+    }
+    
+    cardDragOverHandler(ev) {
+        if (document.getElementById("playedCardsContainer").contains(ev.target)) {
+            ev.preventDefault();
+            ev.dataTransfer.effectAllowed = "move";
+        } else {
+            ev.dataTransfer.effectAllowed = "none";
+        }
+    }
+    
+    cardDropHandler(ev) {
+        ev.preventDefault();
+        this.cardDragEndHandler();
+        let cardName = ev.dataTransfer.getData("text");
+        this.playSelfCard(cardName);
+    }
+    
+    cardDragEndHandler() {
+        document.getElementById("playedCardsContainer").classList.remove("DroppableTargetHighlight");
     }
 
     showPlayedCard(playerId, cardNode) {
@@ -37,9 +67,10 @@ class ViewController {
         this.showPlayedCard(player.id, cardNode);
     }
 
-    playSelfCard(cardNode, cardName) {
+    playSelfCard(cardName) {
         if (this.selfPlayerCardsEnabled)
         {
+            let cardNode = document.getElementById(cardName);
             document.getElementById("playerCardsContainer").removeChild(cardNode);
             this.eventsHandler.sendEventToGameContext('playSelfCard', { "cardName": cardName });
         }
@@ -110,12 +141,27 @@ class ViewController {
 
     showSelfPlayerHand(selfPlayer) {
         let cards = selfPlayer.cards;
+        let gameContainer = document.getElementById("gameContainer");
+        let viewController = this;
 
         cards.forEach(function(card) {
             let cardNode = buildCardNode(selfPlayer.id, card);
             cardNode.addEventListener("click", function() {
-                window.gameViewController.playSelfCard(cardNode, card.cardName);
-            })
+                viewController.playSelfCard(card.cardName);
+            });
+            gameContainer.addEventListener("dragstart", function(ev) {
+                viewController.cardDragStartHandler(ev);
+            });
+            gameContainer.addEventListener("dragover", function(ev) {
+                viewController.cardDragOverHandler(ev);
+            });
+            gameContainer.addEventListener("drop", function(ev) {
+                viewController.cardDropHandler(ev);
+            });
+            gameContainer.addEventListener("dragend", function() {
+                viewController.cardDragEndHandler();
+            });
+
             document.getElementById("playerCardsContainer").appendChild(cardNode);
         });
     }
