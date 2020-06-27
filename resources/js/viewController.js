@@ -53,15 +53,9 @@ class ViewController {
             outer.classList.add("EndGamePlayerInfoContainer");
             let playerNameCtr = document.createElement("div");
             playerNameCtr.textContent = player.name;
+            playerNameCtr.classList.add("RightAlign");
             let playerScoreCtr = document.createElement("div");
             playerScoreCtr.textContent = player.score;
-
-            if (isWinner) {
-                outer.classList.add("EndGameWinningPlayer");
-                let rightStar = document.createElement("div");
-                rightStar.textContent = "🎉";
-                outer.appendChild(rightStar);
-            }
 
             if (player.isSelfPlayer) {
                 outer.classList.add("EndGameSelfPlayer");
@@ -69,6 +63,13 @@ class ViewController {
 
             outer.appendChild(playerNameCtr);
             outer.appendChild(playerScoreCtr);
+
+            if (isWinner) {
+                outer.classList.add("EndGameWinningPlayer");
+                let rightStar = document.createElement("div");
+                rightStar.textContent = "🎉";
+                outer.appendChild(rightStar);
+            }
 
             document.getElementById("endGameStatsContainer").appendChild(outer);
         }
