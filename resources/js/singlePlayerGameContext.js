@@ -72,7 +72,7 @@ class SinglePlayerGameContext {
         let winningPlayer = this.roundPlayerAndCards.find(pAC => pAC.card == winningCard).player;
         let winningPlayerId = winningPlayer.id;
 
-        this.eventsHandler.sendEventToViewController('highlightWinningPlayer', { "winningPlayerId": winningPlayerId });
+        await this.eventsHandler.sendEventToViewController('highlightWinningPlayer', { "winningPlayerId": winningPlayerId });
         await this.defaultSleep();
 
         this.players.find(p => p.id == winningPlayerId).score += 5;
@@ -85,17 +85,17 @@ class SinglePlayerGameContext {
         });
 
         if (winnerWithHighestScore.score >= 25) {
-            this.eventsHandler.sendEventToViewController('resetPlayedCardsState', {});
-            this.eventsHandler.sendEventToViewController('resetSelfPlayerState', {});
-            this.eventsHandler.sendEventToViewController('showStartGameOverlay', {});
+            await this.eventsHandler.sendEventToViewController('resetPlayedCardsState', {});
+            await this.eventsHandler.sendEventToViewController('resetSelfPlayerState', {});
+            await this.eventsHandler.sendEventToViewController('showStartGameOverlay', {});
 
             let orderedPlayers = this.getSortedListOfPlayers();
-            this.eventsHandler.sendEventToViewController('showEndGameStats', { "sortedPlayers": orderedPlayers });
+            await this.eventsHandler.sendEventToViewController('showEndGameStats', { "sortedPlayers": orderedPlayers });
 
         } else {
             this.rotateDealer();
             this.rotatePlayersArray(winningPlayerId);
-            this.eventsHandler.sendEventToViewController('drawPlayerScores', { "players": this.players });
+            await this.eventsHandler.sendEventToViewController('drawPlayerScores', { "players": this.players });
             this.startRound();
         }
     }
@@ -105,7 +105,7 @@ class SinglePlayerGameContext {
     }
 
     async playCardAsync(player, playedCard) {
-        this.eventsHandler.sendEventToViewController('playCard', { "player": player, "playedCard": playedCard });
+        await this.eventsHandler.sendEventToViewController('playCard', { "player": player, "playedCard": playedCard });
         this.roundPlayerAndCards.push({ "player": player, "card": playedCard });
         await this.defaultSleep();
     }
@@ -119,7 +119,7 @@ class SinglePlayerGameContext {
     }
 
     async playCardsAfterSelfAsync() {
-        this.eventsHandler.sendEventToViewController('setSelfPlayerCardsEnabled', { "isEnabled": false });
+        await this.eventsHandler.sendEventToViewController('setSelfPlayerCardsEnabled', { "isEnabled": false });
         let selfPlayerIndex = this.getSelfPlayerIndex();
         await this.playCardsInRange(selfPlayerIndex + 1, this.players.length);
 
@@ -133,9 +133,9 @@ class SinglePlayerGameContext {
 
     async playSelfCard(cardName) {
         let playedCard = this.selfPlayer.playCard(cardName);
-        this.eventsHandler.sendEventToViewController('resetSelfPlayerState', {});
-        this.eventsHandler.sendEventToViewController('showSelfPlayerHand', { "selfPlayer": this.selfPlayer });
-        this.eventsHandler.sendEventToViewController('setSelfPlayerCardsEnabled', { "isEnabled": false });
+        await this.eventsHandler.sendEventToViewController('resetSelfPlayerState', {});
+        await this.eventsHandler.sendEventToViewController('showSelfPlayerHand', { "selfPlayer": this.selfPlayer });
+        await this.eventsHandler.sendEventToViewController('setSelfPlayerCardsEnabled', { "isEnabled": false });
         await this.playCardAsync(this.selfPlayer, playedCard);
 
         await window.gameContext.playCardsAfterSelfAsync();
@@ -164,24 +164,24 @@ class SinglePlayerGameContext {
         this.roundPlayerAndCards = [];
         if (this.selfPlayer.cards.length == 0) {
             this.dealAllPlayerCards();
-            this.eventsHandler.sendEventToViewController('showSelfPlayerHand', { "selfPlayer": this.selfPlayer });
+            await this.eventsHandler.sendEventToViewController('showSelfPlayerHand', { "selfPlayer": this.selfPlayer });
             this.trumpCard.card = this.drawCards(1)[0];
             this.trumpCard.hasBeenStolen = false;
-            this.eventsHandler.sendEventToViewController('redrawTrumpCard', { "trumpCard": this.trumpCard });
+            await this.eventsHandler.sendEventToViewController('redrawTrumpCard', { "trumpCard": this.trumpCard });
         }
 
-        this.eventsHandler.sendEventToViewController('setSelfPlayerCardsEnabled', { "isEnabled": false });
-        this.eventsHandler.sendEventToViewController('resetPlayedCardsState', {});
-        this.eventsHandler.sendEventToViewController('drawPlayedCardsPlaceholders', { "players": this.players });
+        await this.eventsHandler.sendEventToViewController('setSelfPlayerCardsEnabled', { "isEnabled": false });
+        await this.eventsHandler.sendEventToViewController('resetPlayedCardsState', {});
+        await this.eventsHandler.sendEventToViewController('drawPlayedCardsPlaceholders', { "players": this.players });
 
         await this.playCardsBeforeSelf();
 
-        this.eventsHandler.sendEventToViewController('setSelfPlayerCardsEnabled', { "isEnabled": true });
+        await this.eventsHandler.sendEventToViewController('setSelfPlayerCardsEnabled', { "isEnabled": true });
     }
 
-    startGame() {
-        this.eventsHandler.sendEventToViewController('resetSelfPlayerState', {});
-        this.eventsHandler.sendEventToViewController('drawPlayerScores', { "players": this.players });
+    async startGame() {
+        await this.eventsHandler.sendEventToViewController('resetSelfPlayerState', {});
+        await this.eventsHandler.sendEventToViewController('drawPlayerScores', { "players": this.players });
         this.startRound();
     }
 

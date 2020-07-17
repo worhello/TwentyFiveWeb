@@ -127,12 +127,12 @@ class ViewController {
         this.showPlayedCard(player.id, cardNode);
     }
 
-    playSelfCard(cardName) {
+    async playSelfCard(cardName) {
         if (this.selfPlayerCardsEnabled)
         {
             let cardNode = document.getElementById(cardName);
             document.getElementById("playerCardsContainer").removeChild(cardNode);
-            this.eventsHandler.sendEventToGameContext('playSelfCard', { "cardName": cardName });
+            await this.eventsHandler.sendEventToGameContext('playSelfCard', { "cardName": cardName });
         }
     }
 
