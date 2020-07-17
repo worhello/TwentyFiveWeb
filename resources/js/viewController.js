@@ -52,7 +52,7 @@ class ViewController {
             let outer = document.createElement("div");
             outer.classList.add("EndGamePlayerInfoContainer");
             let playerNameCtr = document.createElement("div");
-            playerNameCtr.textContent = player.getName();
+            playerNameCtr.textContent = player.name;
             playerNameCtr.classList.add("RightAlign");
             let playerScoreCtr = document.createElement("div");
             playerScoreCtr.textContent = player.score;
