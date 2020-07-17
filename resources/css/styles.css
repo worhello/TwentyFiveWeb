@@ -95,29 +95,6 @@ a {
     grid-template-columns: auto 108px;
 }
 
-#playersScoreContainer {
-    display: grid;
-    grid-gap: 5px;
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-    grid-template-rows: repeat(auto-fit, minmax(50px, 1fr));
-}
-
-.PlayerScoreContainer {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    align-items: center;
-    justify-content: center;
-    border-style: solid;
-    border-color: black;
-    border-width: 1.5px;
-    margin: 2px;
-}
-
-.PlayerScoreNumber {
-    font-size: 24px;
-}
-
 .TrumpCardContainer {
     background-color: #008800;
     padding: 2px 2px 0px 2px !important;
@@ -130,12 +107,14 @@ a {
     align-items: center;
     justify-content: center;
     background-color: #008800;
+    margin: 2px;
 }
 
 .DroppableTargetHighlight {
     border-style: dashed;
     border-color: azure;
     border-width: 2px;
+    margin: 0px !important;
 }
 
 .Card {
@@ -143,12 +122,17 @@ a {
     height: 150px;
 }
 
+.CardImgContainer {
+    text-align: center;
+}
+
 .CardContainer {
     display: grid;
     width: 102px;
-    height: 170px;
+    height: auto;
+    min-height: 170px;
     padding: 2px;
-    margin: 1px 1px 0px 1px;
+    margin: 1px 1px 1px 1px;
 }
 
 .PlayedCardContainer {

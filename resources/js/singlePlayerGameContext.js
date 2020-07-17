@@ -95,7 +95,6 @@ class SinglePlayerGameContext {
         } else {
             this.rotateDealer();
             this.rotatePlayersArray(winningPlayerId);
-            await this.eventsHandler.sendEventToViewController('drawPlayerScores', { "players": this.players });
             this.startRound();
         }
     }
@@ -123,7 +122,7 @@ class SinglePlayerGameContext {
         let selfPlayerIndex = this.getSelfPlayerIndex();
         await this.playCardsInRange(selfPlayerIndex + 1, this.players.length);
 
-        this.evaluateRoundEnd();
+        await this.evaluateRoundEnd();
     }
     
     async playCardsBeforeSelf() {
@@ -162,17 +161,18 @@ class SinglePlayerGameContext {
     async startRound() {
         this.resetDeckIfNeeded();
         this.roundPlayerAndCards = [];
-        if (this.selfPlayer.cards.length == 0) {
+        let dealtNewCards = this.selfPlayer.cards.length == 0;
+        if (dealtNewCards) {
             this.dealAllPlayerCards();
             await this.eventsHandler.sendEventToViewController('showSelfPlayerHand', { "selfPlayer": this.selfPlayer });
             this.trumpCard.card = this.drawCards(1)[0];
             this.trumpCard.hasBeenStolen = false;
-            await this.eventsHandler.sendEventToViewController('redrawTrumpCard', { "trumpCard": this.trumpCard });
         }
 
         await this.eventsHandler.sendEventToViewController('setSelfPlayerCardsEnabled', { "isEnabled": false });
         await this.eventsHandler.sendEventToViewController('resetPlayedCardsState', {});
         await this.eventsHandler.sendEventToViewController('drawPlayedCardsPlaceholders', { "players": this.players });
+        await this.eventsHandler.sendEventToViewController('redrawTrumpCard', { "trumpCard": this.trumpCard });
 
         await this.playCardsBeforeSelf();
 
@@ -181,8 +181,7 @@ class SinglePlayerGameContext {
 
     async startGame() {
         await this.eventsHandler.sendEventToViewController('resetSelfPlayerState', {});
-        await this.eventsHandler.sendEventToViewController('drawPlayerScores', { "players": this.players });
-        this.startRound();
+        await this.startRound();
     }
 
     drawCards(num) {
@@ -193,9 +192,9 @@ class SinglePlayerGameContext {
         return cards;
     }
 
-    handleEvent(eventName, eventDetails) {
+    async handleEvent(eventName, eventDetails) {
         if (eventName === 'playSelfCard') {
-            this.playSelfCard(eventDetails.cardName);
+            await this.playSelfCard(eventDetails.cardName);
         }
     }
 }
