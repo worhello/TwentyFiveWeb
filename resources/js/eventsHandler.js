@@ -3,11 +3,11 @@
 class EventsHandler {
     constructor() {}
 
-    sendEventToGameContext(eventName, eventDetails) {
-        window.gameContext.handleEvent(eventName, eventDetails);
+    async sendEventToGameContext(eventName, eventDetails) {
+        await window.gameContext.handleEvent(eventName, eventDetails);
     }
 
-    sendEventToViewController(eventName, eventDetails) {
-        window.gameViewController.handleEvent(eventName, eventDetails);
+    async sendEventToViewController(eventName, eventDetails) {
+        await window.gameViewController.handleEvent(eventName, eventDetails);
     }
 }
