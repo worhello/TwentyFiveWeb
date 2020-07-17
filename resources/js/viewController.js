@@ -17,6 +17,7 @@ function buildCardNode(playerId, card) {
 
     cardNodeContainer.appendChild(cardNode);
     cardNodeContainer.id = cardName;
+    cardNodeContainer.className = "CardImgContainer";
     cardNodeContainer.draggable = true;
 
     return cardNodeContainer;
@@ -25,6 +26,15 @@ function buildCardNode(playerId, card) {
 function showStartGameOverlay() {
     document.getElementById("menuContainer").style.display = "block";
     document.getElementById("endGameStatsContainer").style.display = "none";
+}
+
+function getPlayedCardDisplayTitle(player) {
+    var displayTitle = player.name;
+    if (player.isDealer) {
+        displayTitle += " (D)";
+    }
+    displayTitle += " [" + player.score + "]";
+    return displayTitle;
 }
 
 class ViewController {
@@ -136,27 +146,6 @@ class ViewController {
         }
     }
 
-    drawPlayerScores(players) {
-        clearChildrenOfElementById("playersScoreContainer");
-
-        let playersContainer = document.getElementById("playersScoreContainer");
-        for (let player of players) {
-            let playerNode = document.createElement("span");
-            playerNode.className = "PlayerScoreContainer";
-            let playerName = document.createElement("div");
-            let playerScore = document.createElement("div");
-            playerScore.className = "PlayerScoreNumber";
-            playerScore.id = "playerScoreNode_" + player.id;
-            playerNode.appendChild(playerName);
-            playerNode.appendChild(playerScore);
-
-            playerName.textContent = player.getName();
-            playerScore.textContent = player.score;
-
-            playersContainer.appendChild(playerNode);
-        }
-    }
-
     setSelfPlayerCardsEnabled(isEnabled) {
         this.selfPlayerCardsEnabled = isEnabled;
         if (this.selfPlayerCardsEnabled) {
@@ -170,22 +159,36 @@ class ViewController {
 
     redrawPlayerScores(players) {
         for (let player of players) {
-            var playerScoreNode = document.getElementById("playerScoreNode_" + player.id);
-            if (playerScoreNode) {
-                playerScoreNode.textContent = player.score;
+            var playedCardContainerTitle = document.getElementById("playedCardTitle_" + player.id);
+            if (playedCardContainerTitle)
+            {
+                playerNameLabel.textContent = getPlayedCardDisplayTitle(player);
             }
         }
     }
 
     drawPlayedCardsPlaceholders(players) {
         let playedCardArea = document.getElementById("playedCardsContainer");
-        
+
+        let trumpCardContainer = document.createElement("div");
+        trumpCardContainer.className = 'CardContainer TrumpCardContainer';
+        let trumpCardTitle = document.createElement("div");
+        trumpCardTitle.textContent = "Trump Card";
+        let trumpCardImgContainer = document.createElement("div");
+        trumpCardImgContainer.id = "trumpCardImgContainer";
+
+        trumpCardContainer.appendChild(trumpCardTitle);
+        trumpCardContainer.appendChild(trumpCardImgContainer);
+
+        playedCardArea.appendChild(trumpCardContainer);
+
         for (let player of players) {
             let playedCardContainer = document.createElement("span");
             playedCardContainer.className = 'CardContainer PlayedCardContainer';
             playedCardContainer.id = 'playedCard_' + player.id;
             let playerNameLabel = document.createElement("div");
-            playerNameLabel.textContent = player.getName();
+            playerNameLabel.id = 'playedCardTitle_' + player.id;
+            playerNameLabel.textContent = getPlayedCardDisplayTitle(player);
             playedCardContainer.appendChild(playerNameLabel);
             playedCardArea.appendChild(playedCardContainer);
         }
@@ -252,8 +255,6 @@ class ViewController {
             this.redrawTrumpCard(eventDetails.trumpCard);
         } else if (eventName === 'showSelfPlayerHand') {
             this.showSelfPlayerHand(eventDetails.selfPlayer);
-        } else if (eventName === 'drawPlayerScores') {
-            this.drawPlayerScores(eventDetails.players);
         } else if (eventName === 'redrawPlayerScores') {
             this.redrawPlayerScores(eventDetails.players);
         } else if (eventName === 'resetSelfPlayerState') {
