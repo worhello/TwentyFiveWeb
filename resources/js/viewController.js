@@ -37,6 +37,38 @@ function getPlayedCardDisplayTitle(player) {
     return displayTitle;
 }
 
+function calculateAngles(numPlayers) {
+    let step = (2 * Math.PI) / numPlayers
+    var angles = [];
+    var currentAngle = Math.PI / 2;
+
+    for (var i = 0; i < numPlayers; i++) {
+        angles.push(currentAngle);
+        currentAngle += step;
+    }
+
+    return angles;
+}
+
+function calculateZIndices(numCards) {
+    var zIndices = [];
+    let middleCardNum = Math.ceil(numCards / 2);
+    for (var i = 0; i < middleCardNum; i++) {
+        zIndices.push((middleCardNum - i).toString());
+    }
+
+    var copy = zIndices.concat();
+    copy.reverse();
+
+    if (numCards % 2 == 1) {
+        copy.splice(0, 1);
+    }
+
+    zIndices = zIndices.concat(copy);
+
+    return zIndices;
+}
+
 class ViewController {
     constructor(eventsHandler) {
         this.eventsHandler = eventsHandler;
@@ -171,7 +203,8 @@ class ViewController {
         let playedCardArea = document.getElementById("playedCardsContainer");
 
         let trumpCardContainer = document.createElement("div");
-        trumpCardContainer.className = 'CardContainer TrumpCardContainer';
+        trumpCardContainer.classList.add('CardContainer');
+        trumpCardContainer.id = 'trumpCardContainer';
         let trumpCardTitle = document.createElement("div");
         trumpCardTitle.textContent = "Trump Card";
         let trumpCardImgContainer = document.createElement("div");
@@ -182,14 +215,34 @@ class ViewController {
 
         playedCardArea.appendChild(trumpCardContainer);
 
+        let selfPlayerIndex = players.findIndex(p => p.isSelfPlayer == true);
+        let angles = calculateAngles(players.length);
+        var angleIndex = (angles.length - selfPlayerIndex) % angles.length;
+        let zIndices = calculateZIndices(angles.length);
+
+        let cardWidth = 106;
+        let cardHeight = 174;
+        let containerRadius = 325;
+        let cardsRadius = 230;
+
         for (let player of players) {
             let playedCardContainer = document.createElement("span");
-            playedCardContainer.className = 'CardContainer PlayedCardContainer';
+
+            playedCardContainer.classList.add('CardContainer');
+            playedCardContainer.classList.add('PlayedCardContainer');
             playedCardContainer.id = 'playedCard_' + player.id;
             let playerNameLabel = document.createElement("div");
             playerNameLabel.id = 'playedCardTitle_' + player.id;
             playerNameLabel.textContent = getPlayedCardDisplayTitle(player);
             playedCardContainer.appendChild(playerNameLabel);
+
+            let angle = angles[angleIndex];
+            let zIndex = zIndices[angleIndex];
+            playedCardContainer.style.left = Math.round(containerRadius + (cardsRadius * Math.cos(angle)) - (cardWidth/2)) + 'px';
+            playedCardContainer.style.top = Math.round(containerRadius + (cardsRadius * Math.sin(angle))  - (cardHeight/2)) + 'px';
+            playedCardContainer.style.zIndex = zIndex;
+            angleIndex = (angleIndex + 1) % angles.length;
+
             playedCardArea.appendChild(playedCardContainer);
         }
     }
