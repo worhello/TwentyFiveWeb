@@ -14,7 +14,7 @@ function setupPlayers(numPlayers) {
     players.sort(function() {
         return .5 - Math.random();
     });
-    players[0].isDealer = true;
+    players[numPlayers - 1].isDealer = true;
     return players;
 }
 
@@ -150,7 +150,7 @@ class SinglePlayerGameContext {
     rotateDealer() {
         var dealerIndex = this.players.findIndex(p => p.isDealer === true);
         if (dealerIndex == -1) {
-            dealerIndex = 0;
+            dealerIndex = this.players.length - 2;
         } else {
             this.players[dealerIndex].isDealer = false;
         }
