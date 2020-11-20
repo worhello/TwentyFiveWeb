@@ -74,6 +74,7 @@ class SinglePlayerGameContext {
 
         await this.eventsHandler.sendEventToViewController('highlightWinningPlayer', { "winningPlayerId": winningPlayerId });
         await this.defaultSleep();
+        await this.defaultSleep();
 
         this.players.find(p => p.id == winningPlayerId).score += 5;
 
@@ -109,9 +110,14 @@ class SinglePlayerGameContext {
         await this.defaultSleep();
     }
 
+    async highlightCurrentPlayer(player) {
+        await this.eventsHandler.sendEventToViewController('highlightCurrentPlayer', { "player": player });
+    }
+
     async playCardsInRange(begin, end) {
         for (var i = begin; i < end; i++) {
             let player = this.players[i];
+            await this.highlightCurrentPlayer(player);
             let playedCards = this.getPlayedCards();
             await this.playCardAsync(player, player.aiPlayCard(playedCards));
         }
@@ -176,6 +182,7 @@ class SinglePlayerGameContext {
 
         await this.playCardsBeforeSelf();
 
+        await this.highlightCurrentPlayer(this.selfPlayer);
         await this.eventsHandler.sendEventToViewController('setSelfPlayerCardsEnabled', { "isEnabled": true });
     }
 

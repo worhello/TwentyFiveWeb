@@ -30,9 +30,6 @@ function showStartGameOverlay() {
 
 function getPlayedCardDisplayTitle(player) {
     var displayTitle = player.name;
-    if (player.isDealer) {
-        displayTitle += " (D)";
-    }
     displayTitle += " [" + player.score + "]";
     return displayTitle;
 }
@@ -205,8 +202,10 @@ class ViewController {
         let trumpCardContainer = document.createElement("div");
         trumpCardContainer.classList.add('CardContainer');
         trumpCardContainer.id = 'trumpCardContainer';
+
         let trumpCardTitle = document.createElement("div");
         trumpCardTitle.textContent = "Trump Card";
+
         let trumpCardImgContainer = document.createElement("div");
         trumpCardImgContainer.id = "trumpCardImgContainer";
 
@@ -231,6 +230,13 @@ class ViewController {
             playedCardContainer.classList.add('CardContainer');
             playedCardContainer.classList.add('PlayedCardContainer');
             playedCardContainer.id = 'playedCard_' + player.id;
+
+            if (player.isDealer === true) {
+                let isDealerLabel = document.createElement("div");
+                isDealerLabel.textContent = "Dealer";
+                playedCardContainer.appendChild(isDealerLabel);
+            }
+
             let playerNameLabel = document.createElement("div");
             playerNameLabel.id = 'playedCardTitle_' + player.id;
             playerNameLabel.textContent = getPlayedCardDisplayTitle(player);
@@ -292,18 +298,37 @@ class ViewController {
         trumpCardContainer.appendChild(cardNode);
     }
 
-    highlightWinningCard(winningPlayerId) {
-        let winningCardContainer = document.getElementById('playedCard_' + winningPlayerId);
-        winningCardContainer.classList.add('WinningCardAnimation');
+    async clearCurrentPlayerAnimation() {
+        let playedCards = document.getElementsByClassName('PlayedCardContainer');
+        for (let card of playedCards) {
+            card.classList.remove('CurrentCardAnimation');
+        }
+    }
+
+    async addClassNameToPlayedCard(playerId, className) {
+        let cardContainer = document.getElementById('playedCard_' + playerId);
+        cardContainer.classList.add(className);
+    }
+
+    async highlightWinningCard(winningPlayerId) {
+        await this.clearCurrentPlayerAnimation();
+        await this.addClassNameToPlayedCard(winningPlayerId, 'WinningCardAnimation');
+    }
+    
+    async highlightCurrentPlayer(player) {
+        await this.clearCurrentPlayerAnimation();
+        await this.addClassNameToPlayedCard(player.id, 'CurrentCardAnimation');
     }
 
     showWinningPlayer(winningPlayer) {
         window.alert(winningPlayer.name + " won!");
     }
     
-    handleEvent(eventName, eventDetails) {
+    async handleEvent(eventName, eventDetails) {
         if (eventName === 'highlightWinningPlayer') {
-            this.highlightWinningCard(eventDetails.winningPlayerId);
+            await this.highlightWinningCard(eventDetails.winningPlayerId);
+        } else if (eventName === 'highlightCurrentPlayer') {
+            await this.highlightCurrentPlayer(eventDetails.player);
         } else if (eventName === 'redrawTrumpCard') {
             this.redrawTrumpCard(eventDetails.trumpCard);
         } else if (eventName === 'showSelfPlayerHand') {

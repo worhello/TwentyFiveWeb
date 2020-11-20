@@ -154,6 +154,20 @@ a {
     background-color: rgba(51, 255, 5, 0.9);
 }
 
+@keyframes current-card-animation {
+    0%   {border-color:transparent;}
+    50%  {border-color:rgba(51, 255, 5, 0.9);}
+    100% {border-color:transparent;}
+}
+
+.CurrentCardAnimation {
+    border: 5px solid;
+    border-color: transparent;
+    animation-name: current-card-animation;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+}
+
 #playerCardsContainer {
     display: flex;
     flex-direction: row;
