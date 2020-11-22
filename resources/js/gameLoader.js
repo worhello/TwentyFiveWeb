@@ -38,7 +38,8 @@ function onStartButtonClicked() {
 function preloadCards() {
     let cards = buildDeck();
     for (let card of cards) {
-        card.preloadCard();
+        var _img = new Image();
+        _img.src = card.url;
     }
 }
 
