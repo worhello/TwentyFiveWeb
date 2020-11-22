@@ -12,7 +12,7 @@ function buildCardNode(playerId, card) {
     let cardNodeContainer = document.createElement("div");
     let cardNode = document.createElement("img");
     cardNode.className = 'Card';
-    cardNode.src = "resources/images/Cards/" + cardName + ".svg";
+    cardNode.src = card.url;
     cardNode.playerId = playerId;
 
     cardNodeContainer.appendChild(cardNode);
