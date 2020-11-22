@@ -47,11 +47,16 @@ function buildCardName(s, v) {
     return convertValueName(v) + "_of_" + convertSuitName(s);
 }
 
+function buildCardUrl(cardName) {
+    return "resources/images/Cards/" + cardName + ".svg";
+}
+
 class Card {
     constructor(suit, value) {
         this.suit = suit;
         this.value = value;
         this.cardName = buildCardName(suit, value);
+        this.url = buildCardUrl(this.cardName);
     }
 }
 
@@ -71,6 +76,13 @@ class Deck {
         this.cards.sort(function() {
             return .5 - Math.random();
         });
+    }
+
+    preloadCards() {
+        for (let card of this.cards) {
+            var _img = new Image();
+            _img.src = card.url;
+        }
     }
 }
 

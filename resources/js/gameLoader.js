@@ -35,9 +35,17 @@ function onStartButtonClicked() {
     window.gameViewController.hideStartGameOverlay();
 }
 
+function preloadCards() {
+    let cards = buildDeck();
+    for (let card of cards) {
+        card.preloadCard();
+    }
+}
+
 window.onload = function() {
     this.document.getElementById("startGameButton").addEventListener("click", function() {
         onStartButtonClicked();
     });
     showStartGameOverlay();
+    preloadCards();
 }
