@@ -77,13 +77,6 @@ class Deck {
             return .5 - Math.random();
         });
     }
-
-    preloadCards() {
-        for (let card of this.cards) {
-            var _img = new Image();
-            _img.src = card.url;
-        }
-    }
 }
 
 class TrumpCard {
