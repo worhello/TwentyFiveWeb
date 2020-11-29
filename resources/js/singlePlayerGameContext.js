@@ -74,7 +74,7 @@ class SinglePlayerGameContext {
 
         await this.eventsHandler.sendEventToViewController('highlightWinningPlayer', { "winningPlayerId": winningPlayerId });
         await this.defaultSleep();
-        await this.defaultSleep();
+        await this.defaultSleep(); // double pause intentional
 
         this.players.find(p => p.id == winningPlayerId).score += 5;
 
@@ -85,19 +85,26 @@ class SinglePlayerGameContext {
             }
         });
 
+        let orderedPlayers = this.getSortedListOfPlayers();
         if (winnerWithHighestScore.score >= 25) {
             await this.eventsHandler.sendEventToViewController('resetPlayedCardsState', {});
             await this.eventsHandler.sendEventToViewController('resetSelfPlayerState', {});
             await this.eventsHandler.sendEventToViewController('showStartGameOverlay', {});
 
-            let orderedPlayers = this.getSortedListOfPlayers();
             await this.eventsHandler.sendEventToViewController('showEndGameStats', { "sortedPlayers": orderedPlayers });
-
-        } else {
-            this.rotateDealer();
-            this.rotatePlayersArray(winningPlayerId);
-            this.startRound();
         }
+        else if (this.mustDealNewCards()) {
+            await this.eventsHandler.sendEventToViewController('showEndOfHandStats', { "sortedPlayers": orderedPlayers });
+        }
+        else {
+            this.startNextRound(winningPlayerId);
+        }
+    }
+
+    startNextRound(startingPlayerId) {
+        this.rotateDealer();
+        this.rotatePlayersArray(startingPlayerId);
+        this.startRound();
     }
 
     getSelfPlayerIndex() {
@@ -164,11 +171,14 @@ class SinglePlayerGameContext {
         this.players[dealerIndex].isDealer = true;
     }
 
+    mustDealNewCards() {
+        return this.selfPlayer.cards.length == 0;
+    }
+
     async startRound() {
         this.resetDeckIfNeeded();
         this.roundPlayerAndCards = [];
-        let dealtNewCards = this.selfPlayer.cards.length == 0;
-        if (dealtNewCards) {
+        if (this.mustDealNewCards()) {
             this.dealAllPlayerCards();
             await this.eventsHandler.sendEventToViewController('showSelfPlayerHand', { "selfPlayer": this.selfPlayer });
             this.trumpCard.card = this.drawCards(1)[0];
@@ -202,6 +212,8 @@ class SinglePlayerGameContext {
     async handleEvent(eventName, eventDetails) {
         if (eventName === 'playSelfCard') {
             await this.playSelfCard(eventDetails.cardName);
+        } else if (eventName === 'startNextRound') {
+            this.startNextRound(eventDetails.startingPlayerId);
         }
     }
 }

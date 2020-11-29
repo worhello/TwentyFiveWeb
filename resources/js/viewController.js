@@ -23,9 +23,14 @@ function buildCardNode(playerId, card) {
     return cardNodeContainer;
 }
 
-function showStartGameOverlay() {
-    document.getElementById("menuContainer").style.display = "block";
+function hideAllOverlays() {
+    document.getElementById("menuContainer").style.display = "none";
     document.getElementById("endGameStatsContainer").style.display = "none";
+}
+
+function showStartGameOverlay() {
+    hideAllOverlays();
+    document.getElementById("menuContainer").style.display = "block";
 }
 
 function getPlayedCardDisplayTitle(player) {
@@ -73,18 +78,19 @@ class ViewController {
     }
 
     hideStartGameOverlay() {
-        document.getElementById("menuContainer").style.display = "none";
+        hideAllOverlays();
     }
 
-    showEndGameStats(eventDetails) {
-        document.getElementById("menuContainer").style.display = "none";
+    showEndOfHandOrGameStats(sortedPlayers, showWinningPlayer, buttonText, buttonFunc) {
+        clearChildrenOfElementById("endGameStatsContainer");
+        hideAllOverlays();
         document.getElementById("endGameStatsContainer").style.display = "block";
 
         var first = true;
 
-        for (let player of eventDetails.sortedPlayers) {
-            let isWinner = first;
-            if (first) {
+        for (let player of sortedPlayers) {
+            let isWinner = showWinningPlayer && first;
+            if (isWinner) {
                 first = false;
             }
 
@@ -118,18 +124,29 @@ class ViewController {
         startButtonCtr.classList.add("EndGameStartNewGameButtonContainer");
 
         var startNewGameButton = document.createElement("button");
-        startNewGameButton.textContent = "Start New Game";
-        startNewGameButton.addEventListener("click", function() {
-            showStartGameOverlay();
-            clearChildrenOfElementById("endGameStatsContainer");
-        });
+        startNewGameButton.textContent = buttonText;
+        startNewGameButton.addEventListener("click", buttonFunc);
         startButtonCtr.appendChild(startNewGameButton);
         document.getElementById("endGameStatsContainer").appendChild(startButtonCtr);
     }
 
+    showEndGameStats(eventDetails) {
+        this.showEndOfHandOrGameStats(eventDetails.sortedPlayers, true, "Start New Game", function() {
+            showStartGameOverlay();
+            clearChildrenOfElementById("endGameStatsContainer");
+        });
+    }
+
+    showEndOfHandStats(eventDetails) {
+        let viewController = this;
+        this.showEndOfHandOrGameStats(eventDetails.sortedPlayers, false, "Start next round", function() {
+            hideAllOverlays();
+            viewController.eventsHandler.sendEventToGameContext('startNextRound', { "startingPlayerId": eventDetails.sortedPlayers[0].id });
+        });
+    }
+
     cardDragStartHandler(ev) {
-        if (this.selfPlayerCardsEnabled)
-        {
+        if (this.selfPlayerCardsEnabled) {
             document.getElementById("playedCardsContainer").classList.add("DroppableTargetHighlight");
             ev.dataTransfer.effectAllowed = "move";
             ev.dataTransfer.setData("text", ev.target.parentElement.id);
@@ -189,8 +206,7 @@ class ViewController {
     redrawPlayerScores(players) {
         for (let player of players) {
             var playedCardContainerTitle = document.getElementById("playedCardTitle_" + player.id);
-            if (playedCardContainerTitle)
-            {
+            if (playedCardContainerTitle) {
                 playerNameLabel.textContent = getPlayedCardDisplayTitle(player);
             }
         }
@@ -351,6 +367,8 @@ class ViewController {
             showStartGameOverlay();
         } else if (eventName === 'hideStartGameOverlay') {
             this.hideStartGameOverlay();
+        } else if (eventName === 'showEndOfHandStats') {
+            this.showEndOfHandStats(eventDetails);
         } else if (eventName === 'showEndGameStats') {
             this.showEndGameStats(eventDetails);
         }
