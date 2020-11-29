@@ -184,3 +184,19 @@ a {
     opacity: 0.20;
     z-index: 9;
 }
+
+.TrumpCardStolen {
+    opacity: 0.50;
+}
+
+#selfPlayerRobbingCardOverlay {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+}
+
+#selfPlayerRobbingCardOverlay div {
+    margin: 16px;
+}

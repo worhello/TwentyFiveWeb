@@ -83,6 +83,12 @@ class TrumpCard {
     constructor() {
         this.card = new Card();
         this.hasBeenStolen = false;
+        this.stolenBy = {};
+    }
+    
+    steal(player) {
+        this.hasBeenStolen = true;
+        this.stolenBy = player
     }
 }
 
@@ -126,8 +132,12 @@ function isTrumpSuit(cardA, trumpCard) {
     return cardA.suit == trumpCard.card.suit;
 }
 
+function isAceCard(cardA) {
+    return cardA.value == CardValues.ace;
+}
+
 function isAceOfHearts(cardA) {
-    return cardA.suit == CardSuits.hearts && cardA.value == CardValues.ace;
+    return cardA.suit == CardSuits.hearts && isAceCard(cardA);
 }
 
 function isFiveOfTrumps(cardA, trumpCard) {
@@ -139,7 +149,7 @@ function isJackOfTrumps(cardA, trumpCard) {
 }
 
 function isAceOfTrumps(cardA, trumpCard) {
-    return isTrumpSuit(cardA, trumpCard) && cardA.value == CardValues.ace;
+    return isTrumpSuit(cardA, trumpCard) && isAceCard(cardA);
 }
 
 function isTrumpCard(cardA, trumpCard) {
@@ -259,10 +269,26 @@ function getWinningCard(trumpCard, playedCards) {
     return currentWinningCard;
 }
 
+function canTrumpCardBeRobbed(playerHand, playerIsDealer, trumpCard) {
+    let trumpCardIsAce = isAceCard(trumpCard.card);
+    if (trumpCardIsAce && playerIsDealer) {
+        return true;
+    }
+
+    for (let card of playerHand) {
+        if (isAceOfTrumps(card, trumpCard)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 if (typeof module !== 'undefined' && module.exports != null) {
     let gameLogicExports = {};
     gameLogicExports.getBestCardFromOptions = getBestCardFromOptions;
     gameLogicExports.getWinningCard = getWinningCard;
+    gameLogicExports.canTrumpCardBeRobbed = canTrumpCardBeRobbed;
     let deck = {};
     deck.CardSuits = CardSuits;
     deck.CardValues = CardValues;

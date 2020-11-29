@@ -26,6 +26,11 @@ function buildCardNode(playerId, card) {
 function hideAllOverlays() {
     document.getElementById("menuContainer").style.display = "none";
     document.getElementById("endGameStatsContainer").style.display = "none";
+
+    var robbingCardOverlay = document.getElementById("selfPlayerRobbingCardOverlay");
+    if (robbingCardOverlay) {
+        robbingCardOverlay.style.display = "none";
+    }
 }
 
 function showStartGameOverlay() {
@@ -75,6 +80,7 @@ class ViewController {
     constructor(eventsHandler) {
         this.eventsHandler = eventsHandler;
         this.selfPlayerCardsEnabled = false;
+        this.isRobbing = false;
     }
 
     hideStartGameOverlay() {
@@ -188,7 +194,12 @@ class ViewController {
         {
             let cardNode = document.getElementById(cardName);
             document.getElementById("playerCardsContainer").removeChild(cardNode);
-            await this.eventsHandler.sendEventToGameContext('playSelfCard', { "cardName": cardName });
+            if (this.isRobbing) {
+                await this.eventsHandler.sendEventToGameContext('selfPlayerRobTrumpCard', { "droppedCardName": cardName });
+                this.isRobbing = false;
+            } else {
+                await this.eventsHandler.sendEventToGameContext('playSelfCard', { "cardName": cardName });
+            }
         }
     }
 
@@ -221,11 +232,15 @@ class ViewController {
 
         let trumpCardTitle = document.createElement("div");
         trumpCardTitle.textContent = "Trump Card";
+        let trumpCardRobbed = document.createElement("div");
+        trumpCardRobbed.id = "trumpCardRobbedText";
+        trumpCardRobbed.style.display = "none";
 
         let trumpCardImgContainer = document.createElement("div");
         trumpCardImgContainer.id = "trumpCardImgContainer";
 
         trumpCardContainer.appendChild(trumpCardTitle);
+        trumpCardContainer.appendChild(trumpCardRobbed);
         trumpCardContainer.appendChild(trumpCardImgContainer);
 
         playedCardArea.appendChild(trumpCardContainer);
@@ -308,10 +323,15 @@ class ViewController {
         clearChildrenOfElementById("trumpCardImgContainer");
 
         var trumpCardContainer = document.getElementById("trumpCardImgContainer");
-        trumpCardContainer.className = trumpCard.hasBeenStolen ? "TrumpCardStolen" : "TrumpCardNotStolen";
 
         let cardNode = buildCardNode("Trump Card", trumpCard.card);
         trumpCardContainer.appendChild(cardNode);
+        
+        if (trumpCard.hasBeenStolen) {
+            trumpCardContainer.classList.add("TrumpCardStolen");
+            document.getElementById("trumpCardRobbedText").style.display = "block";
+            document.getElementById("trumpCardRobbedText").textContent = "Robbed by " + trumpCard.stolenBy.name;
+        }
     }
 
     async clearCurrentPlayerAnimation() {
@@ -339,7 +359,41 @@ class ViewController {
     showWinningPlayer(winningPlayer) {
         window.alert(winningPlayer.name + " won!");
     }
-    
+
+    showSelfPlayerRobbingDialog(trumpCard) {
+        this.isRobbing = true;
+        hideAllOverlays();
+        var robbingCardOverlay = document.getElementById("selfPlayerRobbingCardOverlay");
+        if (!robbingCardOverlay) {
+            robbingCardOverlay = document.createElement("div");
+            robbingCardOverlay.id = "selfPlayerRobbingCardOverlay";
+            robbingCardOverlay.classList.add("Overlay");
+        } else {
+            clearChildrenOfElementById("selfPlayerRobbingCardOverlay");
+        }
+
+        let title = document.createElement("div");
+        title.innerText = "Select a card from your hand below to drop for the Trump card";
+        robbingCardOverlay.appendChild(title);
+
+        let cardNode = buildCardNode("Trump Card", trumpCard.card);
+        robbingCardOverlay.appendChild(cardNode);
+        
+        var skipButton = document.createElement("button");
+        skipButton.textContent = "Skip";
+        let viewController = this;
+        skipButton.addEventListener("click", function() {
+            viewController.eventsHandler.sendEventToGameContext('skipRobbingTrumpCard', {});
+        })
+        robbingCardOverlay.appendChild(skipButton);
+
+        document.getElementById("playedCardsContainer").appendChild(robbingCardOverlay);
+
+        robbingCardOverlay.style.display = "flex";
+
+        this.setSelfPlayerCardsEnabled(true);
+    }
+
     async handleEvent(eventName, eventDetails) {
         if (eventName === 'highlightWinningPlayer') {
             await this.highlightWinningCard(eventDetails.winningPlayerId);
@@ -371,6 +425,8 @@ class ViewController {
             this.showEndOfHandStats(eventDetails);
         } else if (eventName === 'showEndGameStats') {
             this.showEndGameStats(eventDetails);
+        } else if (eventName === 'showSelfPlayerRobbingDialog') {
+            this.showSelfPlayerRobbingDialog(eventDetails.trumpCard);
         }
     }
 }
