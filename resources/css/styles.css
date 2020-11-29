@@ -24,16 +24,12 @@ a {
     position: absolute;
     width: 100%;
     min-height: 100%;
-    z-index: 2;
+    z-index: 10;
+    background-color: rgba(0,0,0,0.8);
 }
 
 .RightAlign {
     text-align: right;
-}
-
-#menuContainer {
-    background-color: rgba(0,0,0,0.8);
-    z-index: 3;
 }
 
 #startGameContainer {
@@ -48,11 +44,9 @@ a {
 }
 
 #endGameStatsContainer {
-    background-color: #006000;
     display: flex;
     flex-direction: column;
     padding-top: 15px;
-    z-index: 3;
 }
 
 .EndGamePlayerInfoContainer {
@@ -188,5 +182,5 @@ a {
     width: 100%;
     height: 100%;
     opacity: 0.20;
-    z-index: 100;
+    z-index: 9;
 }
