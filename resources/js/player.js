@@ -33,12 +33,15 @@ class Player {
     }
 
     aiWillRobCard() {
-        // TODO - insert randomiser here
-        return true;
+        return Math.floor(Math.random() * 10) > 4;
     }
 
-    aiSelectCardToDropForRob() {
-        // MASSIVE TODO HERE!!!
-        return this.cards[0].cardName;
+    aiSelectCardToDropForRob(trumpCard) {
+        var card = this.cards[0];
+        if (isAceOfTrumps(card, trumpCard)) {
+            card = this.cards[1];
+        }
+
+        return card.cardName;
     }
 }
