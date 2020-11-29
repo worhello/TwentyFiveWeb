@@ -1,5 +1,13 @@
 "use strict";
 
+if (typeof module === "object" && module && typeof module.exports === "object") {
+    this.RandomHelper = require("./randomHelper.js");
+    this.share = require("./share.js");
+}
+
+let TF_RandomHelper = this.RandomHelper.TF_RandomFunc;
+
+
 const CardSuits = Object.freeze({
     hearts: 0,
     diamonds: 1,
@@ -74,7 +82,7 @@ class Deck {
     constructor() {
         this.cards = buildDeck();
         this.cards.sort(function() {
-            return .5 - Math.random();
+            return .5 - TF_RandomHelper();
         });
     }
 }
@@ -289,12 +297,10 @@ if (typeof module !== 'undefined' && module.exports != null) {
     gameLogicExports.getBestCardFromOptions = getBestCardFromOptions;
     gameLogicExports.getWinningCard = getWinningCard;
     gameLogicExports.canTrumpCardBeRobbed = canTrumpCardBeRobbed;
-    let deck = {};
-    deck.CardSuits = CardSuits;
-    deck.CardValues = CardValues;
-    deck.Card = Card;
-    deck.Deck = Deck;
-    deck.TrumpCard = TrumpCard;
-    gameLogicExports.deck = deck;
+    gameLogicExports.CardSuits = CardSuits;
+    gameLogicExports.CardValues = CardValues;
+    gameLogicExports.Card = Card;
+    gameLogicExports.Deck = Deck;
+    gameLogicExports.TrumpCard = TrumpCard;
     module.exports = gameLogicExports;
 }

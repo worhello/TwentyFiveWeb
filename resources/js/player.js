@@ -25,15 +25,14 @@ class Player {
         return this.cards[0];
     }
 
-    aiPlayCard(playedCards) {
-        let trumpCard = window.gameContext.trumpCard;
+    aiPlayCard(playedCards, trumpCard) {
         let cardToPlay = getBestCardFromOptions(this.cards, trumpCard, playedCards);
         this.playCard(cardToPlay.cardName);
         return cardToPlay;
     }
 
     aiWillRobCard() {
-        return Math.floor(Math.random() * 10) > 4;
+        return Math.floor(RandomHelper.tf_random() * 10) > 4;
     }
 
     aiSelectCardToDropForRob(trumpCard) {
@@ -44,4 +43,10 @@ class Player {
 
         return card.cardName;
     }
+}
+
+if (typeof module !== 'undefined' && module.exports != null) {
+    let exports = {};
+    exports.Player = Player;
+    module.exports = exports;
 }

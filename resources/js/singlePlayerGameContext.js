@@ -1,5 +1,17 @@
 "use strict";
 
+if (typeof module === "object" && module && typeof module.exports === "object") {
+    this.RandomHelper = require("./randomHelper.js");
+    this.share = require("./share.js");
+}
+
+/**
+let TF_RandomHelper = this.RandomHelper.TF_RandomFunc;
+let Deck = this.share.Deck;
+let Player = this.share.Player;
+let TrumpCard = this.share.TrumpCard;
+/**/
+
 function sleepFor(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -12,7 +24,7 @@ function setupPlayers(numPlayers) {
         players.push(new Player("player_" + i));
     }
     players.sort(function() {
-        return .5 - Math.random();
+        return .5 - TF_RandomHelper();
     });
     players[numPlayers - 1].isDealer = true;
     return players;
@@ -125,7 +137,7 @@ class SinglePlayerGameContext {
             let player = this.players[i];
             await this.highlightCurrentPlayer(player);
             let playedCards = this.getPlayedCards();
-            await this.playCardAsync(player, player.aiPlayCard(playedCards));
+            await this.playCardAsync(player, player.aiPlayCard(playedCards, this.trumpCard));
         }
     }
 
@@ -294,4 +306,10 @@ class SinglePlayerGameContext {
             await this.skipRobbingTrumpCard();
         }
     }
+}
+
+if (typeof module !== 'undefined' && module.exports != null) {
+    let exports = {};
+    exports.SinglePlayerGameContext = SinglePlayerGameContext;
+    module.exports = exports;
 }
