@@ -31,4 +31,14 @@ class Player {
         this.playCard(cardToPlay.cardName);
         return cardToPlay;
     }
+
+    aiWillRobCard() {
+        // TODO - insert randomiser here
+        return true;
+    }
+
+    aiSelectCardToDropForRob() {
+        // MASSIVE TODO HERE!!!
+        return this.cards[0].cardName;
+    }
 }

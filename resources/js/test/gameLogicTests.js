@@ -4,6 +4,7 @@ let gameLogic = require('../gameLogic.js');
 let deck = gameLogic.deck;
 let gameLogicTestCases = require('./gameLogicTestCases.json');
 let getBestCardTestCases = require('./getBestCardFromHandTestCases.json');
+let canTrumpCardBeRobbedTestCases = require('./canTrumpCardBeRobbedTestCases.json');
 let assert = require('assert');
 
 function buildSuitFromString(suitAsString) {
@@ -105,7 +106,7 @@ describe('parse test JSON test', function() {
         assert.strictEqual(deck.CardSuits.diamonds, trumpCard.suit);
         assert.strictEqual(deck.CardValues.two, trumpCard.value);
     });
-})
+});
 
 describe('Game Logic - using JSON', function() {
     for (let testCase of gameLogicTestCases.testCases) {
@@ -172,4 +173,18 @@ describe('Game Logic (Client only)', function() {
             });
         });
     });
+});
+
+describe('Game Logic - canTrumpCardBeRobbed - using JSON', function() {
+    for (let testCase of canTrumpCardBeRobbedTestCases.testCases) {
+        it(testCase.name, function() {
+            let playerHand = buildDeckCardsFromJSON(testCase.playerHand);
+            let isDealer = testCase.isDealer;
+            var trumpCard = new deck.TrumpCard();
+            trumpCard.card = buildDeckCardFromJSON(testCase.trumpCard);
+            let expectedResult = testCase.expectedResult;
+            let actualResult = gameLogic.canTrumpCardBeRobbed(playerHand, isDealer, trumpCard);
+            assert.strictEqual(actualResult, expectedResult);
+        });
+    }
 });

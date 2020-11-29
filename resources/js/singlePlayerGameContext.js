@@ -40,10 +40,10 @@ class SinglePlayerGameContext {
     }
 
     rotatePlayersArray(lastRoundWinningPlayerId) {
-        let players = this.players;
-        let winningPlayerIndex = players.findIndex(p => p.id == lastRoundWinningPlayerId);
-        let firstHalf = players.slice(winningPlayerIndex);
-        let secondHalf = players.slice(0, winningPlayerIndex);
+        let playersCopy = [...this.players];
+        let winningPlayerIndex = playersCopy.findIndex(p => p.id == lastRoundWinningPlayerId);
+        var firstHalf = playersCopy.slice(winningPlayerIndex, playersCopy.length);
+        let secondHalf = playersCopy.slice(0, winningPlayerIndex);
         this.players = firstHalf.concat(secondHalf);
     }
 
@@ -52,7 +52,7 @@ class SinglePlayerGameContext {
     }
 
     getSortedListOfPlayers() {
-        let playersCopy = this.players;
+        let playersCopy = [...this.players];
         let cmpFunc = function(a, b) {
             if (a.score < b.score) {
                 return 1;
@@ -102,7 +102,6 @@ class SinglePlayerGameContext {
     }
 
     startNextRound(startingPlayerId) {
-        this.rotateDealer();
         this.rotatePlayersArray(startingPlayerId);
         this.startRound();
     }
@@ -175,14 +174,89 @@ class SinglePlayerGameContext {
         return this.selfPlayer.cards.length == 0;
     }
 
+    robCard(player, droppedCardName) {
+        let _ = player.playCard(droppedCardName);
+        player.cards.push(this.trumpCard.card);
+        this.trumpCard.steal(player);
+    }
+
+    async selfPlayerRobTrumpCard(droppedCardName) {
+        this.robCard(this.selfPlayer, droppedCardName);
+        await this.eventsHandler.sendEventToViewController('resetSelfPlayerState', {});
+        await this.eventsHandler.sendEventToViewController('showSelfPlayerHand', { "selfPlayer": this.selfPlayer });
+
+        await this.startRound();
+    }
+
+    async skipRobbingTrumpCard() {
+        await this.startRound();
+    }
+
+    playerCanRobTrumpCard(player) {
+        return canTrumpCardBeRobbed(player.cards, player.isDealer, this.trumpCard);
+    }
+
+    aiAttemptRob(player) {
+        let canRob = this.playerCanRobTrumpCard(player);
+        if (canRob === false) {
+            return false;
+        }
+
+        let willRob = player.aiWillRobCard();
+        if (willRob === false) {
+            return false;
+        }
+
+        this.robCard(player, player.aiSelectCardToDropForRob());
+        return true;
+    }
+
+    attemptRobForEachPlayer() {
+        // sequence is explained in the rules
+        // first check dealer
+        let dealerIndex = this.players.findIndex(p => p.isDealer === true);
+        let dealer = this.players[dealerIndex];
+        let dealerRobbed = this.aiAttemptRob(dealer);
+        if (dealerRobbed === true) {
+            return false;
+        }
+
+        // then cycle through other players
+        for (let player of this.players) {
+            if (player.isDealer) {
+                continue; // already handled above
+            }
+
+            if (player.isSelfPlayer) {
+                if (this.playerCanRobTrumpCard(player)) {
+                    return true;
+                }
+            } else {
+                let aiRobbed = this.aiAttemptRob(player);
+                if (aiRobbed) {
+                    return false;
+                }
+            }
+        }
+
+        return false;
+    }
+
     async startRound() {
         this.resetDeckIfNeeded();
         this.roundPlayerAndCards = [];
         if (this.mustDealNewCards()) {
+            this.rotateDealer();
             this.dealAllPlayerCards();
             await this.eventsHandler.sendEventToViewController('showSelfPlayerHand', { "selfPlayer": this.selfPlayer });
+            this.trumpCard = new TrumpCard();
             this.trumpCard.card = this.drawCards(1)[0];
-            this.trumpCard.hasBeenStolen = false;
+
+            let canBeRobbedBySelfPlayer = this.attemptRobForEachPlayer();
+            if (canBeRobbedBySelfPlayer) {
+                await this.eventsHandler.sendEventToViewController('showSelfPlayerRobbingDialog', { "trumpCard": this.trumpCard });
+                return;
+            }
         }
 
         await this.eventsHandler.sendEventToViewController('setSelfPlayerCardsEnabled', { "isEnabled": false });
@@ -214,6 +288,10 @@ class SinglePlayerGameContext {
             await this.playSelfCard(eventDetails.cardName);
         } else if (eventName === 'startNextRound') {
             this.startNextRound(eventDetails.startingPlayerId);
+        } else if (eventName === 'selfPlayerRobTrumpCard') {
+            this.selfPlayerRobTrumpCard(eventDetails.droppedCardName);
+        } else if (eventName === 'skipRobbingTrumpCard') {
+            await this.skipRobbingTrumpCard();
         }
     }
 }
