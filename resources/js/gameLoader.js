@@ -1,5 +1,11 @@
 "use strict";
 
+//let spGameContext = require("./singlePlayerGameContext.js");
+
+//let SinglePlayerGameContext = spGameContext.SinglePlayerGameContext;
+
+//let Deck = share.Deck;
+
 function getCardDisplayDelay() {
     if (document.getElementById("slow").checked) {
         return 600;
