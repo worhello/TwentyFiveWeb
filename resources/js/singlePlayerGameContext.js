@@ -207,7 +207,7 @@ class SinglePlayerGameContext {
             return false;
         }
 
-        this.robCard(player, player.aiSelectCardToDropForRob());
+        this.robCard(player, player.aiSelectCardToDropForRob(this.trumpCard));
         return true;
     }
 
