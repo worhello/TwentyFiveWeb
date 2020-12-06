@@ -189,6 +189,10 @@ a {
     opacity: 0.50;
 }
 
+.DisabledSelfPlayerCard {
+    opacity: 0.50;
+}
+
 #selfPlayerRobbingCardOverlay {
     display: flex;
     flex-direction: column;

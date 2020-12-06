@@ -57,6 +57,7 @@ class Card {
         this.value = value;
         this.cardName = buildCardName(suit, value);
         this.url = buildCardUrl(this.cardName);
+        this.canPlay = true;
     }
 }
 
@@ -284,11 +285,36 @@ function canTrumpCardBeRobbed(playerHand, playerIsDealer, trumpCard) {
     return false;
 }
 
+function updatePlayerCardsEnabledState(playedCards, cards, trumpCard) {
+    if (playedCards.length === 0) {
+        for (var card of cards) {
+            card.canPlay = true;
+        }
+        return;
+    }
+
+    let firstCard = playedCards[0];
+    var canPlayAtLeastOneCard = false;
+    for (var card of cards) {
+        card.canPlay = (card.suit === firstCard.suit || card.suit === trumpCard.card.suit);
+        if (card.canPlay === true) {
+            canPlayAtLeastOneCard = true;
+        }
+    }
+
+    if (canPlayAtLeastOneCard === false) {
+        for (var card of cards) {
+            card.canPlay = true;
+        }
+    }
+}
+
 if (typeof module !== 'undefined' && module.exports != null) {
     let gameLogicExports = {};
     gameLogicExports.getBestCardFromOptions = getBestCardFromOptions;
     gameLogicExports.getWinningCard = getWinningCard;
     gameLogicExports.canTrumpCardBeRobbed = canTrumpCardBeRobbed;
+    gameLogicExports.updatePlayerCardsEnabledState = updatePlayerCardsEnabledState;
     let deck = {};
     deck.CardSuits = CardSuits;
     deck.CardValues = CardValues;

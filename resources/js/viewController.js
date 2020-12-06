@@ -17,8 +17,12 @@ function buildCardNode(playerId, card) {
 
     cardNodeContainer.appendChild(cardNode);
     cardNodeContainer.id = cardName;
-    cardNodeContainer.className = "CardImgContainer";
-    cardNodeContainer.draggable = true;
+    cardNodeContainer.classList.add("CardImgContainer");
+    if (card.canPlay === false) {
+        cardNodeContainer.classList.add("DisabledSelfPlayerCard");
+    }
+    cardNodeContainer.disabled = (card.canPlay === false);
+    cardNodeContainer.draggable = !(card.canPlay === false);
 
     return cardNodeContainer;
 }
@@ -152,7 +156,7 @@ class ViewController {
     }
 
     cardDragStartHandler(ev) {
-        if (this.selfPlayerCardsEnabled) {
+        if (this.selfPlayerCardsEnabled && ev.target.disabled === false) {
             document.getElementById("playedCardsContainer").classList.add("DroppableTargetHighlight");
             ev.dataTransfer.effectAllowed = "move";
             ev.dataTransfer.setData("text", ev.target.parentElement.id);
@@ -169,10 +173,12 @@ class ViewController {
     }
     
     cardDropHandler(ev) {
-        ev.preventDefault();
-        this.cardDragEndHandler();
-        let cardName = ev.dataTransfer.getData("text");
-        this.playSelfCard(cardName);
+        if (this.selfPlayerCardsEnabled && ev.target.disabled === false && document.getElementById("playedCardsContainer").contains(ev.target)) {
+            ev.preventDefault();
+            this.cardDragEndHandler();
+            let cardName = ev.dataTransfer.getData("text");
+            this.playSelfCard(cardName);
+        }
     }
     
     cardDragEndHandler() {
@@ -192,8 +198,6 @@ class ViewController {
     async playSelfCard(cardName) {
         if (this.selfPlayerCardsEnabled)
         {
-            let cardNode = document.getElementById(cardName);
-            document.getElementById("playerCardsContainer").removeChild(cardNode);
             if (this.isRobbing) {
                 await this.eventsHandler.sendEventToGameContext('selfPlayerRobTrumpCard', { "droppedCardName": cardName });
                 this.isRobbing = false;
@@ -293,6 +297,8 @@ class ViewController {
     }
 
     showSelfPlayerHand(selfPlayer) {
+        this.resetSelfPlayerState();
+
         let cards = selfPlayer.cards;
         let gameContainer = document.getElementById("gameContainer");
         let viewController = this;
@@ -300,7 +306,9 @@ class ViewController {
         cards.forEach(function(card) {
             let cardNode = buildCardNode(selfPlayer.id, card);
             cardNode.addEventListener("click", function() {
-                viewController.playSelfCard(card.cardName);
+                if (cardNode.disabled === false) {
+                    viewController.playSelfCard(card.cardName);
+                }
             });
             gameContainer.addEventListener("dragstart", function(ev) {
                 viewController.cardDragStartHandler(ev);
