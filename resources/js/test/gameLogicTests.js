@@ -1,65 +1,56 @@
 "use strict";
 
-let assert = require('assert');
-
-let share = require('../share.js');
-
+let gameLogic = require('../gameLogic.js');
+let deck = gameLogic.deck;
 let gameLogicTestCases = require('./gameLogicTestCases.json');
 let getBestCardTestCases = require('./getBestCardFromHandTestCases.json');
 let canTrumpCardBeRobbedTestCases = require('./canTrumpCardBeRobbedTestCases.json');
-
-
-let Card = share.Card;
-let CardSuits = share.CardSuits;
-let CardValues = share.CardValues;
-let TrumpCard = share.TrumpCard;
-let gameLogic = share.gameLogic;
-
+let assert = require('assert');
 
 function buildSuitFromString(suitAsString) {
     if (suitAsString == "clubs") {
-        return CardSuits.clubs;
+        return deck.CardSuits.clubs;
     } else if (suitAsString == "spades") {
-        return CardSuits.spades;
+        return deck.CardSuits.spades;
     } else if (suitAsString == "diamonds") {
-        return CardSuits.diamonds;
+        return deck.CardSuits.diamonds;
     } else {
-        return CardSuits.hearts;
+        return deck.CardSuits.hearts;
     }
 }
 
 function buildValueFromString(valueAsString) {
     if (valueAsString == "ace") {
-        return CardValues.ace;
+        return deck.CardValues.ace;
     } else if (valueAsString == "two") {
-        return CardValues.two;
+        return deck.CardValues.two;
     } else  if (valueAsString == "three") {
-        return CardValues.three;
+        return deck.CardValues.three;
     } else  if (valueAsString == "four") {
-        return CardValues.four;
+        return deck.CardValues.four;
     } else  if (valueAsString == "five") {
-        return CardValues.five;
+        return deck.CardValues.five;
     } else  if (valueAsString == "six") {
-        return CardValues.six;
+        return deck.CardValues.six;
     } else  if (valueAsString == "seven") {
-        return CardValues.seven;
+        return deck.CardValues.seven;
     } else  if (valueAsString == "eight") {
-        return CardValues.eight;
+        return deck.CardValues.eight;
     } else  if (valueAsString == "nine") {
-        return CardValues.nine;
+        return deck.CardValues.nine;
     } else  if (valueAsString == "ten") {
-        return CardValues.ten;
+        return deck.CardValues.ten;
     } else  if (valueAsString == "jack") {
-        return CardValues.jack;
+        return deck.CardValues.jack;
     } else  if (valueAsString == "queen") {
-        return CardValues.queen;
+        return deck.CardValues.queen;
     } else  if (valueAsString == "king") {
-        return CardValues.king;
+        return deck.CardValues.king;
     }
 }
 
 function buildDeckCardFromJSON(cardAsJson) {
-    return new Card(buildSuitFromString(cardAsJson.suit), buildValueFromString(cardAsJson.value));
+    return new deck.Card(buildSuitFromString(cardAsJson.suit), buildValueFromString(cardAsJson.value));
 }
 
 function buildDeckCardsFromJSON(cardsAsJsonArray) {
@@ -104,16 +95,16 @@ describe('parse test JSON test', function() {
         assert.strictEqual(2, playedCards.length);
 
         let playedCard0 = playedCards[0];
-        assert.strictEqual(CardSuits.clubs, playedCard0.suit);
-        assert.strictEqual(CardValues.queen, playedCard0.value);
+        assert.strictEqual(deck.CardSuits.clubs, playedCard0.suit);
+        assert.strictEqual(deck.CardValues.queen, playedCard0.value);
 
         let playedCard1 = playedCards[1];
-        assert.strictEqual(CardSuits.spades, playedCard1.suit);
-        assert.strictEqual(CardValues.queen, playedCard1.value);
+        assert.strictEqual(deck.CardSuits.spades, playedCard1.suit);
+        assert.strictEqual(deck.CardValues.queen, playedCard1.value);
 
         let trumpCard = buildDeckCardFromJSON(testCase.trumpCard);
-        assert.strictEqual(CardSuits.diamonds, trumpCard.suit);
-        assert.strictEqual(CardValues.two, trumpCard.value);
+        assert.strictEqual(deck.CardSuits.diamonds, trumpCard.suit);
+        assert.strictEqual(deck.CardValues.two, trumpCard.value);
     });
 });
 
@@ -121,7 +112,7 @@ describe('Game Logic - using JSON', function() {
     for (let testCase of gameLogicTestCases.testCases) {
         it(testCase.name, function() {
             let playedCards = buildDeckCardsFromJSON(testCase.playedCards);
-            var trumpCard = new TrumpCard();
+            var trumpCard = new deck.TrumpCard();
             trumpCard.card = buildDeckCardFromJSON(testCase.trumpCard);
             let expectedCard = playedCards[testCase.expectedCardIndex];
             let actualCard = gameLogic.getWinningCard(trumpCard, playedCards);
@@ -134,14 +125,14 @@ describe('Game Logic - using JSON', function() {
 describe('Game Logic', function() {
     describe('getWinningCard', function() {
         it('should return a default Card if no cards passed in', function() {
-            let trumpCard = new TrumpCard();
-            let cards = [ new Card() ];
+            let trumpCard = new deck.TrumpCard();
+            let cards = [ new deck.Card() ];
             assert.ok(gameLogic.getWinningCard(trumpCard, cards));
         });
 
         it('should return the first card if a single card passed in', function() {
-            let trumpCard = new TrumpCard();
-            let cards = [ new Card() ];
+            let trumpCard = new deck.TrumpCard();
+            let cards = [ new deck.Card() ];
             let expectedCard = cards[0];
             let actualCard = gameLogic.getWinningCard(trumpCard, cards);
             assert.strictEqual(expectedCard.suit, actualCard.suit);
@@ -155,7 +146,7 @@ describe('Game Logic - getBestCardFromOptions - using JSON', function() {
         it(testCase.name, function() {
             let playedCards = buildDeckCardsFromJSON(testCase.playedCards);
             let cardOptions = buildDeckCardsFromJSON(testCase.cardOptions);
-            var trumpCard = new TrumpCard();
+            var trumpCard = new deck.TrumpCard();
             trumpCard.card = buildDeckCardFromJSON(testCase.trumpCard);
             let expectedCard = cardOptions[testCase.expectedCardIndex];
             let actualCard = gameLogic.getBestCardFromOptions(cardOptions, trumpCard, playedCards);
@@ -174,7 +165,7 @@ describe('Game Logic (Client only)', function() {
         });
         describe('one card available', function() {
             it('should return the first card', function() {
-                let cardOptions = [ new Card() ];
+                let cardOptions = [ new deck.Card() ];
                 let expectedCard = cardOptions[0];
                 let actualCard = gameLogic.getBestCardFromOptions(cardOptions);
                 assert.strictEqual(expectedCard.suit, actualCard.suit);
@@ -189,7 +180,7 @@ describe('Game Logic - canTrumpCardBeRobbed - using JSON', function() {
         it(testCase.name, function() {
             let playerHand = buildDeckCardsFromJSON(testCase.playerHand);
             let isDealer = testCase.isDealer;
-            var trumpCard = new TrumpCard();
+            var trumpCard = new deck.TrumpCard();
             trumpCard.card = buildDeckCardFromJSON(testCase.trumpCard);
             let expectedResult = testCase.expectedResult;
             let actualResult = gameLogic.canTrumpCardBeRobbed(playerHand, isDealer, trumpCard);
