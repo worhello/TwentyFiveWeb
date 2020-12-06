@@ -3,11 +3,16 @@
 class Player {
     constructor(name, isSelfPlayer = false) {
         this.name = name;
-        this.id = "playerId_" + name;
+        this.id = Player.getPlayerId(name);
         this.cards = [];
         this.score = 0;
         this.isSelfPlayer = isSelfPlayer;
         this.isDealer = false;
+    }
+
+    static getPlayerId(name) {
+        let strippedName = name.replace(/ /g,'');
+        return "playerId_" + strippedName;
     }
 
     static getGameLogicModule() {
@@ -31,7 +36,7 @@ class Player {
     }
 
     aiPlayCard(playedCards, trumpCard) {
-        let cardToPlay = getGameLogicModule().getBestCardFromOptions(this.cards, trumpCard, playedCards);
+        let cardToPlay = Player.getGameLogicModule().getBestCardFromOptions(this.cards, trumpCard, playedCards);
         this.playCard(cardToPlay.cardName);
         return cardToPlay;
     }
@@ -42,7 +47,7 @@ class Player {
 
     aiSelectCardToDropForRob(trumpCard) {
         var card = this.cards[0];
-        if (isAceOfTrumps(card, trumpCard)) {
+        if (Player.getGameLogicModule().isAceOfTrumps(card, trumpCard)) {
             card = this.cards[1];
         }
 

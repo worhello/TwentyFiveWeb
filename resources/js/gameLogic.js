@@ -74,7 +74,11 @@ function buildDeck() {
 class Deck {
     constructor() {
         this.cards = buildDeck();
-        this.cards.sort(function() {
+        Deck.shuffleDeck(this.cards);
+    }
+
+    static shuffleDeck(cards) {
+        cards.sort(function() {
             return .5 - Math.random();
         });
     }
