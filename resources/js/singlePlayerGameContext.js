@@ -57,8 +57,9 @@ class SinglePlayerGameContext {
     }
 
     dealAllPlayerCards() {
+        let gameContext = this;
         this.players.forEach(function(player) {
-            player.cards = window.gameContext.drawCards(5);
+            player.cards = gameContext.drawCards(5);
         });
     }
 
@@ -274,7 +275,7 @@ class SinglePlayerGameContext {
             this.dealAllPlayerCards();
             await this.updateAndShowSelfPlayerEnabledCards();
             this.trumpCard = new TrumpCard();
-            this.trumpCard.card = this.drawCards(1)[0];
+            this.trumpCard.card = this.drawCard();
 
             let canBeRobbedBySelfPlayer = this.attemptRobForEachPlayer();
             if (canBeRobbedBySelfPlayer) {
@@ -306,10 +307,14 @@ class SinglePlayerGameContext {
         await this.startRound();
     }
 
+    drawCard() {
+        return this.deck.cards.pop();
+    }
+
     drawCards(num) {
         var cards = [];
         for (const _ of Array(num).keys()) {
-            cards.push(this.deck.cards.pop());
+            cards.push(drawCard());
         }
         return cards;
     }
@@ -327,9 +332,11 @@ class SinglePlayerGameContext {
     }
 }
 
-if (typeof module !== 'undefined' && module.exports != null) {
-    let sp_gameContextExports = {};
-    sp_gameContextExports.SinglePlayerGameContext = SinglePlayerGameContext;
-
-    module.exports = sp_gameContextExports;
-}
+(function () {
+    if (typeof module !== 'undefined' && module.exports != null) {
+        let sp_gameContextExports = {};
+        sp_gameContextExports.SinglePlayerGameContext = SinglePlayerGameContext;
+        
+        module.exports = sp_gameContextExports;
+    }
+})();
