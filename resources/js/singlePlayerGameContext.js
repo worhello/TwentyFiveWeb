@@ -1,5 +1,25 @@
 "use strict";
 
+function getGameLogicModule() {
+    if (typeof module !== 'undefined' && module.exports != null) {
+        let gameLogic = require("./gameLogic");
+        return gameLogic;
+    }
+    else {
+        return window.gameLogic;
+    }
+}
+
+function getPlayerModule() {
+    if (typeof module !== 'undefined' && module.exports != null) {
+        let playerModule = require("./player");
+        return playerModule;
+    }
+    else {
+        return window.playerModule;
+    }
+}
+
 function sleepFor(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -7,9 +27,11 @@ function sleepFor(ms) {
 function setupPlayers(numPlayers) {
     var players = [];
 
-    players.push(new Player("You", true));
+    let playerModule = getPlayerModule();
+
+    players.push(new playerModule.Player("You", true));
     for (const i of Array(numPlayers - 1).keys()) {
-        players.push(new Player("player_" + i));
+        players.push(new playerModule.Player("player_" + i));
     }
     players.sort(function() {
         return .5 - Math.random();
@@ -20,10 +42,11 @@ function setupPlayers(numPlayers) {
 
 class SinglePlayerGameContext {
     constructor(eventsHandler, numPlayers, cardDisplayDelay) {
+        this.gameLogic = getGameLogicModule();
         this.eventsHandler = eventsHandler;
-        this.deck = new Deck();
+        this.deck = new this.gameLogic.Deck();
         this.players = setupPlayers(numPlayers);
-        this.trumpCard = new TrumpCard();
+        this.trumpCard = new this.gameLogic.TrumpCard();
         this.selfPlayer = this.players.find(p => p.isSelfPlayer == true );
         this.cardDisplayDelay = cardDisplayDelay;
         this.roundPlayerAndCards = [];
@@ -68,7 +91,7 @@ class SinglePlayerGameContext {
 
     async evaluateRoundEnd() {
         let playedCards = this.getPlayedCards();
-        let winningCard = getWinningCard(this.trumpCard, playedCards);
+        let winningCard = this.gameLogic.getWinningCard(this.trumpCard, playedCards);
         let winningPlayer = this.roundPlayerAndCards.find(pAC => pAC.card == winningCard).player;
         let winningPlayerId = winningPlayer.id;
 
@@ -125,7 +148,7 @@ class SinglePlayerGameContext {
             let player = this.players[i];
             await this.highlightCurrentPlayer(player);
             let playedCards = this.getPlayedCards();
-            await this.playCardAsync(player, player.aiPlayCard(playedCards));
+            await this.playCardAsync(player, player.aiPlayCard(playedCards, this.trumpCard));
         }
     }
 
@@ -148,7 +171,7 @@ class SinglePlayerGameContext {
         await this.eventsHandler.sendEventToViewController('setSelfPlayerCardsEnabled', { "isEnabled": false });
         await this.playCardAsync(this.selfPlayer, playedCard);
 
-        await window.gameContext.playCardsAfterSelfAsync();
+        await this.playCardsAfterSelfAsync();
     }
 
     resetDeckIfNeeded() {
@@ -191,7 +214,7 @@ class SinglePlayerGameContext {
     }
 
     playerCanRobTrumpCard(player) {
-        return canTrumpCardBeRobbed(player.cards, player.isDealer, this.trumpCard);
+        return this.gameLogic.canTrumpCardBeRobbed(player.cards, player.isDealer, this.trumpCard);
     }
 
     aiAttemptRob(player) {
@@ -215,7 +238,7 @@ class SinglePlayerGameContext {
         let dealerIndex = this.players.findIndex(p => p.isDealer === true);
         let dealer = this.players[dealerIndex];
         if (dealer.isSelfPlayer === true) {
-            return true;
+            return this.playerCanRobTrumpCard(dealer);
         }
         let dealerRobbed = this.aiAttemptRob(dealer);
         if (dealerRobbed === true) {
@@ -274,7 +297,7 @@ class SinglePlayerGameContext {
     
     async updateAndShowSelfPlayerEnabledCards() {
         let playedCards = this.getPlayedCards();
-        updatePlayerCardsEnabledState(playedCards, this.selfPlayer.cards, this.trumpCard);
+        this.gameLogic.updatePlayerCardsEnabledState(playedCards, this.selfPlayer.cards, this.trumpCard);
         await this.eventsHandler.sendEventToViewController('showSelfPlayerHand', { "selfPlayer": this.selfPlayer });
     }
 
@@ -302,4 +325,11 @@ class SinglePlayerGameContext {
             await this.skipRobbingTrumpCard();
         }
     }
+}
+
+if (typeof module !== 'undefined' && module.exports != null) {
+    let sp_gameContextExports = {};
+    sp_gameContextExports.SinglePlayerGameContext = SinglePlayerGameContext;
+
+    module.exports = sp_gameContextExports;
 }

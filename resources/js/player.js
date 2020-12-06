@@ -10,11 +10,6 @@ class Player {
         this.isDealer = false;
     }
 
-    getName() {
-        let dealerText = this.isDealer ? " (D)" : "";
-        return this.name + dealerText;
-    }
-
     playCard(cardName) {
         let cardIndex = this.cards.findIndex(card => card.cardName == cardName);
         if (cardIndex > -1) {
@@ -25,9 +20,9 @@ class Player {
         return this.cards[0];
     }
 
-    aiPlayCard(playedCards) {
-        let trumpCard = window.gameContext.trumpCard;
-        let cardToPlay = getBestCardFromOptions(this.cards, trumpCard, playedCards);
+    aiPlayCard(playedCards, trumpCard) {
+        // TODO - need to change this to use getter
+        let cardToPlay = window.gameLogic.getBestCardFromOptions(this.cards, trumpCard, playedCards);
         this.playCard(cardToPlay.cardName);
         return cardToPlay;
     }
@@ -44,4 +39,13 @@ class Player {
 
         return card.cardName;
     }
+}
+
+let playerExports = {};
+playerExports.Player = Player;
+
+if (typeof module !== 'undefined' && module.exports != null) {
+    module.exports = playerExports;
+} else {
+    window.playerModule = playerExports;
 }
