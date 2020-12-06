@@ -309,19 +309,21 @@ function updatePlayerCardsEnabledState(playedCards, cards, trumpCard) {
     }
 }
 
-let gameLogicExports = {};
-gameLogicExports.getBestCardFromOptions = getBestCardFromOptions;
-gameLogicExports.getWinningCard = getWinningCard;
-gameLogicExports.canTrumpCardBeRobbed = canTrumpCardBeRobbed;
-gameLogicExports.updatePlayerCardsEnabledState = updatePlayerCardsEnabledState;
-gameLogicExports.CardSuits = CardSuits;
-gameLogicExports.CardValues = CardValues;
-gameLogicExports.Card = Card;
-gameLogicExports.Deck = Deck;
-gameLogicExports.TrumpCard = TrumpCard;
-
-if (typeof module !== 'undefined' && module.exports != null) {
-    module.exports = gameLogicExports;
-} else {
-    window.gameLogic = gameLogicExports;
-}
+(function () {
+    let gameLogicExports = {};
+    gameLogicExports.getBestCardFromOptions = getBestCardFromOptions;
+    gameLogicExports.getWinningCard = getWinningCard;
+    gameLogicExports.canTrumpCardBeRobbed = canTrumpCardBeRobbed;
+    gameLogicExports.updatePlayerCardsEnabledState = updatePlayerCardsEnabledState;
+    gameLogicExports.CardSuits = CardSuits;
+    gameLogicExports.CardValues = CardValues;
+    gameLogicExports.Card = Card;
+    gameLogicExports.Deck = Deck;
+    gameLogicExports.TrumpCard = TrumpCard;
+    
+    if (typeof module !== 'undefined' && module.exports != null) {
+        module.exports = gameLogicExports;
+    } else {
+        window.gameLogic = gameLogicExports;
+    }
+})();

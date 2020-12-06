@@ -10,6 +10,16 @@ class Player {
         this.isDealer = false;
     }
 
+    static getGameLogicModule() {
+        if (typeof module !== 'undefined' && module.exports != null) {
+            let gameLogic = require("./gameLogic");
+            return gameLogic;
+        }
+        else {
+            return window.gameLogic;
+        }
+    }
+
     playCard(cardName) {
         let cardIndex = this.cards.findIndex(card => card.cardName == cardName);
         if (cardIndex > -1) {
@@ -21,8 +31,7 @@ class Player {
     }
 
     aiPlayCard(playedCards, trumpCard) {
-        // TODO - need to change this to use getter
-        let cardToPlay = window.gameLogic.getBestCardFromOptions(this.cards, trumpCard, playedCards);
+        let cardToPlay = getGameLogicModule().getBestCardFromOptions(this.cards, trumpCard, playedCards);
         this.playCard(cardToPlay.cardName);
         return cardToPlay;
     }
@@ -41,11 +50,13 @@ class Player {
     }
 }
 
-let playerExports = {};
-playerExports.Player = Player;
-
-if (typeof module !== 'undefined' && module.exports != null) {
-    module.exports = playerExports;
-} else {
-    window.playerModule = playerExports;
-}
+(function () {
+    let playerExports = {};
+    playerExports.Player = Player;
+    
+    if (typeof module !== 'undefined' && module.exports != null) {
+        module.exports = playerExports;
+    } else {
+        window.playerModule = playerExports;
+    }
+})();
