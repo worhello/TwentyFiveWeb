@@ -20,40 +20,46 @@ function getPlayerModule() {
     }
 }
 
-function sleepFor(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-function setupPlayers(numPlayers) {
-    var players = [];
-
-    let playerModule = getPlayerModule();
-
-    players.push(new playerModule.Player("You", true));
-    for (const i of Array(numPlayers - 1).keys()) {
-        players.push(new playerModule.Player("player_" + i));
-    }
-    players.sort(function() {
-        return .5 - Math.random();
-    });
-    players[numPlayers - 1].isDealer = true;
-    return players;
-}
-
 class SinglePlayerGameContext {
     constructor(eventsHandler, numPlayers, cardDisplayDelay) {
         this.gameLogic = getGameLogicModule();
         this.eventsHandler = eventsHandler;
         this.deck = new this.gameLogic.Deck();
-        this.players = setupPlayers(numPlayers);
+        this.players = this.setupPlayers(numPlayers);
         this.trumpCard = new this.gameLogic.TrumpCard();
         this.selfPlayer = this.players.find(p => p.isSelfPlayer == true );
         this.cardDisplayDelay = cardDisplayDelay;
         this.roundPlayerAndCards = [];
     }
 
+    static sortPlayers(players) {
+        players.sort(function() {
+            return .5 - Math.random();
+        });
+    }
+    
+    setupPlayers(numPlayers) {
+        var players = [];
+    
+        let playerModule = getPlayerModule();
+    
+        players.push(new playerModule.Player("You", true));
+        for (var i = 1; i < numPlayers; i++) {
+            players.push(new playerModule.Player("player_" + i));
+        }
+        SinglePlayerGameContext.sortPlayers(players);
+        players[numPlayers - 1].isDealer = true;
+        return players;
+    }
+
+    async sleepFor(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
     async defaultSleep() {
-        await sleepFor(this.cardDisplayDelay);
+        if (this.cardDisplayDelay > 0) {
+            await this.sleepFor(this.cardDisplayDelay);
+        }
     }
 
     dealAllPlayerCards() {
@@ -274,7 +280,7 @@ class SinglePlayerGameContext {
             this.rotateDealer();
             this.dealAllPlayerCards();
             await this.updateAndShowSelfPlayerEnabledCards();
-            this.trumpCard = new TrumpCard();
+            this.trumpCard = new this.gameLogic.TrumpCard();
             this.trumpCard.card = this.drawCard();
 
             let canBeRobbedBySelfPlayer = this.attemptRobForEachPlayer();
@@ -313,8 +319,8 @@ class SinglePlayerGameContext {
 
     drawCards(num) {
         var cards = [];
-        for (const _ of Array(num).keys()) {
-            cards.push(drawCard());
+        for (var i = 0; i < num; i++) {
+            cards.push(this.drawCard());
         }
         return cards;
     }
@@ -336,7 +342,7 @@ class SinglePlayerGameContext {
     if (typeof module !== 'undefined' && module.exports != null) {
         let sp_gameContextExports = {};
         sp_gameContextExports.SinglePlayerGameContext = SinglePlayerGameContext;
-        
+
         module.exports = sp_gameContextExports;
     }
 })();
