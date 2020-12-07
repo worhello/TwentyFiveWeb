@@ -48,7 +48,6 @@ class SinglePlayerGameContext {
             players.push(new playerModule.Player("player_" + i));
         }
         SinglePlayerGameContext.sortPlayers(players);
-        players[numPlayers - 1].isDealer = true;
         return players;
     }
 
