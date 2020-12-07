@@ -319,6 +319,7 @@ function updatePlayerCardsEnabledState(playedCards, cards, trumpCard) {
     gameLogicExports.getWinningCard = getWinningCard;
     gameLogicExports.canTrumpCardBeRobbed = canTrumpCardBeRobbed;
     gameLogicExports.updatePlayerCardsEnabledState = updatePlayerCardsEnabledState;
+    gameLogicExports.isAceOfTrumps = isAceOfTrumps;
     gameLogicExports.CardSuits = CardSuits;
     gameLogicExports.CardValues = CardValues;
     gameLogicExports.Card = Card;

@@ -45,6 +45,11 @@ describe('SinglePlayerGameContext', function() {
         it('self player starts', async () => {
             await gameContext.startGame();
 
+            assert.strictEqual(gameContext.players[0].isDealer, false);
+            assert.strictEqual(gameContext.players[1].isDealer, true);
+            assert.strictEqual(gameContext.players[0].isSelfPlayer, true);
+            assert.strictEqual(gameContext.players[1].isSelfPlayer, false);
+
             assert.strictEqual(testEventsHandler.eventsToViewController.length, 9);
             testEventsHandler.checkEventToViewControllerName(0, 'resetSelfPlayerState');
             testEventsHandler.checkEventToViewControllerName(1, 'showSelfPlayerHand');
@@ -63,6 +68,11 @@ describe('SinglePlayerGameContext', function() {
         let gameContext = new singlePlayerGameContext.SinglePlayerGameContext(testEventsHandler, 2, 0);
         it('other player starts', async () => {
             await gameContext.startGame();
+
+            assert.strictEqual(gameContext.players[0].isDealer, false);
+            assert.strictEqual(gameContext.players[1].isDealer, true);
+            assert.strictEqual(gameContext.players[0].isSelfPlayer, false);
+            assert.strictEqual(gameContext.players[1].isSelfPlayer, true);
 
             assert.strictEqual(testEventsHandler.eventsToViewController.length, 20);
             testEventsHandler.checkEventToViewControllerName(0, 'resetSelfPlayerState');
