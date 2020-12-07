@@ -1,7 +1,9 @@
 # TwentyFiveWeb
 Twenty Five Card Game Online
 
-The game can be tried out [here](https://worhello.github.io/TwentyFiveWeb/)
+The game can be tried out [here](https://worhello.github.io/TwentyFiveWeb/)!
+
+Rules can be found [here](https://github.com/worhello/TwentyFiveWeb/wiki/Game-Rules)!
 
 # Credits
 
