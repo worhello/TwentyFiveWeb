@@ -49,11 +49,15 @@ function getPlayedCardDisplayTitle(player) {
 }
 
 function getCurrentCardSideClassName(currentPlayerNum, numPlayers) {
+    if (currentPlayerNum === 1) {
+        return null; // 1 is always the self player
+    }
+
     if (numPlayers === 2 && currentPlayerNum === 2) {
         return null; // center card
     }
 
-    if (numPlayers % 2 === 0 && (currentPlayerNum * 2) === numPlayers) {
+    if (numPlayers % 2 === 0 && ((currentPlayerNum - 1) * 2) === numPlayers) {
         return null;
     }
 
@@ -508,3 +512,12 @@ class ViewController {
         console.log(JSON.stringify(allStyles));
     }
 }
+
+(function() {
+    if (typeof module !== 'undefined' && module.exports != null) {
+        let e = {};
+        e.getCurrentCardSideClassName = getCurrentCardSideClassName;
+
+        module.exports = e;
+    }
+})();
