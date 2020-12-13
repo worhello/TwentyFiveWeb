@@ -57,12 +57,8 @@ function getCurrentCardSideClassName(currentPlayerNum, numPlayers) {
         return null;
     }
 
-    var scaledValue = currentPlayerNum * 2;
-    if (numPlayers === 3) {
-        scaledValue = currentPlayerNum;
-    }
-
-    if (scaledValue < numPlayers) {
+    let midwayPoint = Math.ceil(numPlayers / 2.0);
+    if (currentPlayerNum <= midwayPoint) {
         return "PlayedCardContainer_Left";
     } else {
         return "PlayedCardContainer_Right";
