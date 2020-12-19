@@ -253,8 +253,11 @@ class ViewController {
         this.selfPlayerCardsEnabled = isEnabled;
         if (this.selfPlayerCardsEnabled) {
             document.getElementById("playerCardsContainer").classList.remove('DisabledSelfPlayerCards');
+            document.getElementById("playerInfoContainer").classList.add('PlayerCardsContainerEnabled');
+            window.scrollTo(0,document.body.scrollHeight);
         } else {
             document.getElementById("playerCardsContainer").classList.add('DisabledSelfPlayerCards');
+            document.getElementById("playerInfoContainer").classList.remove('PlayerCardsContainerEnabled');
         }
         document.getElementById('playedCardsContainerWrapper').style.display = 'none';
         document.getElementById('playedCardsContainerWrapper').style.display = 'block';
