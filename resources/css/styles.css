@@ -181,6 +181,7 @@ a {
 #playerInfoContainer {
     top: 650px;
     z-index: 2;
+    background-color: rgba(0, 60, 0, 0.6);
 }
 
 #playerCardsContainer {
@@ -231,6 +232,10 @@ a {
     top: 468px;
 }
 
+.PlayerCardsContainerEnabled{
+    width: min(650px, 100vw);
+}
+
 @media all and (max-width: 650px) {
     body {
         padding: 0px;
@@ -256,6 +261,11 @@ a {
     #playedCardsBackgroundContainer {
         width: 100vw;
         border-radius: 25%;
+    }
+
+    .PlayerCardsContainerEnabled {
+        position: absolute;
+        top: 85vh !important;
     }
 }
 
