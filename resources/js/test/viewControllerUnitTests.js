@@ -10,10 +10,10 @@ describe('viewControllerUnitTests.getCurrentCardSideClassName', function() {
         let numPlayer = 2;
         it('should return correct results for 2 players', function() {
             let actual = getCurrentCardSideClassName(1, numPlayer);
-            assert.strictEqual(actual, null);
+            assert.strictEqual(actual, "PlayedCardContainer_Center");
 
             actual = getCurrentCardSideClassName(2, numPlayer);
-            assert.strictEqual(actual, null);
+            assert.strictEqual(actual, "PlayedCardContainer_Center");
         });
     });
 
@@ -21,7 +21,7 @@ describe('viewControllerUnitTests.getCurrentCardSideClassName', function() {
         let numPlayers = 3;
         it('should return correct results for 3 players', function() {
             let actual = getCurrentCardSideClassName(1, numPlayers);
-            assert.strictEqual(actual, null);
+            assert.strictEqual(actual, "PlayedCardContainer_Center");
             actual = getCurrentCardSideClassName(2, numPlayers);
             assert.strictEqual(actual, "PlayedCardContainer_Left");
             actual = getCurrentCardSideClassName(3, numPlayers);
@@ -35,7 +35,7 @@ describe('viewControllerUnitTests.getCurrentCardSideClassName', function() {
             let actual = getCurrentCardSideClassName(2, numPlayers);
             assert.strictEqual(actual, "PlayedCardContainer_Left");
             actual = getCurrentCardSideClassName(3, numPlayers);
-            assert.strictEqual(actual, null);
+            assert.strictEqual(actual, "PlayedCardContainer_Center");
             actual = getCurrentCardSideClassName(4, numPlayers);
             assert.strictEqual(actual, "PlayedCardContainer_Right");
         });
@@ -63,7 +63,7 @@ describe('viewControllerUnitTests.getCurrentCardSideClassName', function() {
             actual = getCurrentCardSideClassName(3, numPlayers);
             assert.strictEqual(actual, "PlayedCardContainer_Left");
             actual = getCurrentCardSideClassName(4, numPlayers);
-            assert.strictEqual(actual, null);
+            assert.strictEqual(actual, "PlayedCardContainer_Center");
             actual = getCurrentCardSideClassName(5, numPlayers);
             assert.strictEqual(actual, "PlayedCardContainer_Right");
             actual = getCurrentCardSideClassName(6, numPlayers);
@@ -99,7 +99,7 @@ describe('viewControllerUnitTests.getCurrentCardSideClassName', function() {
             actual = getCurrentCardSideClassName(4, numPlayers);
             assert.strictEqual(actual, "PlayedCardContainer_Left");
             actual = getCurrentCardSideClassName(5, numPlayers);
-            assert.strictEqual(actual, null);
+            assert.strictEqual(actual, "PlayedCardContainer_Center");
             actual = getCurrentCardSideClassName(6, numPlayers);
             assert.strictEqual(actual, "PlayedCardContainer_Right");
             actual = getCurrentCardSideClassName(7, numPlayers);
@@ -143,7 +143,7 @@ describe('viewControllerUnitTests.getCurrentCardSideClassName', function() {
             actual = getCurrentCardSideClassName(5, numPlayers);
             assert.strictEqual(actual, "PlayedCardContainer_Left");
             actual = getCurrentCardSideClassName(6, numPlayers);
-            assert.strictEqual(actual, null);
+            assert.strictEqual(actual, "PlayedCardContainer_Center");
             actual = getCurrentCardSideClassName(7, numPlayers);
             assert.strictEqual(actual, "PlayedCardContainer_Right");
             actual = getCurrentCardSideClassName(8, numPlayers);

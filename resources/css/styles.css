@@ -22,8 +22,8 @@ a {
 
 .Overlay {
     position: absolute;
-    width: 100%;
-    min-height: 100%;
+    width: min(100%, 650px);
+    height: min(100%, 845px);
     z-index: 10;
     background-color: rgba(0,0,0,0.8);
 }
@@ -98,11 +98,18 @@ a {
     position: relative;
     width: 650px;
     height: 650px;
-    left: 50%;
-    margin-left: -325px;
-    margin-right: 325px;
+    background-color: transparent;
+    z-index: 1;
+}
+
+#playedCardsBackgroundContainer {
+    position: absolute;
+    top: 18px;
+    width: 650px;
+    height: 650px;
     border-radius: 50%;
     background-color: #008800;
+    z-index: 0;
 }
 
 .DroppableTargetHighlight {
@@ -132,37 +139,20 @@ a {
 
 .PlayedCardContainer {
     background-color: rgba(00, 99, 37, 0.9);
-    /* left: max(0%, ) */
 }
 
 .PlayedCardContainer_Left {
     /* no- op */
 }
 
-@media all and (max-width: 650px) {
-    .PlayedCardContainer_Left {
-        left: 125px !important;
-    }
-}
-
 .PlayedCardContainer_Right {
     /* no- op */
 }
 
-@media all and (max-width: 650px) {
-    .PlayedCardContainer_Right {
-        left: 415px !important;
-    }
-}
-
-/*use left, right, center classes to select max left/right values*/
-
 #playedCardsContainer div#trumpCardContainer {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-53px, -87px);
-    margin: auto;
+    margin-left: auto;
+    margin-right: auto;
+    transform: translateY(238px);
 }
 
 #playedCardsContainer span.CardContainer {
@@ -186,6 +176,11 @@ a {
     animation-name: current-card-animation;
     animation-duration: 2s;
     animation-iteration-count: infinite;
+}
+
+#playerInfoContainer {
+    top: 650px;
+    z-index: 2;
 }
 
 #playerCardsContainer {
@@ -234,6 +229,34 @@ a {
 .SelfPlayerPlayedCard {
     left: 272px;
     top: 468px;
+}
+
+@media all and (max-width: 650px) {
+    body {
+        padding: 0px;
+        margin: 0px;
+    }
+
+    .PlayedCardContainer_Left {
+        left: 2vw !important;
+    }
+    
+    .PlayedCardContainer_Right {
+        left: calc(calc(100vw - 106px) - 2vw) !important;
+    }
+    
+    .PlayedCardContainer_Center, .SelfPlayerPlayedCard {
+        left: calc(50vw - 53px) !important;
+    }
+
+    #playedCardsContainer {
+        width: 100vw;
+    }
+
+    #playedCardsBackgroundContainer {
+        width: 100vw;
+        border-radius: 25%;
+    }
 }
 
 /* Auto generated */
