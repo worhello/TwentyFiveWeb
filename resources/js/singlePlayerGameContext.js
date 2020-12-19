@@ -116,11 +116,7 @@ class SinglePlayerGameContext {
 
         let orderedPlayers = this.getSortedListOfPlayers();
         if (winnerWithHighestScore.score >= 25) {
-            await this.eventsHandler.sendEventToViewController('resetPlayedCardsState', {});
-            await this.eventsHandler.sendEventToViewController('resetSelfPlayerState', {});
-            await this.eventsHandler.sendEventToViewController('showStartGameOverlay', {});
-
-            await this.eventsHandler.sendEventToViewController('showEndGameStats', { "sortedPlayers": orderedPlayers });
+            await this.eventsHandler.sendEventToViewController('showGameEndScreen', { "sortedPlayers": orderedPlayers });
         }
         else if (this.mustDealNewCards()) {
             await this.eventsHandler.sendEventToViewController('showEndOfHandStats', { "sortedPlayers": orderedPlayers });
@@ -173,8 +169,7 @@ class SinglePlayerGameContext {
 
     async playSelfCard(cardName) {
         let playedCard = this.selfPlayer.playCard(cardName);
-        await this.updateAndShowSelfPlayerEnabledCards();
-        await this.eventsHandler.sendEventToViewController('setSelfPlayerCardsEnabled', { "isEnabled": false });
+        await this.updateAndShowSelfPlayerEnabledCards(false);
         await this.playCardAsync(this.selfPlayer, playedCard);
 
         await this.playCardsAfterSelfAsync();
@@ -210,7 +205,7 @@ class SinglePlayerGameContext {
 
     async selfPlayerRobTrumpCard(droppedCardName) {
         this.robCard(this.selfPlayer, droppedCardName);
-        await this.updateAndShowSelfPlayerEnabledCards();
+        await this.updateAndShowSelfPlayerEnabledCards(false);
 
         await this.startRound();
     }
@@ -278,7 +273,7 @@ class SinglePlayerGameContext {
         if (this.mustDealNewCards()) {
             this.rotateDealer();
             this.dealAllPlayerCards();
-            await this.updateAndShowSelfPlayerEnabledCards();
+            await this.updateAndShowSelfPlayerEnabledCards(false);
             this.trumpCard = new this.gameLogic.TrumpCard();
             this.trumpCard.card = this.drawCard();
 
@@ -289,22 +284,18 @@ class SinglePlayerGameContext {
             }
         }
 
-        await this.eventsHandler.sendEventToViewController('setSelfPlayerCardsEnabled', { "isEnabled": false });
-        await this.eventsHandler.sendEventToViewController('resetPlayedCardsState', {});
-        await this.eventsHandler.sendEventToViewController('drawPlayedCardsPlaceholders', { "players": this.players });
-        await this.eventsHandler.sendEventToViewController('redrawTrumpCard', { "trumpCard": this.trumpCard });
+        await this.eventsHandler.sendEventToViewController('setupInitialState', { "isSelfPlayerCardsEnabled": false, "players": this.players, "trumpCard": this.trumpCard });
 
         await this.playCardsBeforeSelf();
 
         await this.highlightCurrentPlayer(this.selfPlayer);
-        await this.updateAndShowSelfPlayerEnabledCards();
-        await this.eventsHandler.sendEventToViewController('setSelfPlayerCardsEnabled', { "isEnabled": true });
+        await this.updateAndShowSelfPlayerEnabledCards(true);
     }
     
-    async updateAndShowSelfPlayerEnabledCards() {
+    async updateAndShowSelfPlayerEnabledCards(selfPlayerCardsEnabled) {
         let playedCards = this.getPlayedCards();
         this.gameLogic.updatePlayerCardsEnabledState(playedCards, this.selfPlayer.cards, this.trumpCard);
-        await this.eventsHandler.sendEventToViewController('showSelfPlayerHand', { "selfPlayer": this.selfPlayer });
+        await this.eventsHandler.sendEventToViewController('showSelfPlayerHand', { "selfPlayer": this.selfPlayer, "isEnabled": selfPlayerCardsEnabled });
     }
 
     async startGame() {
