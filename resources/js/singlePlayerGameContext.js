@@ -30,6 +30,7 @@ class SinglePlayerGameContext {
         this.selfPlayer = this.players.find(p => p.isSelfPlayer == true );
         this.cardDisplayDelay = cardDisplayDelay;
         this.roundPlayerAndCards = [];
+        this.currentWinningPlayerAndCard = {};
     }
 
     static sortPlayers(players) {
@@ -135,9 +136,24 @@ class SinglePlayerGameContext {
         return this.players.findIndex(p => p.isSelfPlayer == true);
     }
 
+    updateCurrentWinningCard(currentMove) {
+        let currentWinningCard = this.gameLogic.getWinningCard(this.trumpCard, this.getPlayedCards());
+        if (!this.currentWinningPlayerAndCard.card || !this.gameLogic.isSameCard(this.currentWinningPlayerAndCard.card, currentWinningCard)) { // is new card
+            this.currentWinningPlayerAndCard = currentMove;
+            return true;
+        }
+        return false;
+    }
+
     async playCardAsync(player, playedCard) {
+        let currentMove = { "player": player, "card": playedCard };
         await this.eventsHandler.sendEventToViewController('playCard', { "player": player, "playedCard": playedCard });
-        this.roundPlayerAndCards.push({ "player": player, "card": playedCard });
+
+        this.roundPlayerAndCards.push(currentMove);
+        if (this.updateCurrentWinningCard(currentMove)) {
+            await this.eventsHandler.sendEventToViewController('updateCurrentWinningCard', { "player": player, "card": playedCard });
+        }
+
         await this.defaultSleep();
     }
 

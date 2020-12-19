@@ -313,6 +313,10 @@ function updatePlayerCardsEnabledState(playedCards, cards, trumpCard) {
     }
 }
 
+function isSameCard(a, b) {
+    return a.suit === b.suit && a.value === b.value;
+}
+
 (function () {
     let gameLogicExports = {};
     gameLogicExports.getBestCardFromOptions = getBestCardFromOptions;
@@ -320,6 +324,7 @@ function updatePlayerCardsEnabledState(playedCards, cards, trumpCard) {
     gameLogicExports.canTrumpCardBeRobbed = canTrumpCardBeRobbed;
     gameLogicExports.updatePlayerCardsEnabledState = updatePlayerCardsEnabledState;
     gameLogicExports.isAceOfTrumps = isAceOfTrumps;
+    gameLogicExports.isSameCard = isSameCard;
     gameLogicExports.CardSuits = CardSuits;
     gameLogicExports.CardValues = CardValues;
     gameLogicExports.Card = Card;
