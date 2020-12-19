@@ -70,7 +70,7 @@ describe('SinglePlayerGameContext', function() {
             assert.strictEqual(gameContext.players[0].isSelfPlayer, false);
             assert.strictEqual(gameContext.players[1].isSelfPlayer, true);
             
-            assert.strictEqual(testEventsHandler.eventsToViewController.length, 12);
+            assert.strictEqual(testEventsHandler.eventsToViewController.length, 13);
             testEventsHandler.checkEventToViewControllerName(0, 'resetSelfPlayerState');
             testEventsHandler.checkEventToViewControllerName(1, 'showSelfPlayerHand');
             testEventsHandler.checkEventToViewControllerName(2, 'setupInitialState');
@@ -81,8 +81,9 @@ describe('SinglePlayerGameContext', function() {
             testEventsHandler.checkEventToViewControllerName(7, 'setupInitialState');
             testEventsHandler.checkEventToViewControllerName(8, 'highlightCurrentPlayer');
             testEventsHandler.checkEventToViewControllerName(9, 'playCard');
-            testEventsHandler.checkEventToViewControllerName(10, 'highlightCurrentPlayer');
-            testEventsHandler.checkEventToViewControllerName(11, 'showSelfPlayerHand');
+            testEventsHandler.checkEventToViewControllerName(10, 'updateCurrentWinningCard');
+            testEventsHandler.checkEventToViewControllerName(11, 'highlightCurrentPlayer');
+            testEventsHandler.checkEventToViewControllerName(12, 'showSelfPlayerHand');
         });
     });
 });

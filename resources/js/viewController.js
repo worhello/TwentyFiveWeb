@@ -443,6 +443,15 @@ class ViewController {
         this.setSelfPlayerCardsEnabled(true);
     }
 
+    updateCurrentWinningCard(player, card) {
+        let currentWinningCardNodes = document.getElementsByClassName("CurrentWinningCard");
+        for (let currentWinningCardNode of currentWinningCardNodes) {
+            currentWinningCardNode.classList.remove("CurrentWinningCard");
+        }
+        let playerCardContainer = document.getElementById('playedCard_' + player.id);
+        playerCardContainer.classList.add("CurrentWinningCard");
+    }
+
     async setupInitialState(isSelfPlayerCardsEnabled, players, trumpCard) {
         this.setSelfPlayerCardsEnabled(isSelfPlayerCardsEnabled);
         this.resetPlayedCardsState();
@@ -478,6 +487,8 @@ class ViewController {
             this.showEndOfHandStats(eventDetails);
         } else if (eventName === 'showSelfPlayerRobbingDialog') {
             this.showSelfPlayerRobbingDialog(eventDetails.trumpCard);
+        } else if (eventName === 'updateCurrentWinningCard') {
+            this.updateCurrentWinningCard(eventDetails.player, eventDetails.card);
         }
     }
 

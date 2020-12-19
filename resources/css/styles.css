@@ -178,6 +178,38 @@ a {
     animation-iteration-count: infinite;
 }
 
+@keyframes current-winning-card-animation {
+    0%   {border-color:transparent;}
+    50%  {border-color:rgba(5, 255, 255, 0.9);}
+    100% {border-color:transparent;}
+}
+
+.CurrentWinningCard {
+    border: 5px dotted;
+    border-color: transparent;
+    animation-name: current-winning-card-animation;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+}
+
+#currentCardsInfo {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-around;
+}
+
+#currentCardIndicator {
+    border: 3px dotted;
+    border-color: rgba(51, 255, 5, 0.9);;
+}
+
+#currentWinningCardIndicator {
+    border: 3px solid;
+    border-color: rgba(5, 255, 255, 0.9);
+}
+
 #playerInfoContainer {
     top: 650px;
     z-index: 2;
