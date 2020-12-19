@@ -50,15 +50,15 @@ function getPlayedCardDisplayTitle(player) {
 
 function getCurrentCardSideClassName(currentPlayerNum, numPlayers) {
     if (currentPlayerNum === 1) {
-        return null; // 1 is always the self player
+        return "PlayedCardContainer_Center"; // 1 is always the self player
     }
 
     if (numPlayers === 2 && currentPlayerNum === 2) {
-        return null; // center card
+        return "PlayedCardContainer_Center"; // center card
     }
 
     if (numPlayers % 2 === 0 && ((currentPlayerNum - 1) * 2) === numPlayers) {
-        return null;
+        return "PlayedCardContainer_Center";
     }
 
     let midwayPoint = Math.ceil(numPlayers / 2.0);
