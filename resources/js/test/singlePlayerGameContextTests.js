@@ -50,51 +50,39 @@ describe('SinglePlayerGameContext', function() {
             assert.strictEqual(gameContext.players[0].isSelfPlayer, true);
             assert.strictEqual(gameContext.players[1].isSelfPlayer, false);
 
-            assert.strictEqual(testEventsHandler.eventsToViewController.length, 9);
+            assert.strictEqual(testEventsHandler.eventsToViewController.length, 5);
             testEventsHandler.checkEventToViewControllerName(0, 'resetSelfPlayerState');
             testEventsHandler.checkEventToViewControllerName(1, 'showSelfPlayerHand');
-            testEventsHandler.checkEventToViewControllerName(2, 'setSelfPlayerCardsEnabled');
-            testEventsHandler.checkEventToViewControllerName(3, 'resetPlayedCardsState');
-            testEventsHandler.checkEventToViewControllerName(4, 'drawPlayedCardsPlaceholders');
-            testEventsHandler.checkEventToViewControllerName(5, 'redrawTrumpCard');
-            testEventsHandler.checkEventToViewControllerName(6, 'highlightCurrentPlayer');
-            testEventsHandler.checkEventToViewControllerName(7, 'showSelfPlayerHand');
-            testEventsHandler.checkEventToViewControllerName(8, 'setSelfPlayerCardsEnabled');
+            testEventsHandler.checkEventToViewControllerName(2, 'setupInitialState');
+            testEventsHandler.checkEventToViewControllerName(3, 'highlightCurrentPlayer');
+            testEventsHandler.checkEventToViewControllerName(4, 'showSelfPlayerHand');
         });
     });
-
+    
     describe('run game - other starts', function() {
         sortPlayersStub.callsFake(function(players) { players.reverse(); });
         let gameContext = new singlePlayerGameContext.SinglePlayerGameContext(testEventsHandler, 2, 0);
         it('other player starts', async () => {
             await gameContext.startGame();
-
+            
             assert.strictEqual(gameContext.players[0].isDealer, false);
             assert.strictEqual(gameContext.players[1].isDealer, true);
             assert.strictEqual(gameContext.players[0].isSelfPlayer, false);
             assert.strictEqual(gameContext.players[1].isSelfPlayer, true);
-
-            assert.strictEqual(testEventsHandler.eventsToViewController.length, 20);
+            
+            assert.strictEqual(testEventsHandler.eventsToViewController.length, 12);
             testEventsHandler.checkEventToViewControllerName(0, 'resetSelfPlayerState');
             testEventsHandler.checkEventToViewControllerName(1, 'showSelfPlayerHand');
-            testEventsHandler.checkEventToViewControllerName(2, 'setSelfPlayerCardsEnabled');
-            testEventsHandler.checkEventToViewControllerName(3, 'resetPlayedCardsState');
-            testEventsHandler.checkEventToViewControllerName(4, 'drawPlayedCardsPlaceholders');
-            testEventsHandler.checkEventToViewControllerName(5, 'redrawTrumpCard');
-            testEventsHandler.checkEventToViewControllerName(6, 'highlightCurrentPlayer');
-            testEventsHandler.checkEventToViewControllerName(7, 'showSelfPlayerHand');
-            testEventsHandler.checkEventToViewControllerName(8, 'setSelfPlayerCardsEnabled');
-            testEventsHandler.checkEventToViewControllerName(9, 'resetSelfPlayerState');
-            testEventsHandler.checkEventToViewControllerName(10, 'showSelfPlayerHand');
-            testEventsHandler.checkEventToViewControllerName(11, 'setSelfPlayerCardsEnabled');
-            testEventsHandler.checkEventToViewControllerName(12, 'resetPlayedCardsState');
-            testEventsHandler.checkEventToViewControllerName(13, 'drawPlayedCardsPlaceholders');
-            testEventsHandler.checkEventToViewControllerName(14, 'redrawTrumpCard');
-            testEventsHandler.checkEventToViewControllerName(15, 'highlightCurrentPlayer');
-            testEventsHandler.checkEventToViewControllerName(16, 'playCard');
-            testEventsHandler.checkEventToViewControllerName(17, 'highlightCurrentPlayer');
-            testEventsHandler.checkEventToViewControllerName(18, 'showSelfPlayerHand');
-            testEventsHandler.checkEventToViewControllerName(19, 'setSelfPlayerCardsEnabled');
+            testEventsHandler.checkEventToViewControllerName(2, 'setupInitialState');
+            testEventsHandler.checkEventToViewControllerName(3, 'highlightCurrentPlayer');
+            testEventsHandler.checkEventToViewControllerName(4, 'showSelfPlayerHand');
+            testEventsHandler.checkEventToViewControllerName(5, 'resetSelfPlayerState');
+            testEventsHandler.checkEventToViewControllerName(6, 'showSelfPlayerHand');
+            testEventsHandler.checkEventToViewControllerName(7, 'setupInitialState');
+            testEventsHandler.checkEventToViewControllerName(8, 'highlightCurrentPlayer');
+            testEventsHandler.checkEventToViewControllerName(9, 'playCard');
+            testEventsHandler.checkEventToViewControllerName(10, 'highlightCurrentPlayer');
+            testEventsHandler.checkEventToViewControllerName(11, 'showSelfPlayerHand');
         });
     });
 });

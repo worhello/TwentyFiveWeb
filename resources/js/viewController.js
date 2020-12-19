@@ -182,8 +182,8 @@ class ViewController {
         document.getElementById("endGameStatsContainer").appendChild(startButtonCtr);
     }
 
-    showEndGameStats(eventDetails) {
-        this.showEndOfHandOrGameStats(eventDetails.sortedPlayers, true, "Start New Game", function() {
+    showEndGameStats(sortedPlayers) {
+        this.showEndOfHandOrGameStats(sortedPlayers, true, "Start New Game", function() {
             showStartGameOverlay();
             clearChildrenOfElementById("endGameStatsContainer");
         });
@@ -254,22 +254,14 @@ class ViewController {
         if (this.selfPlayerCardsEnabled) {
             document.getElementById("playerCardsContainer").classList.remove('DisabledSelfPlayerCards');
             document.getElementById("playerInfoContainer").classList.add('PlayerCardsContainerEnabled');
-            window.scrollTo(0,document.body.scrollHeight);
+            window.scrollTo(0, document.body.scrollHeight);
         } else {
             document.getElementById("playerCardsContainer").classList.add('DisabledSelfPlayerCards');
             document.getElementById("playerInfoContainer").classList.remove('PlayerCardsContainerEnabled');
+            window.scrollTo(0, 0);
         }
         document.getElementById('playedCardsContainerWrapper').style.display = 'none';
         document.getElementById('playedCardsContainerWrapper').style.display = 'block';
-    }
-
-    redrawPlayerScores(players) {
-        for (let player of players) {
-            var playedCardContainerTitle = document.getElementById("playedCardTitle_" + player.id);
-            if (playedCardContainerTitle) {
-                playerNameLabel.textContent = getPlayedCardDisplayTitle(player);
-            }
-        }
     }
 
     buildTrumpCardPlaceholder() {
@@ -343,7 +335,7 @@ class ViewController {
         clearChildrenOfElementById("playerCardsContainer");
     }
 
-    showSelfPlayerHand(selfPlayer) {
+    showSelfPlayerHand(selfPlayer, cardsEnabled) {
         this.resetSelfPlayerState();
 
         let cards = selfPlayer.cards;
@@ -372,6 +364,8 @@ class ViewController {
 
             document.getElementById("playerCardsContainer").appendChild(cardNode);
         });
+
+        this.setSelfPlayerCardsEnabled(cardsEnabled);
     }
 
     redrawTrumpCard(trumpCard) {
@@ -449,37 +443,39 @@ class ViewController {
         this.setSelfPlayerCardsEnabled(true);
     }
 
+    async setupInitialState(isSelfPlayerCardsEnabled, players, trumpCard) {
+        this.setSelfPlayerCardsEnabled(isSelfPlayerCardsEnabled);
+        this.resetPlayedCardsState();
+        this.drawPlayedCardsPlaceholders(players);
+        this.redrawTrumpCard(trumpCard);
+    }
+    
+    async showGameEndScreen(orderedPlayers) {
+        this.resetPlayedCardsState();
+        this.resetSelfPlayerState();
+        showStartGameOverlay();
+        this.showEndGameStats(orderedPlayers);
+    }
+
     async handleEvent(eventName, eventDetails) {
-        if (eventName === 'highlightWinningPlayer') {
+        if (eventName === 'setupInitialState') {
+            await this.setupInitialState(eventDetails.isSelfPlayerCardsEnabled, eventDetails.players, eventDetails.trumpCard);
+        } else if (eventName === 'showGameEndScreen') {
+            await this.showGameEndScreen(eventDetails.sortedPlayers);
+        } else if (eventName === 'highlightWinningPlayer') {
             await this.highlightWinningCard(eventDetails.winningPlayerId);
         } else if (eventName === 'highlightCurrentPlayer') {
             await this.highlightCurrentPlayer(eventDetails.player);
-        } else if (eventName === 'redrawTrumpCard') {
-            this.redrawTrumpCard(eventDetails.trumpCard);
         } else if (eventName === 'showSelfPlayerHand') {
-            this.showSelfPlayerHand(eventDetails.selfPlayer);
-        } else if (eventName === 'redrawPlayerScores') {
-            this.redrawPlayerScores(eventDetails.players);
+            this.showSelfPlayerHand(eventDetails.selfPlayer, eventDetails.isEnabled);
         } else if (eventName === 'resetSelfPlayerState') {
             this.resetSelfPlayerState();
-        } else if (eventName === 'resetPlayedCardsState') {
-            this.resetPlayedCardsState();
-        } else if (eventName === 'drawPlayedCardsPlaceholders') {
-            this.drawPlayedCardsPlaceholders(eventDetails.players);
         } else if (eventName === 'setSelfPlayerCardsEnabled') {
             this.setSelfPlayerCardsEnabled(eventDetails.isEnabled);
         } else if (eventName === 'playCard') {
             this.playCard(eventDetails.player, eventDetails.playedCard);
-        } else if (eventName === 'showWinningPlayer') {
-            this.showWinningPlayer(eventDetails.winningPlayer);
-        } else if (eventName === 'showStartGameOverlay') {
-            showStartGameOverlay();
-        } else if (eventName === 'hideStartGameOverlay') {
-            this.hideStartGameOverlay();
         } else if (eventName === 'showEndOfHandStats') {
             this.showEndOfHandStats(eventDetails);
-        } else if (eventName === 'showEndGameStats') {
-            this.showEndGameStats(eventDetails);
         } else if (eventName === 'showSelfPlayerRobbingDialog') {
             this.showSelfPlayerRobbingDialog(eventDetails.trumpCard);
         }
