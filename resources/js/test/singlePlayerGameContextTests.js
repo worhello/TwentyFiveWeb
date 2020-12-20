@@ -65,16 +65,15 @@ describe('SinglePlayerGameContext', function() {
             var enabledCard = selfPlayer.cards.find(card => card.canPlay === true);
             assert.ok(enabledCard);
             await gameContext.playSelfCard(enabledCard.cardName);
-            assert.strictEqual(testEventsHandler.eventsToViewController.length, 9);
+            assert.strictEqual(testEventsHandler.eventsToViewController.length, 8);
             testEventsHandler.checkEventToViewControllerName(0, 'showSelfPlayerHand');
             testEventsHandler.checkEventToViewControllerName(1, 'playCard');
             testEventsHandler.checkEventToViewControllerName(2, 'updateCurrentWinningCard');
-            testEventsHandler.checkEventToViewControllerName(3, 'setSelfPlayerCardsEnabled');
-            testEventsHandler.checkEventToViewControllerName(4, 'highlightCurrentPlayer');
-            testEventsHandler.checkEventToViewControllerName(5, 'playCard');
-            testEventsHandler.checkEventToViewControllerName(6, 'highlightWinningPlayer');
-            testEventsHandler.checkEventToViewControllerName(7, 'setupInitialState');
-            testEventsHandler.checkEventToViewControllerName(8, 'highlightCurrentPlayer');
+            testEventsHandler.checkEventToViewControllerName(3, 'highlightCurrentPlayer');
+            testEventsHandler.checkEventToViewControllerName(4, 'playCard');
+            testEventsHandler.checkEventToViewControllerName(5, 'highlightWinningPlayer');
+            testEventsHandler.checkEventToViewControllerName(6, 'setupInitialState');
+            testEventsHandler.checkEventToViewControllerName(7, 'highlightCurrentPlayer');
 
             testEventsHandler.eventsToViewController = []; //reset
             assert.strictEqual(testEventsHandler.eventsToViewController.length, 0);
@@ -84,17 +83,16 @@ describe('SinglePlayerGameContext', function() {
             assert.ok(enabledCard);
             await gameContext.playSelfCard(enabledCard.cardName);
 
-            assert.strictEqual(testEventsHandler.eventsToViewController.length, 10);
+            assert.strictEqual(testEventsHandler.eventsToViewController.length, 9);
             testEventsHandler.checkEventToViewControllerName(0, 'showSelfPlayerHand');
             testEventsHandler.checkEventToViewControllerName(1, 'showSelfPlayerHand');
             testEventsHandler.checkEventToViewControllerName(2, 'playCard');
             testEventsHandler.checkEventToViewControllerName(3, 'updateCurrentWinningCard');
-            testEventsHandler.checkEventToViewControllerName(4, 'setSelfPlayerCardsEnabled');
-            testEventsHandler.checkEventToViewControllerName(5, 'highlightCurrentPlayer');
-            testEventsHandler.checkEventToViewControllerName(6, 'playCard');
-            testEventsHandler.checkEventToViewControllerName(7, 'highlightWinningPlayer');
-            testEventsHandler.checkEventToViewControllerName(8, 'setupInitialState');
-            testEventsHandler.checkEventToViewControllerName(9, 'highlightCurrentPlayer');
+            testEventsHandler.checkEventToViewControllerName(4, 'highlightCurrentPlayer');
+            testEventsHandler.checkEventToViewControllerName(5, 'playCard');
+            testEventsHandler.checkEventToViewControllerName(6, 'highlightWinningPlayer');
+            testEventsHandler.checkEventToViewControllerName(7, 'setupInitialState');
+            testEventsHandler.checkEventToViewControllerName(8, 'highlightCurrentPlayer');
 
             testEventsHandler.eventsToViewController = []; //reset
             assert.strictEqual(testEventsHandler.eventsToViewController.length, 0);
@@ -104,17 +102,16 @@ describe('SinglePlayerGameContext', function() {
             assert.ok(enabledCard);
             await gameContext.playSelfCard(enabledCard.cardName);
 
-            assert.strictEqual(testEventsHandler.eventsToViewController.length, 10);
+            assert.strictEqual(testEventsHandler.eventsToViewController.length, 9);
             testEventsHandler.checkEventToViewControllerName(0, 'showSelfPlayerHand');
             testEventsHandler.checkEventToViewControllerName(1, 'showSelfPlayerHand');
             testEventsHandler.checkEventToViewControllerName(2, 'playCard');
             testEventsHandler.checkEventToViewControllerName(3, 'updateCurrentWinningCard');
-            testEventsHandler.checkEventToViewControllerName(4, 'setSelfPlayerCardsEnabled');
-            testEventsHandler.checkEventToViewControllerName(5, 'highlightCurrentPlayer');
-            testEventsHandler.checkEventToViewControllerName(6, 'playCard');
-            testEventsHandler.checkEventToViewControllerName(7, 'highlightWinningPlayer');
-            testEventsHandler.checkEventToViewControllerName(8, 'setupInitialState');
-            testEventsHandler.checkEventToViewControllerName(9, 'highlightCurrentPlayer');
+            testEventsHandler.checkEventToViewControllerName(4, 'highlightCurrentPlayer');
+            testEventsHandler.checkEventToViewControllerName(5, 'playCard');
+            testEventsHandler.checkEventToViewControllerName(6, 'highlightWinningPlayer');
+            testEventsHandler.checkEventToViewControllerName(7, 'setupInitialState');
+            testEventsHandler.checkEventToViewControllerName(8, 'highlightCurrentPlayer');
 
             testEventsHandler.eventsToViewController = []; //reset
             assert.strictEqual(testEventsHandler.eventsToViewController.length, 0);
@@ -124,17 +121,16 @@ describe('SinglePlayerGameContext', function() {
             assert.ok(enabledCard);
             await gameContext.playSelfCard(enabledCard.cardName);
 
-            assert.strictEqual(testEventsHandler.eventsToViewController.length, 10);
+            assert.strictEqual(testEventsHandler.eventsToViewController.length, 9);
             testEventsHandler.checkEventToViewControllerName(0, 'showSelfPlayerHand');
             testEventsHandler.checkEventToViewControllerName(1, 'showSelfPlayerHand');
             testEventsHandler.checkEventToViewControllerName(2, 'playCard');
             testEventsHandler.checkEventToViewControllerName(3, 'updateCurrentWinningCard');
-            testEventsHandler.checkEventToViewControllerName(4, 'setSelfPlayerCardsEnabled');
-            testEventsHandler.checkEventToViewControllerName(5, 'highlightCurrentPlayer');
-            testEventsHandler.checkEventToViewControllerName(6, 'playCard');
-            testEventsHandler.checkEventToViewControllerName(7, 'highlightWinningPlayer');
-            testEventsHandler.checkEventToViewControllerName(8, 'setupInitialState');
-            testEventsHandler.checkEventToViewControllerName(9, 'highlightCurrentPlayer');
+            testEventsHandler.checkEventToViewControllerName(4, 'highlightCurrentPlayer');
+            testEventsHandler.checkEventToViewControllerName(5, 'playCard');
+            testEventsHandler.checkEventToViewControllerName(6, 'highlightWinningPlayer');
+            testEventsHandler.checkEventToViewControllerName(7, 'setupInitialState');
+            testEventsHandler.checkEventToViewControllerName(8, 'highlightCurrentPlayer');
 
             testEventsHandler.eventsToViewController = []; //reset
             assert.strictEqual(testEventsHandler.eventsToViewController.length, 0);
@@ -144,16 +140,15 @@ describe('SinglePlayerGameContext', function() {
             assert.ok(enabledCard);
             await gameContext.playSelfCard(enabledCard.cardName);
 
-            assert.strictEqual(testEventsHandler.eventsToViewController.length, 9);
+            assert.strictEqual(testEventsHandler.eventsToViewController.length, 8);
             testEventsHandler.checkEventToViewControllerName(0, 'showSelfPlayerHand');
             testEventsHandler.checkEventToViewControllerName(1, 'showSelfPlayerHand');
             testEventsHandler.checkEventToViewControllerName(2, 'playCard');
             testEventsHandler.checkEventToViewControllerName(3, 'updateCurrentWinningCard');
-            testEventsHandler.checkEventToViewControllerName(4, 'setSelfPlayerCardsEnabled');
-            testEventsHandler.checkEventToViewControllerName(5, 'highlightCurrentPlayer');
-            testEventsHandler.checkEventToViewControllerName(6, 'playCard');
-            testEventsHandler.checkEventToViewControllerName(7, 'highlightWinningPlayer');
-            testEventsHandler.checkEventToViewControllerName(8, 'showGameEndScreen');
+            testEventsHandler.checkEventToViewControllerName(4, 'highlightCurrentPlayer');
+            testEventsHandler.checkEventToViewControllerName(5, 'playCard');
+            testEventsHandler.checkEventToViewControllerName(6, 'highlightWinningPlayer');
+            testEventsHandler.checkEventToViewControllerName(7, 'showGameEndScreen');
         });
     });
 
