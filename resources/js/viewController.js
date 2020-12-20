@@ -133,11 +133,26 @@ class ViewController {
         hideAllOverlays();
     }
 
-    showEndOfHandOrGameStats(sortedPlayers, showWinningPlayer, buttonText, buttonFunc) {
+    showOverlayWithButton(overlayContent, buttonText, buttonFunc) {
         clearChildrenOfElementById("endGameStatsContainer");
         hideAllOverlays();
         document.getElementById("endGameStatsContainer").style.display = "block";
 
+        document.getElementById("endGameStatsContainer").appendChild(overlayContent);
+
+        let startButtonCtr = document.createElement("div");
+        startButtonCtr.classList.add("EndGamePlayerInfoContainer");
+        startButtonCtr.classList.add("EndGameStartNewGameButtonContainer");
+
+        var startNewGameButton = document.createElement("button");
+        startNewGameButton.textContent = buttonText;
+        startNewGameButton.addEventListener("click", buttonFunc);
+        startButtonCtr.appendChild(startNewGameButton);
+        document.getElementById("endGameStatsContainer").appendChild(startButtonCtr);
+    }
+
+    showEndOfHandOrGameStats(sortedPlayers, showWinningPlayer, buttonText, buttonFunc) {
+        let playersContainer = document.createElement("div");
         var first = true;
 
         for (let player of sortedPlayers) {
@@ -168,18 +183,10 @@ class ViewController {
                 outer.appendChild(rightStar);
             }
 
-            document.getElementById("endGameStatsContainer").appendChild(outer);
+            playersContainer.appendChild(outer);
         }
 
-        let startButtonCtr = document.createElement("div");
-        startButtonCtr.classList.add("EndGamePlayerInfoContainer");
-        startButtonCtr.classList.add("EndGameStartNewGameButtonContainer");
-
-        var startNewGameButton = document.createElement("button");
-        startNewGameButton.textContent = buttonText;
-        startNewGameButton.addEventListener("click", buttonFunc);
-        startButtonCtr.appendChild(startNewGameButton);
-        document.getElementById("endGameStatsContainer").appendChild(startButtonCtr);
+        this.showOverlayWithButton(playersContainer, buttonText, buttonFunc);
     }
 
     showEndGameStats(sortedPlayers) {
@@ -452,6 +459,16 @@ class ViewController {
         playerCardContainer.classList.add("CurrentWinningCard");
     }
 
+    showTutorialWinningReason(winningReasonMessage, continueFunc) {
+        let messageElem = document.createElement("span");
+        messageElem.textContent = winningReasonMessage;
+
+        this.showOverlayWithButton(messageElem, "Continue", function() {
+            hideAllOverlays();
+            continueFunc();
+        });
+    }
+
     async setupInitialState(isSelfPlayerCardsEnabled, players, trumpCard) {
         this.setSelfPlayerCardsEnabled(isSelfPlayerCardsEnabled);
         this.resetPlayedCardsState();
@@ -489,6 +506,8 @@ class ViewController {
             this.showSelfPlayerRobbingDialog(eventDetails.trumpCard);
         } else if (eventName === 'updateCurrentWinningCard') {
             this.updateCurrentWinningCard(eventDetails.player, eventDetails.card);
+        } else if (eventName === 'showTutorialWinningReason') {
+            this.showTutorialWinningReason(eventDetails.winningReasonMessage, eventDetails.continueFunc);
         }
     }
 
