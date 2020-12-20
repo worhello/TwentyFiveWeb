@@ -5,6 +5,7 @@
   "dependencies": {
     "assert": "latest",
     "mocha": "^8.2.1",
+    "nyc": "^15.1.0",
     "sinon": "^9.2.2"
   },
   "repository": {
@@ -12,6 +13,6 @@
     "url": "https://github.com/worhello/TwentyFiveWeb.git"
   },
   "scripts": {
-    "test": "mocha resources/js/test/*.js"
+    "test": "nyc mocha resources/js/test/*.js"
   }
 }
