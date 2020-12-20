@@ -22,7 +22,8 @@ a {
 
 .Overlay {
     position: absolute;
-    width: min(100%, 650px);
+    top: 0vh;
+    width: min(100vw, 650px);
     height: min(100%, 845px);
     z-index: 10;
     background-color: rgba(0,0,0,0.8);
@@ -213,7 +214,7 @@ a {
 #playerInfoContainer {
     top: 650px;
     z-index: 2;
-    background-color: rgba(0, 60, 0, 0.6);
+    background-color: rgba(0, 60, 0);
 }
 
 #playerCardsContainer {
