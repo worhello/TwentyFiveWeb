@@ -231,7 +231,6 @@ class SinglePlayerGameContext {
     }
 
     async playCardsAfterSelfAsync() {
-        await this.eventsHandler.sendEventToViewController('setSelfPlayerCardsEnabled', { "isEnabled": false });
         let selfPlayerIndex = this.getSelfPlayerIndex();
         await this.playCardsInRange(selfPlayerIndex + 1, this.players.length);
 
