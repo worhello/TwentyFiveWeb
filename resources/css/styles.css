@@ -114,9 +114,9 @@ a {
 }
 
 .DroppableTargetHighlight {
-    border-style: dashed;
-    border-color: azure;
-    border-width: 2px;
+    outline-style: dashed;
+    outline-color: azure;
+    outline-width: 2px;
     margin: 0px !important;
 }
 
@@ -166,28 +166,28 @@ a {
 }
 
 @keyframes current-card-animation {
-    0%   {border-color:transparent;}
-    50%  {border-color:rgba(51, 255, 5, 0.9);}
-    100% {border-color:transparent;}
+    0%   {outline-color:transparent;}
+    50%  {outline-color:rgba(51, 255, 5, 0.9);}
+    100% {outline-color:transparent;}
 }
 
 .CurrentCardAnimation {
-    border: 5px solid;
-    border-color: transparent;
+    outline: 5px solid;
+    outline-color: transparent;
     animation-name: current-card-animation;
     animation-duration: 2s;
     animation-iteration-count: infinite;
 }
 
 @keyframes current-winning-card-animation {
-    0%   {border-color:transparent;}
-    50%  {border-color:rgba(5, 255, 255, 0.9);}
-    100% {border-color:transparent;}
+    0%   {outline-color:transparent;}
+    50%  {outline-color:rgba(5, 255, 255, 0.9);}
+    100% {outline-color:transparent;}
 }
 
 .CurrentWinningCard {
-    border: 5px dotted;
-    border-color: transparent;
+    outline: 5px dotted;
+    outline-color: transparent;
     animation-name: current-winning-card-animation;
     animation-duration: 2s;
     animation-iteration-count: infinite;
@@ -202,13 +202,15 @@ a {
 }
 
 #currentCardIndicator {
-    border: 3px dotted;
-    border-color: rgba(51, 255, 5, 0.9);;
+    outline: 3px solid;
+    outline-color: rgba(51, 255, 5, 0.9);
+    padding: 2px;
 }
 
 #currentWinningCardIndicator {
-    border: 3px solid;
-    border-color: rgba(5, 255, 255, 0.9);
+    outline: 3px dotted;
+    outline-color: rgba(5, 255, 255, 0.9);
+    padding: 2px;
 }
 
 #playerInfoContainer {
