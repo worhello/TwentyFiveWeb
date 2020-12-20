@@ -33,7 +33,7 @@ describe('SinglePlayerGameContext', function() {
     shuffleDeckStub.callsFake(function(cards) { cards.sort(function(a, b) { return a.value > b.value ? 1 : -1; }); });
     describe('run game - self starts', function() {
         sortPlayersStub.callsFake(function(players) {});
-        let gameContext = new singlePlayerGameContext.SinglePlayerGameContext(testEventsHandler, 2, 0);
+        let gameContext = new singlePlayerGameContext.SinglePlayerGameContext(testEventsHandler, 2, 0, false);
         if ('for tests, deck should be sorted by value', function() {
             let deck = gameContext.deck;
             assert.strictEqual(deck.cards[0].value, gameLogic.CardValues.ace);
@@ -61,7 +61,7 @@ describe('SinglePlayerGameContext', function() {
     
     describe('run game - other starts', function() {
         sortPlayersStub.callsFake(function(players) { players.reverse(); });
-        let gameContext = new singlePlayerGameContext.SinglePlayerGameContext(testEventsHandler, 2, 0);
+        let gameContext = new singlePlayerGameContext.SinglePlayerGameContext(testEventsHandler, 2, 0, false);
         it('other player starts', async () => {
             await gameContext.startGame();
             
