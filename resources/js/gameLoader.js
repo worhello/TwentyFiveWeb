@@ -44,6 +44,11 @@ function onStartButtonClicked() {
 }
 
 function onTutorialButtonClicked() {
+    let userIsOk = window.confirm("Running a game in Tutorial mode results in having predefined card choices, to highlight the different card interactions and comparisons. You will generally have far more card choices available in a real game.\n\nClick OK to continue");
+    if (userIsOk === false) {
+        return;
+    }
+
     let numPlayers = 2;
     let isSinglePlayer = true;
     let cardDisplayDelay = getCardDisplayDelay();
