@@ -119,7 +119,7 @@ class SinglePlayerGameContext {
             return "You lost because you both played Hearts, where higher values are better";
         }
         else if (this.tutorialPlayCount === 5) {
-            return "You won because you did played a card of the Trumps suit vs a non-Trumps card";
+            return "You won because you played a card of the Trumps suit vs a non-Trumps card";
         }
         else if (this.tutorialPlayCount === 6) {
             return "You won because the Five of Trumps is the best card in the game";
