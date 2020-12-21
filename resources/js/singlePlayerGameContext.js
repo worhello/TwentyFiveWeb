@@ -106,6 +106,7 @@ class SinglePlayerGameContext {
     }
 
     getTutorialWinningReasonMessage() {
+        // TODO move these to the localisation manager / tutorial manager
         if (this.tutorialPlayCount === 1) {
             return "You won because you both played Diamonds, where higher values are better";
         }

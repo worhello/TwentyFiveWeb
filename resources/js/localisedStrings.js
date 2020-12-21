@@ -83,6 +83,30 @@ function getLocalisedStrings() {
             "translator note": "text for the dialog to confirm that you want to play the tutorial",
             "en/UK": "Running a game in Tutorial mode results in having predefined card choices, to highlight the different card interactions and comparisons. You will generally have far more card choices available in a real game.\n\nClick OK to continue"
         },
+        "trumpCardTitle": {
+            "translator note": "text above the trump card in the middle of the playable area",
+            "en/UK": "Trump Card"
+        },
+        "dealerTitle": {
+            "translator note": "text above the player who is the current dealer",
+            "en/UK": "Dealer"
+        },
+        "skipRobbingButtonText": {
+            "translator note": "button text for skipping your chance to rob the trump card",
+            "en/UK": "Skip"
+        },
+        "startNewGameButtonText": {
+            "translator note": "button text for starting a new game after completing a game",
+            "en/UK": "Start New Game"
+        },
+        "startNextRoundButtonText": {
+            "translator note": "button text for starting the next round in an ongoing game",
+            "en/UK": "Start Next Round"
+        },
+        "tutorialContinueToNextHand": {
+            "translator note": "button text for continuing to the next hard after receiving the explanation for the result of the previous round",
+            "en/UK": "Continue"
+        },
         "UnlocalisedString": "UNLOCALISED_STRING"
     }
 }
