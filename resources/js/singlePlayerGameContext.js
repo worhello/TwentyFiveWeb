@@ -408,7 +408,7 @@ class SinglePlayerGameContext {
 
             let canBeRobbedBySelfPlayer = this.attemptRobForEachPlayer();
             if (canBeRobbedBySelfPlayer) {
-                await this.eventsHandler.sendEventToViewController('showSelfPlayerRobbingDialog', { "trumpCard": this.trumpCard });
+                await this.eventsHandler.sendEventToViewController('showSelfPlayerRobbingDialog', { "trumpCard": this.trumpCard, "skipButtonDisabled": this.isTutorial });
                 return;
             }
         }

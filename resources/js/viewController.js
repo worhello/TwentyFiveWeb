@@ -417,7 +417,7 @@ class ViewController {
         window.alert(winningPlayer.name + " won!");
     }
 
-    showSelfPlayerRobbingDialog(trumpCard) {
+    showSelfPlayerRobbingDialog(trumpCard, skipButtonDisabled) {
         this.isRobbing = true;
         hideAllOverlays();
         var robbingCardOverlay = document.getElementById("selfPlayerRobbingCardOverlay");
@@ -430,7 +430,7 @@ class ViewController {
         }
 
         let title = document.createElement("div");
-        title.innerText = "Select a card from your hand below to drop for the Trump card";
+        title.textContent = this.localisationManager.getLocalisedString("robbingDialogText");
         robbingCardOverlay.appendChild(title);
 
         let cardNode = buildCardNode("Trump Card", trumpCard.card);
@@ -441,7 +441,9 @@ class ViewController {
         let viewController = this;
         skipButton.addEventListener("click", function() {
             viewController.eventsHandler.sendEventToGameContext('skipRobbingTrumpCard', {});
-        })
+            viewController.isRobbing = false;
+        });
+        skipButton.disabled = (skipButtonDisabled === true);
         robbingCardOverlay.appendChild(skipButton);
 
         document.getElementById("playedCardsContainer").appendChild(robbingCardOverlay);
@@ -504,7 +506,7 @@ class ViewController {
         } else if (eventName === 'showEndOfHandStats') {
             this.showEndOfHandStats(eventDetails);
         } else if (eventName === 'showSelfPlayerRobbingDialog') {
-            this.showSelfPlayerRobbingDialog(eventDetails.trumpCard);
+            this.showSelfPlayerRobbingDialog(eventDetails.trumpCard, eventDetails.skipButtonDisabled);
         } else if (eventName === 'updateCurrentWinningCard') {
             this.updateCurrentWinningCard(eventDetails.player, eventDetails.card);
         } else if (eventName === 'showTutorialWinningReason') {
