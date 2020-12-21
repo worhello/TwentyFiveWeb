@@ -25,7 +25,7 @@ function startGame(numPlayers, isSinglePlayer, cardDisplayDelay, isTutorialMode)
         return;
     }
 
-    window.gameViewController = new ViewController(window.eventsHandler);
+    window.gameViewController = new ViewController(window.eventsHandler, window.localisationManager);
 
     window.gameContext.startGame();
 

@@ -122,8 +122,9 @@ function calculateZIndices(numCards) {
 }
 
 class ViewController {
-    constructor(eventsHandler) {
+    constructor(eventsHandler, localisationManager) {
         this.eventsHandler = eventsHandler;
+        this.localisationManager = localisationManager;
         this.selfPlayerCardsEnabled = false;
         this.isRobbing = false;
         //this.debug_printAllAngles();
@@ -190,7 +191,7 @@ class ViewController {
     }
 
     showEndGameStats(sortedPlayers) {
-        this.showEndOfHandOrGameStats(sortedPlayers, true, "Start New Game", function() {
+        this.showEndOfHandOrGameStats(sortedPlayers, true, this.localisationManager.getLocalisedString("startNewGameButtonText"), function() {
             showStartGameOverlay();
             clearChildrenOfElementById("endGameStatsContainer");
         });
@@ -198,7 +199,7 @@ class ViewController {
 
     showEndOfHandStats(eventDetails) {
         let viewController = this;
-        this.showEndOfHandOrGameStats(eventDetails.sortedPlayers, false, "Start next round", function() {
+        this.showEndOfHandOrGameStats(eventDetails.sortedPlayers, false, this.localisationManager.getLocalisedString("startNextRoundButtonText"), function() {
             hideAllOverlays();
             viewController.eventsHandler.sendEventToGameContext('startNextRound', { "startingPlayerId": eventDetails.sortedPlayers[0].id });
         });
@@ -277,7 +278,7 @@ class ViewController {
         trumpCardContainer.id = 'trumpCardContainer';
 
         let trumpCardTitle = document.createElement("div");
-        trumpCardTitle.textContent = "Trump Card";
+        trumpCardTitle.textContent = this.localisationManager.getLocalisedString("trumpCardTitle");
         let trumpCardRobbed = document.createElement("div");
         trumpCardRobbed.id = "trumpCardRobbedText";
         trumpCardRobbed.style.display = "none";
@@ -298,7 +299,7 @@ class ViewController {
         
         if (player.isDealer === true) {
             let isDealerLabel = document.createElement("div");
-            isDealerLabel.textContent = "Dealer";
+            isDealerLabel.textContent = this.localisationManager.getLocalisedString("dealerTitle");
             playedCardContainer.appendChild(isDealerLabel);
         }
 
@@ -386,7 +387,7 @@ class ViewController {
         if (trumpCard.hasBeenStolen) {
             trumpCardContainer.classList.add("TrumpCardStolen");
             document.getElementById("trumpCardRobbedText").style.display = "block";
-            document.getElementById("trumpCardRobbedText").textContent = "Robbed by " + trumpCard.stolenBy.name;
+            document.getElementById("trumpCardRobbedText").textContent = "Robbed by " + trumpCard.stolenBy.name; // TODO - add localised strings with parameters
         }
     }
 
@@ -436,7 +437,7 @@ class ViewController {
         robbingCardOverlay.appendChild(cardNode);
         
         var skipButton = document.createElement("button");
-        skipButton.textContent = "Skip";
+        skipButton.textContent = this.localisationManager.getLocalisedString("skipRobbingButtonText");
         let viewController = this;
         skipButton.addEventListener("click", function() {
             viewController.eventsHandler.sendEventToGameContext('skipRobbingTrumpCard', {});
@@ -463,7 +464,7 @@ class ViewController {
         let messageElem = document.createElement("span");
         messageElem.textContent = winningReasonMessage;
 
-        this.showOverlayWithButton(messageElem, "Continue", function() {
+        this.showOverlayWithButton(messageElem, this.localisationManager.getLocalisedString("tutorialContinueToNextHand"), function() {
             hideAllOverlays();
             continueFunc();
         });
