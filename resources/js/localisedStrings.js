@@ -107,6 +107,10 @@ function getLocalisedStrings() {
             "translator note": "button text for continuing to the next hard after receiving the explanation for the result of the previous round",
             "en/UK": "Continue"
         },
+        "robbingDialogText": {
+            "translator note": "text for dialog when the player can rob the Trump card",
+            "en/UK": "Select a card from your hand below to drop for the Trump card"
+        },
         "UnlocalisedString": "UNLOCALISED_STRING"
     }
 }
