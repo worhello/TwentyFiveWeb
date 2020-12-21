@@ -1,7 +1,6 @@
 
 
 function getLocalisedStrings() {
-    // TODO aggregate strings from everywhere in the code to here
     return {
         "2PlayersOption": {
             "translator note" : "play a game with 2 players",
@@ -111,6 +110,10 @@ function getLocalisedStrings() {
             "translator note": "text for dialog when the player can rob the Trump card",
             "en/UK": "Select a card from your hand below to drop for the Trump card"
         },
+        "robbedByPlayerLabelText": {
+            "translator note": "label stating which player robbed the trump card",
+            "en/UK": "Robbed by {{param}}"
+        },
         "UnlocalisedString": "UNLOCALISED_STRING"
     }
 }
@@ -121,14 +124,21 @@ class LocalisedStringManager {
         this.localisedStrings = getLocalisedStrings();
     }
 
-    getLocalisedString(localisedStringId) {
+    getLocalisedString(localisedStringId, params) {
         var localisedString = "";
         var localisedStringObj = this.localisedStrings[localisedStringId];
         if (localisedStringObj) {
             localisedString = localisedStringObj[this.locale];
-        }
 
-        if (localisedString === "") {
+            if (localisedString && params && params.length > 0) {
+                let paramToken = "{{param}}";
+                for (let param of params) {
+                    localisedString = localisedString.replace(paramToken, param);
+                }
+            }
+        }
+        if (!localisedString)
+        {
             localisedString = this.localisedStrings["UnlocalisedString"];
         }
 
