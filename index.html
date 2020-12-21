@@ -8,6 +8,7 @@
         <script src="resources/js/singlePlayerGameContext.js"></script>
         <script src="resources/js/viewController.js"></script>
         <script src="resources/js/eventsHandler.js"></script>
+        <script src="resources/js/localisedStrings.js"></script>
         <script src="resources/js/gameLoader.js"></script>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
@@ -17,31 +18,30 @@
                 <div id="startGameContainer">
                     <div>
                         <select name="numPlayers" id="numPlayersSelect">
-                            <option value="2" selected>2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                            <option value="6">6</option>
-                            <option value="7">7</option>
-                            <option value="8">8</option>
-                            <option value="9">9</option>
-                            <option value="10">10</option>
+                            <option id="2PlayersOption" value="2" selected></option>
+                            <option id="3PlayersOption" value="3"></option>
+                            <option id="4PlayersOption" value="4"></option>
+                            <option id="5PlayersOption" value="5"></option>
+                            <option id="6PlayersOption" value="6"></option>
+                            <option id="7PlayersOption" value="7"></option>
+                            <option id="8PlayersOption" value="8"></option>
+                            <option id="9PlayersOption" value="9"></option>
+                            <option id="10PlayersOption" value="10"></option>
                         </select>
-                        <label for="numPlayersSelect"> players</label>
                     </div>
                     <div>
                         <input type="radio" id="singlePlayer" value="singlePlayer" name="playMode" checked>
-                        <label for="singlePlayer">Single Player</label><br/>
+                        <label id="singlePlayerLabel" for="singlePlayer"></label><br/>
                         <input type="radio" id="multiPlayer" name="playMode" value="multiPlayer" disabled title="Multiplayer coming soon...">
-                        <label for="multiPlayer">Multiplayer (Coming soon)</label>
+                        <label id="multiPlayerLabel" for="multiPlayer"></label>
                     </div>
                     <div>
                         <input type="radio" id="slow" value="slow" name="playSpeed">
-                        <label for="slow">Slow</label><br/>
+                        <label id="slowSpeedLabel" for="slow"></label><br/>
                         <input type="radio" id="medium" value="medium" name="playSpeed" checked>
-                        <label for="medium">Medium</label><br/>
+                        <label id="mediumSpeedLabel" for="medium"></label><br/>
                         <input type="radio" id="fast" value="fast" name="playSpeed">
-                        <label for="fast">Fast</label><br/>
+                        <label id="fastSpeedLabel" for="fast"></label><br/>
                     </div>
                     <div>
                         <button id="startGameButton">Start Game</button>
@@ -54,15 +54,15 @@
             <div id="endGameStatsContainer" class="Overlay">
             </div>
             <div id="gameContainer">
-                <div><a href="https://github.com/worhello/TwentyFiveWeb/wiki/Game-Rules" target="_blank">Game Rules</a></div>
+                <div><a id="gameRulesLabel" href="https://github.com/worhello/TwentyFiveWeb/wiki/Game-Rules" target="_blank"></a></div>
                 <div id="playedCardsBackgroundContainer"></div>
                 <div id="playedCardsContainerWrapper">
                     <div id="playedCardsContainer"></div>
                 </div>
                 <div id="playerInfoContainer">
                     <div id="currentCardsInfo">
-                        <div id="currentCardIndicator">Current Card</div>
-                        <div id="currentWinningCardIndicator">Current Winning Card</div>
+                        <div id="currentCardIndicator"></div>
+                        <div id="currentWinningCardIndicator"></div>
                     </div>
                     <div id="playerCardsContainer"></div>
                 </div>
