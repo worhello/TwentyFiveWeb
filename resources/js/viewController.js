@@ -387,7 +387,7 @@ class ViewController {
         if (trumpCard.hasBeenStolen) {
             trumpCardContainer.classList.add("TrumpCardStolen");
             document.getElementById("trumpCardRobbedText").style.display = "block";
-            document.getElementById("trumpCardRobbedText").textContent = "Robbed by " + trumpCard.stolenBy.name; // TODO - add localised strings with parameters
+            document.getElementById("trumpCardRobbedText").textContent = this.localisationManager.getLocalisedString("robbedByPlayerLabelText", [ trumpCard.stolenBy.name ]);
         }
     }
 
