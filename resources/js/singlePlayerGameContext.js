@@ -102,6 +102,13 @@ class SinglePlayerGameContext {
         return playersCopy;
     }
 
+    async showNextTutorialOverlayMessage(continueFunc) {
+        if (this.tutorialManager) {
+            let tutorialOverlayMessage = this.tutorialManager.getNextTutorialOverlayMessage();
+            await this.eventsHandler.sendEventToViewController('showTutorialOverlayMessage', { "tutorialOverlayMessage": tutorialOverlayMessage, "continueFunc": continueFunc });
+        }
+    }
+
     async evaluateRoundEnd() {
         let playedCards = this.getPlayedCards();
         let winningCard = this.gameLogic.getWinningCard(this.trumpCard, playedCards);
@@ -136,8 +143,7 @@ class SinglePlayerGameContext {
         };
 
         if (this.tutorialManager) {
-            let winningReasonMessage = this.tutorialManager.getNextWinningReasonMessage();
-            await this.eventsHandler.sendEventToViewController('showTutorialWinningReason', { "winningReasonMessage": winningReasonMessage, "continueFunc": continueFunc });
+            await showNextTutorialOverlayMessage(continueFunc);
         }
         else {
             await continueFunc();
@@ -353,9 +359,30 @@ class SinglePlayerGameContext {
         await this.eventsHandler.sendEventToViewController('showSelfPlayerHand', { "selfPlayer": this.selfPlayer, "isEnabled": selfPlayerCardsEnabled });
     }
 
+    async showNextTutorialIntroMessage() {
+        if (this.tutorialManager) {
+            let gameContext = this;
+            let continueFunc = async function() {
+                if (gameContext.tutorialManager.hasMoreIntroMessages()) {
+                    await gameContext.showNextTutorialIntroMessage();
+                }
+                else {
+                    await gameContext.startRound();
+                }
+            };
+            await this.showNextTutorialOverlayMessage(continueFunc);
+        }
+    }
+
     async startGame() {
         await this.eventsHandler.sendEventToViewController('resetSelfPlayerState', {});
-        await this.startRound();
+
+        if (this.tutorialManager) {
+            await this.showNextTutorialIntroMessage();
+        }
+        else {
+            await this.startRound();
+        }
     }
 
     drawCard() {

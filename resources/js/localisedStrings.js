@@ -126,6 +126,18 @@ function getLocalisedStrings() {
             "translator note": "fallback message in tutorial manager",
             "en/UK": "This is a tutorial message from the game context"
         },
+        "tutorialIntroOne": {
+            "translator note": "first tutorial intro message for before the first play, shows in an overlay",
+            "en/UK": "Welcome to Twenty Five!"
+        },
+        "tutorialIntroTwo": {
+            "translator note": "second tutorial intro message for before the first play, shows in an overlay",
+            "en/UK": "The aim of the game is to reach 25 points."
+        },
+        "tutorialIntroThree": {
+            "translator note": "third tutorial intro message for before the first play, shows in an overlay",
+            "en/UK": "Each round (known as a 'hand') is worth 5 points."
+        },
         "tutorialMoveOne": {
             "translator note": "tutorial message for the first play, shows in an overlay",
             "en/UK": "You won because you both played Diamonds, where higher values are better"
