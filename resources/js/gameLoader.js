@@ -12,12 +12,12 @@ function getCardDisplayDelay() {
     return 400;
 }
 
-function startGame(numPlayers, isSinglePlayer, cardDisplayDelay, isTutorialMode) {
+function startGame(numPlayers, isSinglePlayer, cardDisplayDelay, tutorialManager) {
 
     window.eventsHandler = new EventsHandler();
 
     if (isSinglePlayer) {
-        window.gameContext = new SinglePlayerGameContext(window.eventsHandler, numPlayers, cardDisplayDelay, isTutorialMode);
+        window.gameContext = new SinglePlayerGameContext(window.eventsHandler, numPlayers, cardDisplayDelay, tutorialManager, window.localisationManager);
     } else {
         // Long term TODO
         //window.gameContext = new SinglePlayerGameContext(window.eventsHandler, numPlayers, cardDisplayDelay);
@@ -40,7 +40,7 @@ function onStartButtonClicked() {
 
     let cardDisplayDelay = getCardDisplayDelay();
     
-    startGame(numPlayers, isSinglePlayer, cardDisplayDelay, false);
+    startGame(numPlayers, isSinglePlayer, cardDisplayDelay, null);
 }
 
 function onTutorialButtonClicked() {
@@ -52,7 +52,8 @@ function onTutorialButtonClicked() {
     let numPlayers = 2;
     let isSinglePlayer = true;
     let cardDisplayDelay = getCardDisplayDelay();
-    startGame(numPlayers, isSinglePlayer, cardDisplayDelay, true);
+    let tutorialManager = new window.tutorialManager.TutorialManager(window.localisationManager);
+    startGame(numPlayers, isSinglePlayer, cardDisplayDelay, tutorialManager);
 }
 
 function preloadCards() {
@@ -64,8 +65,9 @@ function preloadCards() {
 }
 
 function initLocalisation() {
-    let locale = "en/UK"; // TODO
-    window.localisationManager = new window.localisedStrings.LocalisedStringManager(locale);
+    let locale = "en/UK"; // TODO - see GH #115
+    let localisedStrings = window.localisedStrings.getLocalisedStrings();
+    window.localisationManager = new window.localisedStringManager.LocalisedStringManager(locale, localisedStrings);
 
     document.getElementById("2PlayersOption").textContent  = window.localisationManager.getLocalisedString("2PlayersOption");
     document.getElementById("3PlayersOption").textContent  = window.localisationManager.getLocalisedString("3PlayersOption");
@@ -99,6 +101,9 @@ window.onload = function() {
     this.document.getElementById("startTutorialButton").addEventListener("click", function() {
         onTutorialButtonClicked();
     });
+
+    // only needed for debugging purposes, can enable locally
+    this.document.getElementById("gameSpeedSelector").hidden = true;
 
     initLocalisation();
     showStartGameOverlay();

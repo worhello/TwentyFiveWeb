@@ -3,6 +3,9 @@
 let gameLogic = require('../gameLogic.js');
 let singlePlayerGameContext = require('../singlePlayerGameContext.js');
 
+let localisedStrings = require('../localisedStrings.js');
+let localisedStringsManager = require('../localisedStringsManager.js');
+
 let assert = require('assert');
 let sinon = require('sinon');
 
@@ -11,7 +14,7 @@ class TestEventsHandler {
         this.eventsToGameContext = [];
         this.eventsToViewController = [];
     }
-
+    
     async sendEventToGameContext(eventName, eventDetails) {
         this.eventsToGameContext.push({ "eventName": eventName, "eventDetails": eventDetails });
     }
@@ -19,7 +22,7 @@ class TestEventsHandler {
     async sendEventToViewController(eventName, eventDetails) {
         this.eventsToViewController.push({ "eventName": eventName, "eventDetails": eventDetails });
     }
-
+    
     checkEventToViewControllerName(eventIndex, expectedEventName) {
         assert.strictEqual(this.eventsToViewController[eventIndex].eventName, expectedEventName);
     }
@@ -27,13 +30,14 @@ class TestEventsHandler {
 
 describe('SinglePlayerGameContext', function() {
     let testEventsHandler = new TestEventsHandler();
+    let localisationManager = new localisedStringsManager.LocalisedStringManager("en/UK", localisedStrings.getLocalisedStrings());
 
     var sortPlayersStub = sinon.stub(singlePlayerGameContext.SinglePlayerGameContext, 'sortPlayers');
     var shuffleDeckStub = sinon.stub(gameLogic.Deck, 'shuffleDeck');
     shuffleDeckStub.callsFake(function(cards) { cards.sort(function(a, b) { return a.value > b.value ? 1 : -1; }); });
     describe('run game - self starts', function() {
         sortPlayersStub.callsFake(function(players) {});
-        let gameContext = new singlePlayerGameContext.SinglePlayerGameContext(testEventsHandler, 2, 0, false);
+        let gameContext = new singlePlayerGameContext.SinglePlayerGameContext(testEventsHandler, 2, 0, null, localisationManager);
         if ('for tests, deck should be sorted by value', function() {
             let deck = gameContext.deck;
             assert.strictEqual(deck.cards[0].value, gameLogic.CardValues.ace);
@@ -154,7 +158,7 @@ describe('SinglePlayerGameContext', function() {
 
     describe('run game - other starts', function() {
         sortPlayersStub.callsFake(function(players) { players.reverse(); });
-        let gameContext = new singlePlayerGameContext.SinglePlayerGameContext(testEventsHandler, 2, 0, false);
+        let gameContext = new singlePlayerGameContext.SinglePlayerGameContext(testEventsHandler, 2, 0, null, localisationManager);
         it('other player starts', async () => {
             testEventsHandler.eventsToViewController = [];
             await gameContext.startGame();

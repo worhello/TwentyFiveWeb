@@ -13,6 +13,6 @@
     "url": "https://github.com/worhello/TwentyFiveWeb.git"
   },
   "scripts": {
-    "test": "nyc --reporter=json mocha resources/js/test/*.js"
+    "test": "mocha resources/js/test/*.js"
   }
 }

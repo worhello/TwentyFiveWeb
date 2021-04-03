@@ -417,7 +417,7 @@ class ViewController {
         window.alert(winningPlayer.name + " won!");
     }
 
-    showSelfPlayerRobbingDialog(trumpCard, skipButtonDisabled) {
+    showSelfPlayerRobbingDialog(trumpCard, skipButtonDisabled, skipButtonDisabledReason) {
         this.isRobbing = true;
         hideAllOverlays();
         var robbingCardOverlay = document.getElementById("selfPlayerRobbingCardOverlay");
@@ -444,7 +444,10 @@ class ViewController {
             viewController.isRobbing = false;
         });
         skipButton.disabled = (skipButtonDisabled === true);
-        robbingCardOverlay.appendChild(skipButton);
+        var skipButtonContainer = document.createElement("div");
+        skipButtonContainer.appendChild(skipButton);
+        skipButtonContainer.title = skipButtonDisabledReason;
+        robbingCardOverlay.appendChild(skipButtonContainer);
 
         document.getElementById("playedCardsContainer").appendChild(robbingCardOverlay);
 
@@ -506,7 +509,7 @@ class ViewController {
         } else if (eventName === 'showEndOfHandStats') {
             this.showEndOfHandStats(eventDetails);
         } else if (eventName === 'showSelfPlayerRobbingDialog') {
-            this.showSelfPlayerRobbingDialog(eventDetails.trumpCard, eventDetails.skipButtonDisabled);
+            this.showSelfPlayerRobbingDialog(eventDetails.trumpCard, eventDetails.skipButtonDisabled, eventDetails.skipButtonDisabledReason);
         } else if (eventName === 'updateCurrentWinningCard') {
             this.updateCurrentWinningCard(eventDetails.player, eventDetails.card);
         } else if (eventName === 'showTutorialWinningReason') {

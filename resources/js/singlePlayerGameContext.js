@@ -21,21 +21,18 @@ function getPlayerModule() {
 }
 
 class SinglePlayerGameContext {
-    constructor(eventsHandler, numPlayers, cardDisplayDelay, isTutorial) {
+    constructor(eventsHandler, numPlayers, cardDisplayDelay, tutorialManager, localisationManager) {
         this.gameLogic = getGameLogicModule();
         this.eventsHandler = eventsHandler;
+        this.tutorialManager = tutorialManager;
+        this.localisationManager = localisationManager;
         this.deck = new this.gameLogic.Deck();
-        this.players = this.setupPlayers(numPlayers, !isTutorial);
+        this.players = this.setupPlayers(numPlayers, tutorialManager === null);
         this.trumpCard = new this.gameLogic.TrumpCard();
         this.selfPlayer = this.players.find(p => p.isSelfPlayer == true );
         this.cardDisplayDelay = cardDisplayDelay;
         this.roundPlayerAndCards = [];
         this.currentWinningPlayerAndCard = {};
-
-        this.isTutorial = isTutorial;
-        this.tutorialDeckSorted = false;
-        this.tutorialDealerSet = false;
-        this.tutorialPlayCount = 0;
     }
 
     static sortPlayers(players) {
@@ -43,18 +40,18 @@ class SinglePlayerGameContext {
             return .5 - Math.random();
         });
     }
-    
-    setupPlayers(numPlayers, sortPlayers) {
+
+    setupPlayers(numPlayers, sort) {
         var players = [];
     
         let playerModule = getPlayerModule();
     
-        players.push(new playerModule.Player("You", true));
+        players.push(new playerModule.Player(this.localisationManager.getLocalisedString("selfPlayerDisplayName"), true));
         for (var i = 1; i < numPlayers; i++) {
             players.push(new playerModule.Player("player_" + i));
         }
 
-        if (sortPlayers) {
+        if (sort) {
             SinglePlayerGameContext.sortPlayers(players);
         }
 
@@ -105,42 +102,6 @@ class SinglePlayerGameContext {
         return playersCopy;
     }
 
-    getTutorialWinningReasonMessage() {
-        // TODO move these to the localisation manager / tutorial manager
-        if (this.tutorialPlayCount === 1) {
-            return "You won because you both played Diamonds, where higher values are better";
-        }
-        else if (this.tutorialPlayCount === 2) {
-            return "You lost because you both played Spades, where lower values are better";
-        }
-        else if (this.tutorialPlayCount === 3) {
-            return "You won because you both played Clubs, where lower values are better";
-        }
-        else if (this.tutorialPlayCount === 4) {
-            return "You lost because you both played Hearts, where higher values are better";
-        }
-        else if (this.tutorialPlayCount === 5) {
-            return "You won because you played a card of the Trumps suit vs a non-Trumps card";
-        }
-        else if (this.tutorialPlayCount === 6) {
-            return "You won because the Five of Trumps is the best card in the game";
-        }
-        else if (this.tutorialPlayCount === 7) {
-            return "You lost because you did not play the Jack or Five of Trumps against the Ace of Hearts, which is ALWAYS the third best card in the deck";
-        }
-        else if (this.tutorialPlayCount === 8) {
-            return "You lost because you did not play the same suit as the first card";
-        }
-        else if (this.tutorialPlayCount === 9) {
-            return "You won because you played a picture card against a normal numbered card (e.g. not Five of Trumps)";
-        }
-        else if (this.tutorialPlayCount === 10) {
-            return "You won because the other player did not play Trumps against your Trumps card";
-        }
-
-        return "This is a tutorial message from the game context";
-    }
-
     async evaluateRoundEnd() {
         let playedCards = this.getPlayedCards();
         let winningCard = this.gameLogic.getWinningCard(this.trumpCard, playedCards);
@@ -174,9 +135,9 @@ class SinglePlayerGameContext {
             }
         };
 
-        if (this.isTutorial) {
-            this.tutorialPlayCount++;
-            await this.eventsHandler.sendEventToViewController('showTutorialWinningReason', { "winningReasonMessage": this.getTutorialWinningReasonMessage(), "continueFunc": continueFunc });
+        if (this.tutorialManager) {
+            let winningReasonMessage = this.tutorialManager.getNextWinningReasonMessage();
+            await this.eventsHandler.sendEventToViewController('showTutorialWinningReason', { "winningReasonMessage": winningReasonMessage, "continueFunc": continueFunc });
         }
         else {
             await continueFunc();
@@ -222,9 +183,8 @@ class SinglePlayerGameContext {
             let player = this.players[i];
             await this.highlightCurrentPlayer(player);
             let playedCards = this.getPlayedCards();
-            if (this.isTutorial) {
-                // always play the first card
-                await this.playCardAsync(player, player.playCard(player.cards[0].cardName));
+            if (this.tutorialManager) {
+                await this.playCardAsync(player, this.tutorialManager.playNextAiCard(player));
             } else {
                 await this.playCardAsync(player, player.aiPlayCard(playedCards, this.trumpCard));
             }
@@ -251,72 +211,29 @@ class SinglePlayerGameContext {
         await this.playCardsAfterSelfAsync();
     }
 
-    sortDeckForTutorial() {
-        let gameLogic = this.gameLogic;
-        let cardsToFindAndReplace = [
-            new gameLogic.Card(gameLogic.CardSuits.diamonds, gameLogic.CardValues.seven),
-            new gameLogic.Card(gameLogic.CardSuits.spades,   gameLogic.CardValues.three),
-            new gameLogic.Card(gameLogic.CardSuits.clubs,    gameLogic.CardValues.ace  ),
-            new gameLogic.Card(gameLogic.CardSuits.hearts,   gameLogic.CardValues.six  ),
-            new gameLogic.Card(gameLogic.CardSuits.hearts,   gameLogic.CardValues.three),
-
-            new gameLogic.Card(gameLogic.CardSuits.diamonds, gameLogic.CardValues.four ),
-            new gameLogic.Card(gameLogic.CardSuits.spades,   gameLogic.CardValues.two  ),
-            new gameLogic.Card(gameLogic.CardSuits.clubs,    gameLogic.CardValues.ten  ),
-            new gameLogic.Card(gameLogic.CardSuits.hearts,   gameLogic.CardValues.seven),
-            new gameLogic.Card(gameLogic.CardSuits.clubs,    gameLogic.CardValues.three),
-
-            new gameLogic.Card(gameLogic.CardSuits.hearts,   gameLogic.CardValues.four ),
-
-            new gameLogic.Card(gameLogic.CardSuits.clubs,    gameLogic.CardValues.nine ),
-            new gameLogic.Card(gameLogic.CardSuits.diamonds, gameLogic.CardValues.five ),
-            new gameLogic.Card(gameLogic.CardSuits.diamonds, gameLogic.CardValues.ten  ),
-            new gameLogic.Card(gameLogic.CardSuits.hearts,   gameLogic.CardValues.king ),
-            new gameLogic.Card(gameLogic.CardSuits.spades,   gameLogic.CardValues.queen),
-
-            new gameLogic.Card(gameLogic.CardSuits.diamonds, gameLogic.CardValues.jack ),
-            new gameLogic.Card(gameLogic.CardSuits.hearts,   gameLogic.CardValues.ace  ),
-            new gameLogic.Card(gameLogic.CardSuits.diamonds, gameLogic.CardValues.queen),
-            new gameLogic.Card(gameLogic.CardSuits.spades,   gameLogic.CardValues.four ),
-            new gameLogic.Card(gameLogic.CardSuits.hearts,   gameLogic.CardValues.jack ),
-
-            new gameLogic.Card(gameLogic.CardSuits.diamonds, gameLogic.CardValues.ace  )
-        ];
-
-        for (var i = 0; i < cardsToFindAndReplace.length; i++) {
-            let deckIndex = 51 - i;
-            let cardIndex = this.deck.cards.findIndex(function(card) { return gameLogic.isSameCard(card, cardsToFindAndReplace[i]); } );
-            var tmp = this.deck.cards[deckIndex];
-            this.deck.cards[deckIndex] = this.deck.cards[cardIndex];
-            this.deck.cards[cardIndex] = tmp;
-        }
-    }
-
     resetDeckIfNeeded() {
         let numCardsNeeded = (this.players.length * 5) + 1;
         if (this.deck.cards.length < numCardsNeeded) {
             this.deck = new Deck();
         }
 
-        if (this.isTutorial && this.tutorialDeckSorted === false) {
-            this.tutorialDeckSorted = true;
-            this.sortDeckForTutorial();
+        if (this.tutorialManager) {
+            this.tutorialManager.sortDeckIfNeeded(this.deck.cards);
         }
     }
 
     rotateDealer() {
-        var dealerIndex = this.players.findIndex(p => p.isDealer === true);
-        if (dealerIndex == -1) {
-            dealerIndex = this.players.length - 2;
-        } else {
-            this.players[dealerIndex].isDealer = false;
-        }
-        if (this.isTutorial && this.tutorialDealerSet === false) {
-            // other player is dealer first
-            this.tutorialDealerSet = true;
-            dealerIndex = (this.getSelfPlayerIndex() + 1) % this.players.length; 
+        if (this.tutorialManager) {
+            dealerIndex = this.tutorialManager.getDealerIndex(this.getSelfPlayerIndex());
         }
         else {
+            var dealerIndex = this.players.findIndex(p => p.isDealer === true);
+            if (dealerIndex == -1) {
+                dealerIndex = this.players.length - 2;
+            } else {
+                this.players[dealerIndex].isDealer = false;
+            }
+
             dealerIndex = (dealerIndex + 1) % this.players.length;
         }
         this.players[dealerIndex].isDealer = true;
@@ -408,7 +325,12 @@ class SinglePlayerGameContext {
 
             let canBeRobbedBySelfPlayer = this.attemptRobForEachPlayer();
             if (canBeRobbedBySelfPlayer) {
-                await this.eventsHandler.sendEventToViewController('showSelfPlayerRobbingDialog', { "trumpCard": this.trumpCard, "skipButtonDisabled": this.isTutorial });
+                await this.eventsHandler.sendEventToViewController('showSelfPlayerRobbingDialog', 
+                { 
+                    "trumpCard": this.trumpCard, 
+                    "skipButtonDisabled": this.tutorialManager !== null,
+                    "skipButtonDisabledReason": this.tutorialManager !== null ? this.tutorialManager.getSkipTrumpButtonDisabledReason() : ""
+                });
                 return;
             }
         }
@@ -423,13 +345,8 @@ class SinglePlayerGameContext {
     
     async updateAndShowSelfPlayerEnabledCards(selfPlayerCardsEnabled) {
         let playedCards = this.getPlayedCards();
-        if (this.isTutorial) {
-            for (var card of this.selfPlayer.cards) {
-                card.canPlay = false;
-            }
-            if (this.selfPlayer.cards.length > 0) {
-                this.selfPlayer.cards[0].canPlay = true;
-            }
+        if (this.tutorialManager) {
+            this.tutorialManager.enableCardsForPlay(this.selfPlayer.cards);
         } else {
             this.gameLogic.updatePlayerCardsEnabledState(playedCards, this.selfPlayer.cards, this.trumpCard);
         }

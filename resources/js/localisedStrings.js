@@ -114,41 +114,68 @@ function getLocalisedStrings() {
             "translator note": "label stating which player robbed the trump card",
             "en/UK": "Robbed by {{param}}"
         },
-        "UnlocalisedString": "UNLOCALISED_STRING"
-    }
-}
-
-class LocalisedStringManager {
-    constructor(locale) {
-        this.locale = locale;
-        this.localisedStrings = getLocalisedStrings();
-    }
-
-    getLocalisedString(localisedStringId, params) {
-        var localisedString = "";
-        var localisedStringObj = this.localisedStrings[localisedStringId];
-        if (localisedStringObj) {
-            localisedString = localisedStringObj[this.locale];
-
-            if (localisedString && params && params.length > 0) {
-                let paramToken = "{{param}}";
-                for (let param of params) {
-                    localisedString = localisedString.replace(paramToken, param);
-                }
-            }
-        }
-        if (!localisedString)
-        {
-            localisedString = this.localisedStrings["UnlocalisedString"];
-        }
-
-        return localisedString;
+        "selfPlayerDisplayName": {
+            "translator note": "label for your own card/move",
+            "en/UK": "You"
+        },
+        "selfPlayerDisplayName": {
+            "translator note": "label for your own card/move",
+            "en/UK": "You"
+        },
+        "defaultTutorialMessage": {
+            "translator note": "fallback message in tutorial manager",
+            "en/UK": "This is a tutorial message from the game context"
+        },
+        "tutorialMoveOne": {
+            "translator note": "tutorial message for the first play, shows in an overlay",
+            "en/UK": "You won because you both played Diamonds, where higher values are better"
+        },
+        "tutorialMoveTwo": {
+            "translator note": "tutorial message for the second play, shows in an overlay",
+            "en/UK": "You lost because you both played Spades, where lower values are better"
+        },
+        "tutorialMoveThree": {
+            "translator note": "tutorial message for the third play, shows in an overlay",
+            "en/UK": "You won because you both played Clubs, where lower values are better"
+        },
+        "tutorialMoveFour": {
+            "translator note": "tutorial message for the fourth play, shows in an overlay",
+            "en/UK": "You lost because you both played Hearts, where higher values are better"
+        },
+        "tutorialMoveFive": {
+            "translator note": "tutorial message for the fifth play, shows in an overlay",
+            "en/UK": "You won because you played a card of the Trumps suit vs a non-Trumps card"
+        },
+        "tutorialMoveSix": {
+            "translator note": "tutorial message for the sixth play, shows in an overlay",
+            "en/UK": "You won because the Five of Trumps is the best card in the game"
+        },
+        "tutorialMoveSeven": {
+            "translator note": "tutorial message for the seventh play, shows in an overlay",
+            "en/UK": "You lost because you did not play the Jack or Five of Trumps against the Ace of Hearts, which is ALWAYS the third best card in the deck"
+        },
+        "tutorialMoveEight": {
+            "translator note": "tutorial message for the eighth play, shows in an overlay",
+            "en/UK": "You lost because you did not play the same suit as the first card"
+        },
+        "tutorialMoveNine": {
+            "translator note": "tutorial message for the ninth play, shows in an overlay",
+            "en/UK": "You won because you played a picture card against a normal numbered card (e.g. not Five of Trumps)"
+        },
+        "tutorialMoveTen": {
+            "translator note": "tutorial message for the last play, shows in an overlay",
+            "en/UK": "You won because the other player did not play Trumps against your Trumps card"
+        },
+        "skipTrumpButtonDisabledReason": {
+            "translator note": "tutorial message for why the skip button is disabled for trump cards",
+            "en/UK": "In normal play you can choose to skip swapping a card for the trump card, here you MUST drop the indicated card"
+        },
     }
 }
 
 (function () {
     let e = {};
-    e.LocalisedStringManager = LocalisedStringManager;
+    e.getLocalisedStrings = getLocalisedStrings;
     
     if (typeof module !== 'undefined' && module.exports != null) {
         module.exports = e;

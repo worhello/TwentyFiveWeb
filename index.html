@@ -8,7 +8,9 @@
         <script src="resources/js/singlePlayerGameContext.js"></script>
         <script src="resources/js/viewController.js"></script>
         <script src="resources/js/eventsHandler.js"></script>
+        <script src="resources/js/localisedStringsManager.js"></script>
         <script src="resources/js/localisedStrings.js"></script>
+        <script src="resources/js/tutorialManager.js"></script>
         <script src="resources/js/gameLoader.js"></script>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
@@ -35,7 +37,7 @@
                         <input type="radio" id="multiPlayer" name="playMode" value="multiPlayer" disabled title="Multiplayer coming soon...">
                         <label id="multiPlayerLabel" for="multiPlayer"></label>
                     </div>
-                    <div>
+                    <div id="gameSpeedSelector">
                         <input type="radio" id="slow" value="slow" name="playSpeed">
                         <label id="slowSpeedLabel" for="slow"></label><br/>
                         <input type="radio" id="medium" value="medium" name="playSpeed" checked>
