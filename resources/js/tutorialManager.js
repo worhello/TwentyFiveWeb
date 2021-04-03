@@ -3,47 +3,78 @@
 class TutorialManager {
     constructor(localisedStringManager) {
         this.localisedStringManager = localisedStringManager;
-        this.playCount = 0;
+        this.playCount = -1;
         this.deckSorted = false;
         this.dealerSet = false;
+        this.introMessagesShown = 0;
     }
 
-    getNextWinningReasonMessage() {
+    getNextTutorialOverlayMessage() {
+        var messageType = "defaultTutorialMesssage";
+        if (this.hasMoreIntroMessages()) {
+            messageType = this.getNextIntroMessageType();
+        } else {
+            messageType = this.getNextWinningMessageType();
+        }
+
+        return this.localisedStringManager.getLocalisedString(messageType);
+    }
+
+    hasMoreIntroMessages() {
+        return this.introMessagesShown < 3;
+    }
+
+    getNextIntroMessageType() {
+        this.introMessagesShown++;
+        if (this.introMessagesShown === 1) {
+            return "tutorialIntroOne";
+        }
+        else if (this.introMessagesShown === 2) {
+            return "tutorialIntroTwo";
+        }
+        else if (this.introMessagesShown === 3) {
+            return "tutorialIntroThree";
+        }
+
+        return "defaultTutorialMesssage";
+    }
+
+    getNextWinningMessageType() {
         this.playCount++;
 
-        var winningReasonType = "defaultTutorialMesssage";
+        var messageType = "defaultTutorialMesssage";
         if (this.playCount === 1) {
-            winningReasonType = "tutorialMoveOne";
+            return "tutorialMoveOne";
         }
         else if (this.playCount === 2) {
-            winningReasonType = "tutorialMoveTwo";
+            return "tutorialMoveTwo";
         }
         else if (this.playCount === 3) {
-            winningReasonType = "tutorialMoveThree";
+            return "tutorialMoveThree";
         }
         else if (this.playCount === 4) {
-            winningReasonType = "tutorialMoveFour";
+            return "tutorialMoveFour";
         }
         else if (this.playCount === 5) {
-            winningReasonType = "tutorialMoveFive";
+            return "tutorialMoveFive";
         }
         else if (this.playCount === 6) {
-            winningReasonType = "tutorialMoveSix";
+            return "tutorialMoveSix";
         }
         else if (this.playCount === 7) {
-            winningReasonType = "tutorialMoveSeven";
+            return "tutorialMoveSeven";
         }
         else if (this.playCount === 8) {
-            winningReasonType = "tutorialMoveEight";
+            return "tutorialMoveEight";
         }
         else if (this.playCount === 9) {
-            winningReasonType = "tutorialMoveNine";
+            return "tutorialMoveNine";
         }
         else if (this.playCount === 10) {
-            winningReasonType = "tutorialMoveTen";
+            return "tutorialMoveTen";
         }
 
-        return this.localisedStringManager.getLocalisedString(winningReasonType);
+        return "defaultTutorialMesssage";
     }
 
     static getGameLogicModule() {

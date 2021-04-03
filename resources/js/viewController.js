@@ -465,9 +465,9 @@ class ViewController {
         playerCardContainer.classList.add("CurrentWinningCard");
     }
 
-    showTutorialWinningReason(winningReasonMessage, continueFunc) {
+    showTutorialOverlayMessage(tutorialOverlayMessage, continueFunc) {
         let messageElem = document.createElement("span");
-        messageElem.textContent = winningReasonMessage;
+        messageElem.textContent = tutorialOverlayMessage;
 
         this.showOverlayWithButton(messageElem, this.localisationManager.getLocalisedString("tutorialContinueToNextHand"), function() {
             hideAllOverlays();
@@ -512,8 +512,8 @@ class ViewController {
             this.showSelfPlayerRobbingDialog(eventDetails.trumpCard, eventDetails.skipButtonDisabled, eventDetails.skipButtonDisabledReason);
         } else if (eventName === 'updateCurrentWinningCard') {
             this.updateCurrentWinningCard(eventDetails.player, eventDetails.card);
-        } else if (eventName === 'showTutorialWinningReason') {
-            this.showTutorialWinningReason(eventDetails.winningReasonMessage, eventDetails.continueFunc);
+        } else if (eventName === 'showTutorialOverlayMessage') {
+            this.showTutorialOverlayMessage(eventDetails.tutorialOverlayMessage, eventDetails.continueFunc);
         }
     }
 
