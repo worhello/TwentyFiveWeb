@@ -1,10 +1,10 @@
 "use strict";
 
 let gameLogic = require('../gameLogic.js');
-let gameLogicTestCases = require('./gameLogicTestCases.json');
-let getBestCardTestCases = require('./getBestCardFromHandTestCases.json');
-let canTrumpCardBeRobbedTestCases = require('./canTrumpCardBeRobbedTestCases.json');
-let updatePlayerCardsEnabledStateTestCases = require('./updatePlayerCardsEnabledStateTestCases.json');
+let gameLogicTestCases = require('./Resources/gameLogicTestCases.json');
+let getBestCardTestCases = require('./Resources/getBestCardFromHandTestCases.json');
+let canTrumpCardBeRobbedTestCases = require('./Resources/canTrumpCardBeRobbedTestCases.json');
+let updatePlayerCardsEnabledStateTestCases = require('./Resources/updatePlayerCardsEnabledStateTestCases.json');
 let assert = require('assert');
 
 function buildSuitFromString(suitAsString) {
