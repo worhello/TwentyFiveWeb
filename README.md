@@ -1,7 +1,8 @@
 # TwentyFiveWeb
-Twenty Five Card Game Online
-
 [![worhello](https://circleci.com/gh/worhello/TwentyFiveWeb.svg?style=svg)](https://app.circleci.com/pipelines/github/worhello/TwentyFiveWeb)
+[![CodeQL](https://github.com/worhello/TwentyFiveWeb/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/worhello/TwentyFiveWeb/actions/workflows/codeql-analysis.yml)
+
+Twenty Five Card Game Online
 
 The game can be tried out [here](https://worhello.github.io/TwentyFiveWeb/)!
 
