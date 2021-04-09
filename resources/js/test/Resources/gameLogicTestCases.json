@@ -145,6 +145,15 @@
             "expectedCardIndex": 1
         },
         {
+            "name": "neither of the cards are trumps - same suits - number vs ace - diamonds",
+            "playedCards": [
+                { "suit": "diamonds", "value": "ten" },
+                { "suit": "diamonds", "value": "ace"}
+            ],
+            "trumpCard": { "suit": "hearts", "value": "two"},
+            "expectedCardIndex": 0
+        },
+        {
             "name": "first card played is trumps - clubs are trumps",
             "playedCards": [
                 { "suit": "clubs", "value": "queen"},
@@ -257,6 +266,15 @@
             "playedCards": [
                 { "suit": "diamonds", "value": "jack" },
                 { "suit": "diamonds", "value": "five"}
+            ],
+            "trumpCard": { "suit": "diamonds", "value": "ten"},
+            "expectedCardIndex": 1
+        },
+        {
+            "name": "both cards are trumps - both cards are normal cases - ace of trumps vs ten of trumps",
+            "playedCards": [
+                { "suit": "diamonds", "value": "ten" },
+                { "suit": "diamonds", "value": "ace"}
             ],
             "trumpCard": { "suit": "diamonds", "value": "ten"},
             "expectedCardIndex": 1
