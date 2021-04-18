@@ -12,24 +12,23 @@ function getCardDisplayDelay() {
     return 400;
 }
 
-function startGame(numPlayers, isSinglePlayer, cardDisplayDelay, tutorialManager) {
+async function startGame(numPlayers, isSinglePlayer, cardDisplayDelay, tutorialManager) {
 
     window.eventsHandler = new EventsHandler();
 
     if (isSinglePlayer) {
         window.gameContext = new SinglePlayerGameContext(window.eventsHandler, numPlayers, cardDisplayDelay, tutorialManager, window.localisationManager);
     } else {
-        // Long term TODO
-        //window.gameContext = new SinglePlayerGameContext(window.eventsHandler, numPlayers, cardDisplayDelay);
-        window.alert("Multiplayer not yet supported!");
-        return;
+        window.gameContext = new MultiPlayerGameContext(window.eventsHandler, numPlayers, window.localisationManager);
     }
 
     window.gameViewController = new ViewController(window.eventsHandler, window.localisationManager);
 
-    window.gameContext.startGame();
+    await window.gameContext.startGame();
 
-    window.gameViewController.hideStartGameOverlay();
+    if (isSinglePlayer) {
+        window.gameViewController.hideStartGameOverlay();
+    }
 }
 
 function onStartButtonClicked() {
@@ -81,6 +80,7 @@ function initLocalisation() {
 
     document.getElementById("singlePlayerLabel").textContent = window.localisationManager.getLocalisedString("singlePlayer");
     document.getElementById("multiPlayerLabel").textContent  = window.localisationManager.getLocalisedString("multiPlayerComingSoon");
+    //document.getElementById("multiPlayerLabel").textContent  = window.localisationManager.getLocalisedString("multiPlayer");
     document.getElementById("slowSpeedLabel").textContent    = window.localisationManager.getLocalisedString("slowSpeedLabel");
     document.getElementById("mediumSpeedLabel").textContent  = window.localisationManager.getLocalisedString("mediumSpeedLabel");
     document.getElementById("fastSpeedLabel").textContent    = window.localisationManager.getLocalisedString("fastSpeedLabel");
@@ -104,6 +104,9 @@ window.onload = function() {
 
     // only needed for debugging purposes, can enable locally
     this.document.getElementById("gameSpeedSelector").hidden = true;
+
+    // not fully finished out - can be enabled locally
+    this.document.getElementById("multiPlayer").disabled = true;
 
     initLocalisation();
     showStartGameOverlay();
