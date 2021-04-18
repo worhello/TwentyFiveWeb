@@ -49,6 +49,7 @@ class SinglePlayerGameContext {
         players.push(new playerModule.Player(this.localisationManager.getLocalisedString("selfPlayerDisplayName"), true));
         for (var i = 1; i < numPlayers; i++) {
             players.push(new playerModule.Player("player_" + i));
+            players[i].isAi = true;
         }
 
         if (sort) {
