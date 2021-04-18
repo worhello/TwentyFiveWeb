@@ -42,6 +42,10 @@ function getLocalisedStrings() {
             "translator note": "text for the label beside the radio button option for a single player game",
             "en/UK": "Single Player"
         },
+        "multiPlayer":{
+            "translator note": "text for the label beside the radio button option for a multiplayer game",
+            "en/UK": "Multiplayer"
+        },
         "multiPlayerComingSoon":{
             "translator note": "text for the label beside the radio button option for a multiplayer game",
             "en/UK": "Multiplayer (Coming soon)"
@@ -182,6 +186,18 @@ function getLocalisedStrings() {
             "translator note": "tutorial message for why the skip button is disabled for trump cards",
             "en/UK": "In normal play you can choose to skip swapping a card for the trump card, here you MUST drop the indicated card"
         },
+        "multiplayerGetNameReason": {
+            "translator note": "text telling user that their display name will be shown to everyone in the game",
+            "en/UK": "Your display name will be shown to all other players in this game"
+        },
+        "inputNamePlaceholder": {
+            "translator note": "placeholder text for display name input",
+            "en/UK": "Your display name"
+        },
+        "addAIsButton": {
+            "translator note": "button text to add AIs for multiplayer game",
+            "en/UK": "Add AIs"
+        }
     }
 }
 

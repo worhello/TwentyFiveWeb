@@ -152,7 +152,7 @@ class ViewController {
         document.getElementById("endGameStatsContainer").appendChild(startButtonCtr);
     }
 
-    showEndOfHandOrGameStats(sortedPlayers, showWinningPlayer, buttonText, buttonFunc) {
+    showEndOfHandOrGameStats(sortedPlayers, showWinningPlayer, showScores, buttonText, buttonFunc) {
         let playersContainer = document.createElement("div");
         var first = true;
 
@@ -164,18 +164,22 @@ class ViewController {
 
             let outer = document.createElement("div");
             outer.classList.add("EndGamePlayerInfoContainer");
+
             let playerNameCtr = document.createElement("div");
             playerNameCtr.textContent = player.name;
             playerNameCtr.classList.add("RightAlign");
-            let playerScoreCtr = document.createElement("div");
-            playerScoreCtr.textContent = player.score;
+            outer.appendChild(playerNameCtr);
+
+            if (showScores) {
+                let playerScoreCtr = document.createElement("div");
+                playerScoreCtr.textContent = player.score;
+                outer.appendChild(playerScoreCtr);
+            }
 
             if (player.isSelfPlayer) {
                 outer.classList.add("EndGameSelfPlayer");
             }
 
-            outer.appendChild(playerNameCtr);
-            outer.appendChild(playerScoreCtr);
 
             if (isWinner) {
                 outer.classList.add("EndGameWinningPlayer");
@@ -191,15 +195,15 @@ class ViewController {
     }
 
     showEndGameStats(sortedPlayers) {
-        this.showEndOfHandOrGameStats(sortedPlayers, true, this.localisationManager.getLocalisedString("startNewGameButtonText"), function() {
+        this.showEndOfHandOrGameStats(sortedPlayers, true, true, this.localisationManager.getLocalisedString("startNewGameButtonText"), function() {
             showStartGameOverlay();
             clearChildrenOfElementById("endGameStatsContainer");
         });
     }
-
+    
     showEndOfHandStats(eventDetails) {
         let viewController = this;
-        this.showEndOfHandOrGameStats(eventDetails.sortedPlayers, false, this.localisationManager.getLocalisedString("startNextRoundButtonText"), function() {
+        this.showEndOfHandOrGameStats(eventDetails.sortedPlayers, false, true, this.localisationManager.getLocalisedString("startNextRoundButtonText"), function() {
             hideAllOverlays();
             viewController.eventsHandler.sendEventToGameContext('startNextRound', { "startingPlayerId": eventDetails.sortedPlayers[0].id });
         });
@@ -489,6 +493,33 @@ class ViewController {
         this.showEndGameStats(orderedPlayers);
     }
 
+    showMultiplayerNameInput(continueFunc) {
+        let container = document.createElement("div");
+        let textElem = document.createElement("span");
+        textElem.textContent = this.localisationManager.getLocalisedString("multiplayerGetNameReason");
+        container.appendChild(textElem);
+        container.appendChild(document.createElement("br"));
+        let input = document.createElement("input");
+        input.type = "text";
+        input.placeholder = this.localisationManager.getLocalisedString("inputNamePlaceholder");
+        container.appendChild(input);
+        // TODO - tie button enabled to input not being empty
+
+        this.showOverlayWithButton(container, this.localisationManager.getLocalisedString("tutorialContinueToNextHand"), function() {
+            hideAllOverlays();
+            continueFunc(input.value);
+        });
+    }
+
+    updateMultiplayerWaitingScreen(waitingPlayers, needMorePlayers, continueFunc) {
+        let buttonText = needMorePlayers ? this.localisationManager.getLocalisedString("addAIsButton")
+                                         : this.localisationManager.getLocalisedString("startGameButton");
+        this.showEndOfHandOrGameStats(waitingPlayers, false, false, buttonText, function() {
+            hideAllOverlays();
+            continueFunc();
+        });
+    }
+
     async handleEvent(eventName, eventDetails) {
         if (eventName === 'setupInitialState') {
             await this.setupInitialState(eventDetails.isSelfPlayerCardsEnabled, eventDetails.players, eventDetails.trumpCard);
@@ -514,6 +545,10 @@ class ViewController {
             this.updateCurrentWinningCard(eventDetails.player, eventDetails.card);
         } else if (eventName === 'showTutorialOverlayMessage') {
             this.showTutorialOverlayMessage(eventDetails.tutorialOverlayMessage, eventDetails.continueFunc);
+        } else if (eventName === 'showMultiplayerNameInput') {
+            this.showMultiplayerNameInput(eventDetails.continueFunc);
+        } else if (eventName === 'updateMultiplayerWaitingScreen') {
+            this.updateMultiplayerWaitingScreen(eventDetails.waitingPlayers, eventDetails.needMorePlayers, eventDetails.continueFunc);
         }
     }
 
