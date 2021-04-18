@@ -18,6 +18,7 @@ class MultiPlayerGameContext {
         this.localisationManager = localisationManager;
         this.userId = "";
         this.gameId = "";
+        this.gameUrl = "";
         this.selfPlayer = {};
 
         this.websocket = new WebSocket('ws://localhost:8081');
@@ -35,7 +36,26 @@ class MultiPlayerGameContext {
         await this.eventsHandler.sendEventToViewController('showMultiplayerNameInput', {
             continueFunc: function (input) { gameContext.createGameWithName(input); }
         });
-        }
+    }
+
+    async joinGame(gameId) {
+        let gameContext = this;
+        await this.eventsHandler.sendEventToViewController('showMultiplayerNameInput', {
+            continueFunc: function (input) { gameContext.joinGameWithName(gameId, input); }
+        });
+    }
+
+    async joinGameWithName(gameId, playerName) {
+        let data = {
+            type: "joinGame",
+            gameId: gameId,
+            playerDetails: {
+                name: playerName,
+                userId: this.userId
+            }
+        };
+        this.websocket.send(JSON.stringify(data));
+    }
 
     createGameWithName(playerName) {
         // TODO lots of input validation needed here...
@@ -140,6 +160,7 @@ class MultiPlayerGameContext {
         this.eventsHandler.sendEventToViewController('updateMultiplayerWaitingScreen', {
             waitingPlayers: this.players,
             needMorePlayers: json.needMorePlayers,
+            gameUrl: this.gameUrl,
             continueFunc: function () { json.needMorePlayers? gameContext.requestAIs() : gameContext.startGameOnServer(); }
         });
 
@@ -204,12 +225,13 @@ class MultiPlayerGameContext {
 
     async handleWebsocketEvent(event) {
         let json = JSON.parse(event.data);
-        //console.log(json);
+        console.log(json);
         if (json.type == "wsConnectionAck") {
             this.userId = json.userId;
         }
-        else if (json.type == "createGameAck") {
+        else if (json.type == "createGameAck" || json.type == "joinGameAck") {
             this.gameId = json.gameId;
+            this.gameUrl = json.gameUrl;
         }
         else if (json.type == "playerListChanged") {
             this.handlePlayerListChanged(json);

@@ -197,6 +197,14 @@ function getLocalisedStrings() {
         "addAIsButton": {
             "translator note": "button text to add AIs for multiplayer game",
             "en/UK": "Add AIs"
+        },
+        "copyLinkToShareGameLabel": {
+            "translator note": "label text for a copyable URL to join a multiplayer game",
+            "en/UK": "You can share the link below with your friends to play a game together"
+        },
+        "copyLinkButtonText": {
+            "translator note": "button text for a button to copy a URL",
+            "en/UK": "Copy link"
         }
     }
 }

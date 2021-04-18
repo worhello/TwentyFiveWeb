@@ -154,6 +154,7 @@ class ViewController {
 
     showEndOfHandOrGameStats(sortedPlayers, showWinningPlayer, showScores, buttonText, buttonFunc) {
         let playersContainer = document.createElement("div");
+        playersContainer.id = "playersContainer";
         var first = true;
 
         for (let player of sortedPlayers) {
@@ -179,7 +180,6 @@ class ViewController {
             if (player.isSelfPlayer) {
                 outer.classList.add("EndGameSelfPlayer");
             }
-
 
             if (isWinner) {
                 outer.classList.add("EndGameWinningPlayer");
@@ -480,6 +480,7 @@ class ViewController {
     }
 
     async setupInitialState(isSelfPlayerCardsEnabled, players, trumpCard) {
+        hideAllOverlays();
         this.setSelfPlayerCardsEnabled(isSelfPlayerCardsEnabled);
         this.resetPlayedCardsState();
         this.drawPlayedCardsPlaceholders(players);
@@ -511,13 +512,36 @@ class ViewController {
         });
     }
 
-    updateMultiplayerWaitingScreen(waitingPlayers, needMorePlayers, continueFunc) {
+    updateMultiplayerWaitingScreen(waitingPlayers, needMorePlayers, gameUrl, continueFunc) {
         let buttonText = needMorePlayers ? this.localisationManager.getLocalisedString("addAIsButton")
                                          : this.localisationManager.getLocalisedString("startGameButton");
         this.showEndOfHandOrGameStats(waitingPlayers, false, false, buttonText, function() {
             hideAllOverlays();
             continueFunc();
         });
+        let gameUrlContainer = document.createElement("div");
+
+        let gameUrlLabel = document.createElement("span");
+        gameUrlLabel.textContent = this.localisationManager.getLocalisedString("copyLinkToShareGameLabel");
+
+        let gameUrlInput = document.createElement("input");
+        gameUrlInput.value = gameUrl;
+        gameUrlInput.readOnly = true;
+        gameUrlInput.size = 72;
+
+        let copyUrlButton = document.createElement("button");
+        copyUrlButton.textContent = this.localisationManager.getLocalisedString("copyLinkButtonText");
+        copyUrlButton.addEventListener("click", function() {
+            gameUrlInput.select();
+            document.execCommand("copy");
+        });
+
+        gameUrlContainer.appendChild(gameUrlLabel);
+        gameUrlContainer.appendChild(document.createElement("br"));
+        gameUrlContainer.appendChild(gameUrlInput);
+        gameUrlContainer.appendChild(copyUrlButton);
+
+        document.getElementById("playersContainer").appendChild(gameUrlContainer);
     }
 
     async handleEvent(eventName, eventDetails) {
@@ -548,7 +572,7 @@ class ViewController {
         } else if (eventName === 'showMultiplayerNameInput') {
             this.showMultiplayerNameInput(eventDetails.continueFunc);
         } else if (eventName === 'updateMultiplayerWaitingScreen') {
-            this.updateMultiplayerWaitingScreen(eventDetails.waitingPlayers, eventDetails.needMorePlayers, eventDetails.continueFunc);
+            this.updateMultiplayerWaitingScreen(eventDetails.waitingPlayers, eventDetails.needMorePlayers, eventDetails.gameUrl, eventDetails.continueFunc);
         }
     }
 
