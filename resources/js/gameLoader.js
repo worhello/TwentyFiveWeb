@@ -12,7 +12,7 @@ function getCardDisplayDelay() {
     return 400;
 }
 
-async function startGame(numPlayers, isSinglePlayer, cardDisplayDelay, tutorialManager) {
+async function startGame(numPlayers, isSinglePlayer, cardDisplayDelay, tutorialManager, gameId) {
 
     window.eventsHandler = new EventsHandler();
 
@@ -24,7 +24,12 @@ async function startGame(numPlayers, isSinglePlayer, cardDisplayDelay, tutorialM
 
     window.gameViewController = new ViewController(window.eventsHandler, window.localisationManager);
 
-    await window.gameContext.startGame();
+    if (!isSinglePlayer && gameId != null) {
+        await window.gameContext.joinGame(gameId);
+    }
+    else {
+        await window.gameContext.startGame();
+    }
 
     if (isSinglePlayer) {
         window.gameViewController.hideStartGameOverlay();
@@ -32,14 +37,17 @@ async function startGame(numPlayers, isSinglePlayer, cardDisplayDelay, tutorialM
 }
 
 function onStartButtonClicked() {
+    let isSinglePlayer = document.getElementById("singlePlayer").checked;
+    createGame(isSinglePlayer, null);
+}
+
+function createGame(isSinglePlayer, gameId) {
     let numPlayersSelect = document.getElementById("numPlayersSelect");
     let numPlayers = numPlayersSelect.options[numPlayersSelect.selectedIndex].value;
 
-    let isSinglePlayer = document.getElementById("singlePlayer").checked;
-
     let cardDisplayDelay = getCardDisplayDelay();
     
-    startGame(numPlayers, isSinglePlayer, cardDisplayDelay, null);
+    startGame(numPlayers, isSinglePlayer, cardDisplayDelay, null, gameId);
 }
 
 function onTutorialButtonClicked() {
@@ -52,7 +60,7 @@ function onTutorialButtonClicked() {
     let isSinglePlayer = true;
     let cardDisplayDelay = getCardDisplayDelay();
     let tutorialManager = new window.tutorialManager.TutorialManager(window.localisationManager);
-    startGame(numPlayers, isSinglePlayer, cardDisplayDelay, tutorialManager);
+    startGame(numPlayers, isSinglePlayer, cardDisplayDelay, tutorialManager, null);
 }
 
 function preloadCards() {
@@ -94,6 +102,12 @@ function initLocalisation() {
     document.getElementById("currentWinningCardIndicator").textContent = window.localisationManager.getLocalisedString("currentWinningCardIndicator");
 }
 
+function getGameIdParam() {
+    let url = window.location.search;
+    let params = new URLSearchParams(url);
+    return params.get('gameId');
+}
+
 window.onload = function() {
     this.document.getElementById("startGameButton").addEventListener("click", function() {
         onStartButtonClicked();
@@ -111,4 +125,9 @@ window.onload = function() {
     initLocalisation();
     showStartGameOverlay();
     preloadCards();
+
+    let gameId = getGameIdParam();
+    if (gameId != null) {
+        createGame(false, gameId);
+    }
 }
