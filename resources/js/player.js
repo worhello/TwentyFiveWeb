@@ -8,6 +8,7 @@ class Player {
         this.score = 0;
         this.isSelfPlayer = isSelfPlayer;
         this.isDealer = false;
+        this.isAi = false;
     }
 
     static getPlayerId(name) {
