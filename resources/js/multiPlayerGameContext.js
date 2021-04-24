@@ -81,8 +81,7 @@ class MultiPlayerGameContext {
     startGameOnServer() {
         let data = {
             type: "startGame",
-            gameId: this.gameId,
-            playWithAiIfNeeded: true
+            gameId: this.gameId
         };
         this.websocket.send(JSON.stringify(data));
     }
@@ -153,6 +152,9 @@ class MultiPlayerGameContext {
         let convertToTfPlayer = function(details) {
             var p = new playersModule.Player(details.name, details.userId == gameContext.userId);
             p.id = details.userId;
+            if (p.isSelfPlayer) {
+                p.showDisplayName = true;
+            }
             return p;
         }
         this.players = playersDetails.map(convertToTfPlayer);
@@ -173,7 +175,7 @@ class MultiPlayerGameContext {
         this.trumpCard = json.gameInfo.trumpCard;
         this.selfPlayer.id = json.playerDetails.userId;
         this.selfPlayer.cards = json.playerDetails.cards;
-        this.players = json.players;
+        this.players = json.players; // TODO this overwrites important info, let's change this
         this.players.find(p => p.id == this.selfPlayer.id).isSelfPlayer = true;
         await this.eventsHandler.sendEventToViewController('showSelfPlayerHand', { "selfPlayer": this.selfPlayer, "isEnabled": false });
         await this.eventsHandler.sendEventToViewController('setupInitialState', { "isSelfPlayerCardsEnabled": false, "players": this.players, "trumpCard": this.trumpCard });

@@ -122,9 +122,9 @@ function getLocalisedStrings() {
             "translator note": "label for your own card/move",
             "en/UK": "You"
         },
-        "selfPlayerDisplayName": {
-            "translator note": "label for your own card/move",
-            "en/UK": "You"
+        "selfPlayerInListofPlayersName": {
+            "translator note": "label indicating which player is you in the list of players in multiplayer lobby/end of game/round stats",
+            "en/UK": "{{param}} (You)"
         },
         "defaultTutorialMessage": {
             "translator note": "fallback message in tutorial manager",
