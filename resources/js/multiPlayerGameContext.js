@@ -103,7 +103,7 @@ class MultiPlayerGameContext {
             gameId: this.gameId,
             userId: this.userId,
             droppedCardDetails: {
-                droppedCardName: droppedCardName
+                cardName: droppedCardName
             }
         };
         this.websocket.send(JSON.stringify(data));
@@ -152,9 +152,6 @@ class MultiPlayerGameContext {
         let convertToTfPlayer = function(details) {
             var p = new playersModule.Player(details.name, details.userId == gameContext.userId);
             p.id = details.userId;
-            if (p.isSelfPlayer) {
-                p.showDisplayName = true;
-            }
             return p;
         }
         this.players = playersDetails.map(convertToTfPlayer);
@@ -225,6 +222,14 @@ class MultiPlayerGameContext {
         }
     }
 
+    async handleRobTrumpCardAvailable(json) {
+        await this.eventsHandler.sendEventToViewController('showSelfPlayerRobbingDialog', { 
+            "trumpCard": json.trumpCard, 
+            "skipButtonDisabled": false,
+            "skipButtonDisabledReason": ""
+        });
+    }
+
     async handleWebsocketEvent(event) {
         let json = JSON.parse(event.data);
         console.log(json);
@@ -261,6 +266,9 @@ class MultiPlayerGameContext {
         }
         else if (json.type == "scoresUpdated") {
             await this.handleScoresUpdated(json);
+        }
+        else if (json.type == "robTrumpCardAvailable") {
+            await this.handleRobTrumpCardAvailable(json);
         }
     }
 }
