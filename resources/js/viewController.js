@@ -127,6 +127,7 @@ class ViewController {
         this.localisationManager = localisationManager;
         this.selfPlayerCardsEnabled = false;
         this.isRobbing = false;
+        this.isMultiplayer = false;
         //this.debug_printAllAngles();
     }
 
@@ -179,6 +180,9 @@ class ViewController {
 
             if (player.isSelfPlayer) {
                 outer.classList.add("EndGameSelfPlayer");
+                if (this.isMultiplayer) {
+                    playerNameCtr.textContent = this.localisationManager.getLocalisedString("selfPlayerInListofPlayersName", [ player.name ]);
+                }
             }
 
             if (isWinner) {
@@ -495,6 +499,7 @@ class ViewController {
     }
 
     showMultiplayerNameInput(continueFunc) {
+        this.isMultiplayer = true;
         let container = document.createElement("div");
         let textElem = document.createElement("span");
         textElem.textContent = this.localisationManager.getLocalisedString("multiplayerGetNameReason");
