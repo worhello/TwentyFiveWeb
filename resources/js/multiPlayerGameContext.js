@@ -205,6 +205,7 @@ class MultiPlayerGameContext {
 
     async handleGameFinished(json) {
         await this.eventsHandler.sendEventToViewController('showGameEndScreen', { "sortedPlayers": json.orderedPlayers });
+        this.websocket.close();
     }
 
     async handleRoundFinished(json) {
