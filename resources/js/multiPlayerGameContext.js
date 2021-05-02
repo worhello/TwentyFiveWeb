@@ -21,7 +21,7 @@ class MultiPlayerGameContext {
         this.gameUrl = "";
         this.selfPlayer = {};
 
-        //this.websocket = new WebSocket('ws://localhost:8081');
+        //this.websocket = new WebSocket('ws://localhost:3000');
         this.websocket = new WebSocket('ws://twentyfive-env.eba-jrs4p3fm.eu-west-1.elasticbeanstalk.com/');
         let gameContext = this;
         this.websocket.onmessage = function (event) {
@@ -246,6 +246,12 @@ class MultiPlayerGameContext {
         });
     }
 
+    async handlePlayersReadyForNextRoundChanged(json) {
+        await this.eventsHandler.sendEventToViewController('playersReadyForNextRoundChanged', { 
+            "readyPlayerIds": json.readyPlayerIds
+        });
+    }
+
     async handleWebsocketEvent(event) {
         let json = JSON.parse(event.data);
         console.log(json);
@@ -285,6 +291,9 @@ class MultiPlayerGameContext {
         }
         else if (json.type == "robTrumpCardAvailable") {
             await this.handleRobTrumpCardAvailable(json);
+        }
+        else if (json.type == "playersReadyForNextRoundChanged") {
+            await this.handlePlayersReadyForNextRoundChanged(json);
         }
     }
 

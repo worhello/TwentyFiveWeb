@@ -209,6 +209,10 @@ function getLocalisedStrings() {
         "connectingLabel": {
             "translator note": "label which appears when trying to connect to server",
             "en/UK": "Connecting..."
+        },
+        "playerReady": {
+            "translator note": "indicate that this player is ready for next round",
+            "en/UK": "{{param}} (Ready)"
         }
     }
 }
