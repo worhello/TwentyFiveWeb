@@ -46,10 +46,6 @@ function getLocalisedStrings() {
             "translator note": "text for the label beside the radio button option for a multiplayer game",
             "en/UK": "Multiplayer"
         },
-        "multiPlayerComingSoon":{
-            "translator note": "text for the label beside the radio button option for a multiplayer game",
-            "en/UK": "Multiplayer (Coming soon)"
-        },
         "slowSpeedLabel":{
             "translator note": "text for the label beside the radio button option for a slower paced game (transitions every 600ms)",
             "en/UK": "Slow"
@@ -205,6 +201,14 @@ function getLocalisedStrings() {
         "copyLinkButtonText": {
             "translator note": "button text for a button to copy a URL",
             "en/UK": "Copy link"
+        },
+        "multiplayerConnectionDropped": {
+            "translator note": "alert message when connection to the server drops",
+            "en/UK": "The connection to the server was lost or could not be started. Please try again later"
+        },
+        "connectingLabel": {
+            "translator note": "label which appears when trying to connect to server",
+            "en/UK": "Connecting..."
         }
     }
 }

@@ -21,28 +21,43 @@ class MultiPlayerGameContext {
         this.gameUrl = "";
         this.selfPlayer = {};
 
-        this.websocket = new WebSocket('ws://localhost:8081');
+        //this.websocket = new WebSocket('ws://localhost:8081');
+        this.websocket = new WebSocket('ws://twentyfive-env.eba-jrs4p3fm.eu-west-1.elasticbeanstalk.com/');
         let gameContext = this;
         this.websocket.onmessage = function (event) {
             gameContext.handleWebsocketEvent(event);
         };
         this.websocket.onopen = function (event) {
             console.log("connected successfully");
+            gameContext.handleWebsocketConnected();
         };
+        this.websocket.onerror = function(event) {
+            gameContext.handleWebsocketError();
+        }
     }
 
     async startGame() {
         let gameContext = this;
-        await this.eventsHandler.sendEventToViewController('showMultiplayerNameInput', {
-            continueFunc: function (input) { gameContext.createGameWithName(input); }
-        });
+        await this.showMultiPlayerNameInput(function (input) { gameContext.createGameWithName(input); });
     }
-
+    
     async joinGame(gameId) {
         let gameContext = this;
-        await this.eventsHandler.sendEventToViewController('showMultiplayerNameInput', {
-            continueFunc: function (input) { gameContext.joinGameWithName(gameId, input); }
-        });
+        await this.showMultiPlayerNameInput(function (input) { gameContext.joinGameWithName(gameId, input); });
+    }
+
+    async showMultiPlayerNameInput(continueFunc) {
+        if (this.websocket.readyState == WebSocket.OPEN) {
+            await this.eventsHandler.sendEventToViewController('showMultiplayerNameInput', {
+                continueFunc: continueFunc
+            });
+        }
+        else {
+            let gameContext = this;
+            this.websocket.onopen = function(event) {
+                gameContext.showMultiPlayerNameInput(continueFunc);
+            }
+        }
     }
 
     async joinGameWithName(gameId, playerName) {
@@ -271,5 +286,13 @@ class MultiPlayerGameContext {
         else if (json.type == "robTrumpCardAvailable") {
             await this.handleRobTrumpCardAvailable(json);
         }
+    }
+
+    handleWebsocketConnected() {
+        this.eventsHandler.sendEventToViewController('multiplayerConnected', {});
+    }
+
+    handleWebsocketError() {
+        this.eventsHandler.sendEventToViewController('multiplayerErrorHappened', {});
     }
 }
