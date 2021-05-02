@@ -170,6 +170,7 @@ class ViewController {
             outer.classList.add("EndGamePlayerInfoContainer");
 
             let playerNameCtr = document.createElement("div");
+            playerNameCtr.id = "PlayerNameCtr_" + player.id;
             playerNameCtr.textContent = player.name;
             playerNameCtr.classList.add("RightAlign");
             outer.appendChild(playerNameCtr);
@@ -210,7 +211,9 @@ class ViewController {
     showEndOfHandStats(eventDetails) {
         let viewController = this;
         this.showEndOfHandOrGameStats(eventDetails.sortedPlayers, false, true, this.localisationManager.getLocalisedString("startNextRoundButtonText"), function() {
-            hideAllOverlays();
+            if (this.isMultiplayer == false) {
+                hideAllOverlays();
+            }
             viewController.eventsHandler.sendEventToGameContext('startNextRound', { "startingPlayerId": eventDetails.sortedPlayers[0].id });
         });
     }
@@ -562,6 +565,15 @@ class ViewController {
         showStartGameOverlay();
     }
 
+    handlePlayersReadyForNextRoundChanged(readyPlayerIds) {
+        for (let playerId of readyPlayerIds) {
+            let nameCtr = document.getElementById("PlayerNameCtr_" + playerId);
+            if (nameCtr) {
+                nameCtr.textContent = this.localisationManager.getLocalisedString("playerReady", nameCtr.textContent);
+            }
+        }
+    }
+
     async handleEvent(eventName, eventDetails) {
         if (eventName === 'setupInitialState') {
             await this.setupInitialState(eventDetails.isSelfPlayerCardsEnabled, eventDetails.players, eventDetails.trumpCard);
@@ -595,6 +607,8 @@ class ViewController {
             this.handleMultiplayerConnected();
         } else if (eventName == 'multiplayerErrorHappened') {
             this.handleMultiplayerError();
+        } else if (eventName == 'playersReadyForNextRoundChanged') {
+            this.handlePlayersReadyForNextRoundChanged(eventDetails.readyPlayerIds);
         }
     }
 
