@@ -34,6 +34,10 @@ async function startGame(numPlayers, isSinglePlayer, cardDisplayDelay, tutorialM
     if (isSinglePlayer) {
         window.gameViewController.hideStartGameOverlay();
     }
+    else {
+        document.getElementById("startGameButton").disabled = true;
+        document.getElementById("connectingLabel").hidden = false;
+    }
 }
 
 function onStartButtonClicked() {
@@ -87,19 +91,20 @@ function initLocalisation() {
     document.getElementById("10PlayersOption").textContent = window.localisationManager.getLocalisedString("10PlayersOption");
 
     document.getElementById("singlePlayerLabel").textContent = window.localisationManager.getLocalisedString("singlePlayer");
-    document.getElementById("multiPlayerLabel").textContent  = window.localisationManager.getLocalisedString("multiPlayerComingSoon");
-    //document.getElementById("multiPlayerLabel").textContent  = window.localisationManager.getLocalisedString("multiPlayer");
+    document.getElementById("multiPlayerLabel").textContent  = window.localisationManager.getLocalisedString("multiPlayer");
     document.getElementById("slowSpeedLabel").textContent    = window.localisationManager.getLocalisedString("slowSpeedLabel");
     document.getElementById("mediumSpeedLabel").textContent  = window.localisationManager.getLocalisedString("mediumSpeedLabel");
     document.getElementById("fastSpeedLabel").textContent    = window.localisationManager.getLocalisedString("fastSpeedLabel");
     
     document.getElementById("startGameButton").textContent     = window.localisationManager.getLocalisedString("startGameButton");
     document.getElementById("startTutorialButton").textContent = window.localisationManager.getLocalisedString("startTutorialButton");
+    document.getElementById("connectingLabel").textContent     = window.localisationManager.getLocalisedString("connectingLabel");
 
-    document.getElementById("gameRulesLabel").textContent    = window.localisationManager.getLocalisedString("gameRulesLabel");
+    document.getElementById("gameRulesLabel").textContent = window.localisationManager.getLocalisedString("gameRulesLabel");
 
     document.getElementById("currentCardIndicator").textContent        = window.localisationManager.getLocalisedString("currentCardIndicator");
     document.getElementById("currentWinningCardIndicator").textContent = window.localisationManager.getLocalisedString("currentWinningCardIndicator");
+
 }
 
 function getGameIdParam() {
@@ -118,9 +123,6 @@ window.onload = function() {
 
     // only needed for debugging purposes, can enable locally
     this.document.getElementById("gameSpeedSelector").hidden = true;
-
-    // not fully finished out - can be enabled locally
-    this.document.getElementById("multiPlayer").disabled = true;
 
     initLocalisation();
     showStartGameOverlay();

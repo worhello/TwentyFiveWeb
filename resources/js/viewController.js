@@ -40,6 +40,8 @@ function hideAllOverlays() {
 function showStartGameOverlay() {
     hideAllOverlays();
     document.getElementById("menuContainer").style.display = "block";
+    document.getElementById("startGameButton").disabled = false;
+    document.getElementById("connectingLabel").hidden = true;
 }
 
 function getPlayedCardDisplayTitle(player) {
@@ -490,7 +492,7 @@ class ViewController {
         this.drawPlayedCardsPlaceholders(players);
         this.redrawTrumpCard(trumpCard);
     }
-    
+
     async showGameEndScreen(orderedPlayers) {
         this.resetPlayedCardsState();
         this.resetSelfPlayerState();
@@ -549,6 +551,17 @@ class ViewController {
         document.getElementById("playersContainer").appendChild(gameUrlContainer);
     }
 
+    handleMultiplayerConnected() {
+        //
+    }
+
+    handleMultiplayerError() {
+        window.alert(this.localisationManager.getLocalisedString("multiplayerConnectionDropped"));
+        this.resetPlayedCardsState();
+        this.resetSelfPlayerState();
+        showStartGameOverlay();
+    }
+
     async handleEvent(eventName, eventDetails) {
         if (eventName === 'setupInitialState') {
             await this.setupInitialState(eventDetails.isSelfPlayerCardsEnabled, eventDetails.players, eventDetails.trumpCard);
@@ -578,6 +591,10 @@ class ViewController {
             this.showMultiplayerNameInput(eventDetails.continueFunc);
         } else if (eventName === 'updateMultiplayerWaitingScreen') {
             this.updateMultiplayerWaitingScreen(eventDetails.waitingPlayers, eventDetails.needMorePlayers, eventDetails.gameUrl, eventDetails.continueFunc);
+        } else if (eventName == 'multiplayerConnected') {
+            this.handleMultiplayerConnected();
+        } else if (eventName == 'multiplayerErrorHappened') {
+            this.handleMultiplayerError();
         }
     }
 
