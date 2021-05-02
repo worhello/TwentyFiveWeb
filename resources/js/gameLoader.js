@@ -17,9 +17,9 @@ async function startGame(numPlayers, isSinglePlayer, cardDisplayDelay, tutorialM
     window.eventsHandler = new EventsHandler();
 
     if (isSinglePlayer) {
-        window.gameContext = new SinglePlayerGameContext(window.eventsHandler, numPlayers, cardDisplayDelay, tutorialManager, window.localisationManager);
+        window.gameContext = new SinglePlayerGameContext2(window.eventsHandler, numPlayers, cardDisplayDelay, tutorialManager, window.localisationManager);
     } else {
-        window.gameContext = new MultiPlayerGameContext(window.eventsHandler, numPlayers, window.localisationManager);
+        window.gameContext = new MultiPlayerGameContext(window.eventsHandler, numPlayers);
     }
 
     window.gameViewController = new ViewController(window.eventsHandler, window.localisationManager);
@@ -68,7 +68,8 @@ function onTutorialButtonClicked() {
 }
 
 function preloadCards() {
-    let cards = buildDeck();
+    let deck = new Deck();
+    let cards = deck.cards;
     for (let card of cards) {
         var _img = new Image();
         _img.src = card.url;
@@ -123,6 +124,9 @@ window.onload = function() {
 
     // only needed for debugging purposes, can enable locally
     this.document.getElementById("gameSpeedSelector").hidden = true;
+
+    // disabling for now, needs work to not crash
+    this.document.getElementById("startTutorialButton").hidden = true;
 
     initLocalisation();
     showStartGameOverlay();
