@@ -12,12 +12,14 @@ function getCardDisplayDelay() {
     return 400;
 }
 
-async function startGame(numPlayers, isSinglePlayer, cardDisplayDelay, tutorialManager, gameId) {
+async function startGame(numPlayers, isSinglePlayer, cardDisplayDelay, isTutorial, gameId) {
 
     window.eventsHandler = new EventsHandler();
 
-    if (isSinglePlayer) {
-        window.gameContext = new SinglePlayerGameContext2(window.eventsHandler, numPlayers, cardDisplayDelay, tutorialManager, window.localisationManager);
+    if (isTutorial) {
+        window.gameContext = new TutorialGameContext(window.eventsHandler, numPlayers, cardDisplayDelay, window.localisationManager);
+    } else if (isSinglePlayer) {
+        window.gameContext = new SinglePlayerGameContext2(window.eventsHandler, numPlayers, cardDisplayDelay, window.localisationManager);
     } else {
         window.gameContext = new MultiPlayerGameContext(window.eventsHandler, numPlayers);
     }
@@ -31,7 +33,7 @@ async function startGame(numPlayers, isSinglePlayer, cardDisplayDelay, tutorialM
         await window.gameContext.startGame();
     }
 
-    if (isSinglePlayer) {
+    if (isSinglePlayer && !isTutorial) {
         window.gameViewController.hideStartGameOverlay();
     }
     else {
@@ -51,7 +53,7 @@ function createGame(isSinglePlayer, gameId) {
 
     let cardDisplayDelay = getCardDisplayDelay();
     
-    startGame(numPlayers, isSinglePlayer, cardDisplayDelay, null, gameId);
+    startGame(numPlayers, isSinglePlayer, cardDisplayDelay, false, gameId);
 }
 
 function onTutorialButtonClicked() {
@@ -63,8 +65,7 @@ function onTutorialButtonClicked() {
     let numPlayers = 2;
     let isSinglePlayer = true;
     let cardDisplayDelay = getCardDisplayDelay();
-    let tutorialManager = new window.tutorialManager.TutorialManager(window.localisationManager);
-    startGame(numPlayers, isSinglePlayer, cardDisplayDelay, tutorialManager, null);
+    startGame(numPlayers, isSinglePlayer, cardDisplayDelay, true, null);
 }
 
 function preloadCards() {
@@ -124,9 +125,6 @@ window.onload = function() {
 
     // only needed for debugging purposes, can enable locally
     this.document.getElementById("gameSpeedSelector").hidden = true;
-
-    // disabling for now, needs work to not crash
-    this.document.getElementById("startTutorialButton").hidden = true;
 
     initLocalisation();
     showStartGameOverlay();

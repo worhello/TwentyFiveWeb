@@ -28,7 +28,6 @@ function buildCardNode(playerId, card) {
 }
 
 function hideAllOverlays() {
-    console.log("hit hideAllOverlays");
     document.getElementById("menuContainer").style.display = "none";
     document.getElementById("endGameStatsContainer").style.display = "none";
 
@@ -480,7 +479,6 @@ class ViewController {
     }
 
     showTutorialOverlayMessage(tutorialOverlayMessage, continueFunc) {
-        console.log("git vc.showTutorialOverlayMessage");
         let messageElem = document.createElement("span");
         messageElem.textContent = tutorialOverlayMessage;
 
@@ -577,7 +575,6 @@ class ViewController {
     }
 
     async handleEvent(eventName, eventDetails) {
-        console.log("vc handleEvent, name=" + eventName);
         if (eventName === 'setupInitialState') {
             await this.setupInitialState(eventDetails.isSelfPlayerCardsEnabled, eventDetails.players, eventDetails.trumpCard);
         } else if (eventName === 'showGameEndScreen') {
