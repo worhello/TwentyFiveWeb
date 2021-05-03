@@ -1,6 +1,6 @@
 "use strict";
 
-class SinglePlayerGameContext2 extends GameContext {
+class SinglePlayerGameContext extends GameContext {
     constructor(eventsHandler, numPlayers, cardDisplayDelay, localisationManager) {
         super(eventsHandler);
         this.gameId = "SinglePlayerGameId";
@@ -106,11 +106,11 @@ class SinglePlayerGameContext2 extends GameContext {
 
 (function () {
     let e = {};
-    e.SinglePlayerGameContext2 = SinglePlayerGameContext2;
+    e.SinglePlayerGameContext = SinglePlayerGameContext;
     
     if (typeof module !== 'undefined' && module.exports != null) {
         module.exports = e;
     } else {
-        window.SinglePlayerGameContext2Module = e;
+        window.SinglePlayerGameContextModule = e;
     }
 })();
