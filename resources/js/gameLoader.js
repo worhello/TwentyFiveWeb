@@ -19,7 +19,7 @@ async function startGame(numPlayers, isSinglePlayer, cardDisplayDelay, isTutoria
     if (isTutorial) {
         window.gameContext = new TutorialGameContext(window.eventsHandler, numPlayers, cardDisplayDelay, window.localisationManager);
     } else if (isSinglePlayer) {
-        window.gameContext = new SinglePlayerGameContext2(window.eventsHandler, numPlayers, cardDisplayDelay, window.localisationManager);
+        window.gameContext = new SinglePlayerGameContext(window.eventsHandler, numPlayers, cardDisplayDelay, window.localisationManager);
     } else {
         window.gameContext = new MultiPlayerGameContext(window.eventsHandler, numPlayers);
     }

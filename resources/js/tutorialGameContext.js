@@ -3,10 +3,10 @@
 class TutorialModulesAccessor {
     static getSPContextModule() {
         if (typeof module !== 'undefined' && module.exports != null) {
-            return require("./singlePlayerGameContext2");
+            return require("./singlePlayerGameContext");
         }
         else {
-            return window.SinglePlayerGameContext2Module;
+            return window.SinglePlayerGameContextModule;
         }
     }
 
@@ -247,7 +247,7 @@ class TutorialGame extends (TutorialModulesAccessor.getGameModule()).Game {
     }
 }
 
-class TutorialGameContext extends (TutorialModulesAccessor.getSPContextModule()).SinglePlayerGameContext2 {
+class TutorialGameContext extends (TutorialModulesAccessor.getSPContextModule()).SinglePlayerGameContext {
     constructor(eventsHandler, numPlayers, cardDisplayDelay, localisationManager) {
         super(eventsHandler, numPlayers, cardDisplayDelay, localisationManager);
         this.tutorialManager = new TutorialManager(localisationManager);
