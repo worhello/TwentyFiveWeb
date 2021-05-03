@@ -1,18 +1,18 @@
 "use strict";
 
 class SinglePlayerGameContext2 extends GameContext {
-    constructor(eventsHandler, numPlayers, cardDisplayDelay, tutorialManager, localisationManager) {
+    constructor(eventsHandler, numPlayers, cardDisplayDelay, localisationManager) {
         super(eventsHandler);
         this.gameId = "SinglePlayerGameId";
         this.eventsHandler = eventsHandler;
-        this.tutorialManager = tutorialManager;
         this.cardDisplayDelay = cardDisplayDelay;
 
         let gameContext = this;
-        let notifyEventFunc = async function(playerId, data) { await gameContext.handleGameEvent(playerId, data); };
-        let gameStateChangedFunc = async function(newState) { await gameContext.handleGameStateChanged(newState); };
-        let disableReneging = true;
-        this.game = new (this.getGameModule()).Game(this.gameId, numPlayers, notifyEventFunc, gameStateChangedFunc, disableReneging, tutorialManager != null);
+        this.notifyEventFunc = async function(playerId, data) { await gameContext.handleGameEvent(playerId, data); };
+        this.gameStateChangedFunc = async function(newState) { await gameContext.handleGameStateChanged(newState); };
+        this.disableReneging = true;
+
+        this.game = new (this.getGameModule()).Game(this.gameId, numPlayers, this.notifyEventFunc, this.gameStateChangedFunc, this.disableReneging);
 
         this.players = [];
         this.trumpCard = {};
@@ -51,28 +51,8 @@ class SinglePlayerGameContext2 extends GameContext {
         }
     }
 
-    async showNextTutorialOverlayMessage(continueFunc) {
-        if (this.tutorialManager) {
-            let tutorialOverlayMessage = this.tutorialManager.getNextTutorialOverlayMessage();
-            await this.eventsHandler.sendEventToViewController('showTutorialOverlayMessage', { "tutorialOverlayMessage": tutorialOverlayMessage, "continueFunc": continueFunc });
-        }
-    }
-
-    async showNextTutorialIntroMessage() {
-        if (this.tutorialManager) {
-            console.log("inside showNextTutorialIntroMessage");
-            let gameContext = this;
-            let continueFunc = async function() {
-                if (gameContext.tutorialManager.hasMoreIntroMessages()) {
-                    await gameContext.showNextTutorialIntroMessage();
-                }
-                else {
-                    //await gameContext.startRound();
-                    await gameContext.game.start();
-                }
-            };
-            await this.showNextTutorialOverlayMessage(continueFunc);
-        }
+    async onStartGame() {
+        await this.game.start();
     }
 
     async startGame() {
@@ -83,12 +63,7 @@ class SinglePlayerGameContext2 extends GameContext {
 
         await this.eventsHandler.sendEventToViewController('resetSelfPlayerState', {});
 
-        if (this.tutorialManager) {
-            await this.showNextTutorialIntroMessage();
-        }
-        else {
-            await this.game.start();
-        }
+        await this.onStartGame();
     }
 
     async playSelfCard(cardName) {
@@ -119,25 +94,6 @@ class SinglePlayerGameContext2 extends GameContext {
         }
     }
 
-    async handleTfGameEvent(data) {
-        if (data.type == "tutorialRoundEnded") {
-            await this.showNextTutorialOverlayMessage(data.continueFunc);
-        }
-        else {
-            await super.handleTfGameEvent(data);
-        }
-    }
-
-    // overriding base class due to tutorial logic
-    async handleRobTrumpCardAvailable(json) {
-        await this.eventsHandler.sendEventToViewController('showSelfPlayerRobbingDialog', 
-        { 
-            "trumpCard": json.trumpCard, 
-            "skipButtonDisabled": this.tutorialManager !== null,
-            "skipButtonDisabledReason": this.tutorialManager !== null ? this.tutorialManager.getSkipTrumpButtonDisabledReason() : ""
-        });
-    }
-
     async handleGameEvent(playerId, data) {
         if (playerId == this.selfPlayer.id) {
             await this.handleTfGameEvent(data);
@@ -145,6 +101,16 @@ class SinglePlayerGameContext2 extends GameContext {
     }
     
     async handleGameStateChanged(newState) {
-        console.log("gameState changed to: " + newState);
     }
 }
+
+(function () {
+    let e = {};
+    e.SinglePlayerGameContext2 = SinglePlayerGameContext2;
+    
+    if (typeof module !== 'undefined' && module.exports != null) {
+        module.exports = e;
+    } else {
+        window.SinglePlayerGameContext2Module = e;
+    }
+})();

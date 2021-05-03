@@ -85,12 +85,6 @@ class GameContext {
         });
     }
 
-    async handleWebsocketEvent(event) {
-        let json = JSON.parse(event.data);
-        console.log(json);
-        await this.handleTfGameEvent(json);
-    }
-
     async handleTfGameEvent(json) {
         console.log("Received TF Event with type=" + json.type);
         if (json.type == "wsConnectionAck") {

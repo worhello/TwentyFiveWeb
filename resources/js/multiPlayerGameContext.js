@@ -28,7 +28,6 @@ class MultiPlayerGameContext extends GameContext {
             gameContext.handleWebsocketEvent(event);
         };
         this.websocket.onopen = function (event) {
-            console.log("connected successfully");
             gameContext.handleWebsocketConnected();
         };
         this.websocket.onerror = function(event) {
@@ -190,7 +189,6 @@ class MultiPlayerGameContext extends GameContext {
 
     async handleWebsocketEvent(event) {
         let json = JSON.parse(event.data);
-        console.log(json);
         await this.handleTfGameEvent(json);
     }
 

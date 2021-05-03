@@ -24,7 +24,7 @@ function buildPlayerDetailsJson(players) {
 }
 
 class Game {
-    constructor(id, numberOfPlayers, notifyOnePlayerFunc, notifyStateChangeFunc, disableReneging, isTutorial) {
+    constructor(id, numberOfPlayers, notifyOnePlayerFunc, notifyStateChangeFunc, disableReneging) {
         this.id = id;
         this.numberOfPlayers = numberOfPlayers;
         this.notifyOnePlayerFunc = notifyOnePlayerFunc;
@@ -37,11 +37,6 @@ class Game {
         this.currentState = GameState.notStarted;
         this.notifyStateChangeFunc = notifyStateChangeFunc;
         this.renegingDisabled = disableReneging;
-        this.tutorialManager = null;
-        if (isTutorial) {
-            this.tutorialManager = new (this.getTutorialGameManagerModule()).TutorialGameManager();
-        }
-        console.log(this.tutorialManager);
     }
 
     getPlayerModule() {
@@ -81,16 +76,6 @@ class Game {
         }
         else {
             return window.gameLogic;
-        }
-    }
-
-    getTutorialGameManagerModule() {
-        if (typeof module !== 'undefined' && module.exports != null) {
-            let m = require("./tutorialGameManager");
-            return m;
-        }
-        else {
-            return window.tutorialGameManager;
         }
     }
 
@@ -311,6 +296,18 @@ class Game {
         }
     }
 
+    updatePlayerCardsEnabled(player) {
+        if (this.disableReneging) {
+            let playedCards = this.getPlayedCards();
+            this.getGameLogicModule().updatePlayerCardsEnabledState(playedCards, player.cards, this.trumpCard);
+        }
+    }
+
+    playerBestCardAi(player) {
+        let playedCards = this.getPlayedCards();
+        return player.aiPlayCard(playedCards, this.trumpCard);
+    }
+
     async requestNextPlayerMove() {
         let player = this.players[this.currentPlayerIndex];
         await this.notifyAllCurrentPlayerMovePending(player);
@@ -318,20 +315,11 @@ class Game {
             // Add delay for AIs so the gameplay feels a little more natural
             let gameMgr = this;
             setTimeout(function() {
-                let playedCards = gameMgr.getPlayedCards();
-                let nextCard = gameMgr.tutorialManager ? gameMgr.tutorialManager.playNextAiCard(player)
-                                                       : player.aiPlayCard(playedCards, gameMgr.trumpCard);
-                gameMgr.playCard(player, nextCard);
+                gameMgr.playCard(player, gameMgr.playerBestCardAi(player));
             }, 500);
         }
         else {
-            if (this.tutorialManager) {
-                this.tutorialManager.enableCardsForPlay(player.cards);
-            }
-            else if (this.disableReneging) {
-                let playedCards = this.getPlayedCards();
-                this.getGameLogicModule().updatePlayerCardsEnabledState(playedCards, player.cards, this.trumpCard);
-            }
+            this.updatePlayerCardsEnabled(player);
             await this.notifyOnePlayerMoveRequested(player);
         }
     }
@@ -361,10 +349,6 @@ class Game {
         if (this.deck.cards.length < numCardsNeeded) {
             this.deck = new (this.getDeckModule()).Deck();
         }
-
-        if (this.tutorialManager) {
-            this.tutorialManager.sortDeckIfNeeded(this.deck.cards);
-        }
     }
 
     mustDealNewCards() {
@@ -379,19 +363,14 @@ class Game {
     }
 
     rotateDealer() {
-        if (this.tutorialManager) {
-            dealerIndex = this.tutorialManager.getDealerIndex(this.getSelfPlayerIndex());
+        var dealerIndex = this.players.findIndex(p => p.isDealer == true);
+        if (dealerIndex == -1) {
+            dealerIndex = this.players.length - 2;
+        } else {
+            this.players[dealerIndex].isDealer = false;
         }
-        else {
-            var dealerIndex = this.players.findIndex(p => p.isDealer == true);
-            if (dealerIndex == -1) {
-                dealerIndex = this.players.length - 2;
-            } else {
-                this.players[dealerIndex].isDealer = false;
-            }
-            
-            dealerIndex = (dealerIndex + 1) % this.players.length;
-        }
+        
+        dealerIndex = (dealerIndex + 1) % this.players.length;
         this.players[dealerIndex].isDealer = true;
     }
 
@@ -433,8 +412,6 @@ class Game {
     playCardWithId(userId, cardDetails) {
         let player = this.findPlayerById(userId);
         if (!player) {
-            // do something
-            console.log(userId);
             return;
         }
         let playedCard = player.playCard(cardDetails.cardName);
@@ -473,12 +450,8 @@ class Game {
         }
     }
 
-    async notifyAllTutorialRoundEnded(continueFunc) {
-        let data = {
-            type: "tutorialRoundEnded",
-            continueFunc: continueFunc
-        };
-        await this.notifyAllPlayers(data);
+    async onRoundEnded(continueFunc) {
+        await continueFunc();
     }
 
     async evaluateRoundEnd() {
@@ -514,12 +487,7 @@ class Game {
             }
         }
 
-        if (this.tutorialManager) {
-            await notifyAllTutorialRoundEnded(continueFunc);
-        }
-        else {
-            await continueFunc();
-        }
+        await this.onRoundEnded(continueFunc);
     }
 
     getSortedListOfPlayers() {
