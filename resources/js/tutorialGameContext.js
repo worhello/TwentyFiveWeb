@@ -3,7 +3,7 @@
 class TutorialModulesAccessor {
     static getSPContextModule() {
         if (typeof module !== 'undefined' && module.exports != null) {
-            return require("./singlePlayerGameContext2");
+            return require("./singlePlayerGameContext");
         }
         else {
             return window.SinglePlayerGameContextModule;
