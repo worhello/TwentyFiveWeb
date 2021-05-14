@@ -25,7 +25,7 @@ class MultiPlayerGameContext extends GameContext {
         this.websocket = new WebSocket('ws://twentyfive-env.eba-jrs4p3fm.eu-west-1.elasticbeanstalk.com/');
         let gameContext = this;
         this.websocket.onmessage = function (event) {
-            gameContext.handleWebsocketEvent(event);
+            gameContext.handleWebsocketEvent(event).finally(function() {});
         };
         this.websocket.onopen = function (event) {
             gameContext.handleWebsocketConnected();
@@ -189,7 +189,16 @@ class MultiPlayerGameContext extends GameContext {
 
     async handleWebsocketEvent(event) {
         let json = JSON.parse(event.data);
-        await this.handleTfGameEvent(json);
+        if (json.type == "wsConnectionAck") {
+            this.userId = json.userId;
+        }
+        else if (json.type == "createGameAck" || json.type == "joinGameAck") {
+            this.gameId = json.gameId;
+            this.gameUrl = json.gameUrl;
+        }
+        else {
+            await this.handleTfGameEvent(json);
+        }
     }
 
     handleWebsocketConnected() {
