@@ -87,14 +87,7 @@ class GameContext {
 
     async handleTfGameEvent(json) {
         console.log("Received TF Event with type=" + json.type);
-        if (json.type == "wsConnectionAck") {
-            this.userId = json.userId;
-        }
-        else if (json.type == "createGameAck" || json.type == "joinGameAck") {
-            this.gameId = json.gameId;
-            this.gameUrl = json.gameUrl;
-        }
-        else if (json.type == "playerListChanged") {
+        if (json.type == "playerListChanged") {
             await this.handlePlayerListChanged(json);
         }
         else if (json.type == "gameInitialState") {
