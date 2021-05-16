@@ -62,8 +62,24 @@ function preloadCards() {
     }
 }
 
+function detectLocale() {
+    if (/^en\b/.test(navigator.language)) {
+        return "en";
+    }
+    else if (/^fr\b/.test(navigator.language)) {
+        console.log("French is not currently supported!");
+        return "fr";
+    }
+    else if (/^de\b/.test(navigator.language)) {
+        console.log("German is not currently supported!");
+        return "de";
+    }
+
+    return "unknown";
+}
+
 function initLocalisation() {
-    let locale = "en/UK"; // TODO - see GH #115
+    let locale = detectLocale();
     let localisedStrings = window.localisedStrings.getLocalisedStrings();
     window.localisationManager = new window.localisedStringManager.LocalisedStringManager(locale, localisedStrings);
 

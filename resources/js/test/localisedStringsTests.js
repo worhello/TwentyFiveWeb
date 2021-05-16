@@ -25,7 +25,7 @@ describe("check returned strings are formatted correctly", function() {
     });
     
     describe("test getLocalisedStrings with no params", function() {
-        let localisedStringManager = new localisedStringsManager.LocalisedStringManager("en/UK", strings);
+        let localisedStringManager = new localisedStringsManager.LocalisedStringManager("en", strings);
         it("unknown localised string", function() {
             let actual = localisedStringManager.getLocalisedString(unknownStringId);
             assert.strictEqual(actual, "UNLOCALISED_STRING: Unknown string ID - MyUnknownStringId");
@@ -38,7 +38,7 @@ describe("check returned strings are formatted correctly", function() {
     });
 
     describe("test getLocalisedStrings with params", function() {
-        let localisedStringManager = new localisedStringsManager.LocalisedStringManager("en/UK", strings);
+        let localisedStringManager = new localisedStringsManager.LocalisedStringManager("en", strings);
         let knownParamStringId = "robbedByPlayerLabelText";
         it("unknown localised string", function() {
             let actual = localisedStringManager.getLocalisedString(unknownStringId, ["my param"]);
