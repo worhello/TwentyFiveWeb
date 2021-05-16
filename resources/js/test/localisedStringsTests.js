@@ -56,3 +56,29 @@ describe("check returned strings are formatted correctly", function() {
         });
     });
 });
+
+describe("test all localised strings are translated to all finished languages", function() {
+    let expectedProperties = [
+        "translator note",
+        "en"
+    ];
+
+    let stringInfos = localisedStrings.getLocalisedStrings();
+
+    it("all strings have ONLY the required properties", function() {
+        const checkExclusiveProperties = function(stringInfoName) {
+            return Object.keys(stringInfos[stringInfoName]).length == expectedProperties.length;
+        }
+        assert.strictEqual(Object.keys(stringInfos).every(checkExclusiveProperties), true);
+
+        const checkAllStrings = function(prop) {
+            for (let stringName of Object.keys(stringInfos)) {
+                if (!stringInfos[stringName][prop]) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        assert.strictEqual(expectedProperties.every(checkAllStrings), true);
+    });
+});
