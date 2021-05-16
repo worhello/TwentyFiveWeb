@@ -75,7 +75,7 @@ function detectLocale() {
         return "de";
     }
 
-    return "unknown";
+    return "en";
 }
 
 function initLocalisation() {
