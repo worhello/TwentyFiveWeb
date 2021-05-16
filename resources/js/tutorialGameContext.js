@@ -20,6 +20,16 @@ class TutorialModulesAccessor {
         }
     }
 
+    static getGameProcessorModule() {
+        if (typeof module !== 'undefined' && module.exports != null) {
+            let m = require("./twentyfive-js/gameProcessor");
+            return m;
+        }
+        else {
+            return window.gameProcess;
+        }
+    }
+
     static getGameLogicModule() {
         if (typeof module !== 'undefined' && module.exports != null) {
             let gameLogic = require("./gameLogic");
@@ -195,32 +205,32 @@ class TutorialGameManager {
         return selfPlayerCards;
     }
 
-    playNextAiCard(player) {
-        // always play the first card
-        return player.playCard(player.cards[0].cardName);
+    getNextAiCardToPlay(player) {
+        return player.cards[0].cardName;
     }
 }
 
-class TutorialGame extends (TutorialModulesAccessor.getGameModule()).Game {
-    constructor(id, numberOfPlayers, notifyOnePlayerFunc, notifyStateChangeFunc, disableReneging) {
-        super(id, numberOfPlayers, notifyOnePlayerFunc, notifyStateChangeFunc, disableReneging);
+class TutorialGameProcessor extends (TutorialModulesAccessor.getGameProcessorModule()).GameProcessor {
+    constructor(game, notifyOnePlayerFunc, notifyStateChangeFunc, notifyGameChangedFunc) {
+        super(game, notifyOnePlayerFunc, notifyStateChangeFunc, notifyGameChangedFunc);
         this.tutorialGameManager = new TutorialGameManager();
+        this.nextActionDelayTime = 500;
     }
 
     // override
     resetDeckIfNeeded() {
         super.resetDeckIfNeeded();
-        this.tutorialGameManager.sortDeckIfNeeded(this.deck.cards);
+        this.tutorialGameManager.sortDeckIfNeeded(this.game.deck.cards);
     }
 
     // override
     rotateDealer() {
         let dealerIndex = this.tutorialGameManager.getDealerIndex(this.getSelfPlayerIndex());
-        this.players[dealerIndex].isDealer = true;
+        this.game.players[dealerIndex].isDealer = true;
     }
 
     getSelfPlayerIndex() {
-        return this.players.findIndex(p => p.isAi == false); // only one non-AI in a tutorial
+        return this.game.players.findIndex(p => p.isAi == false); // only one non-AI in a tutorial
     }
 
     // override
@@ -230,8 +240,7 @@ class TutorialGame extends (TutorialModulesAccessor.getGameModule()).Game {
 
     // override
     playerBestCardAi(player) {
-        return this.tutorialGameManager.playNextAiCard(player);
-    }
+        return this.getPlayerModule().PlayerLogic.playCard(player, this.tutorialGameManager.getNextAiCardToPlay(player));    }
 
     async notifyShowNextTutorialOverlayMessage(continueFunc) {
         let data = {
@@ -250,8 +259,8 @@ class TutorialGame extends (TutorialModulesAccessor.getGameModule()).Game {
 class TutorialGameContext extends (TutorialModulesAccessor.getSPContextModule()).SinglePlayerGameContext {
     constructor(eventsHandler, numPlayers, cardDisplayDelay, localisationManager) {
         super(eventsHandler, numPlayers, cardDisplayDelay, localisationManager);
+        this.gameMgr = new TutorialGameProcessor(this.game, this.notifyEventFunc, this.gameStateChangedFunc, this.gameChangedFunc)
         this.tutorialManager = new TutorialManager(localisationManager);
-        this.game = new TutorialGame(this.gameId, numPlayers, this.notifyEventFunc, this.gameStateChangedFunc, this.disableReneging);
     }
 
     // override
@@ -274,7 +283,7 @@ class TutorialGameContext extends (TutorialModulesAccessor.getSPContextModule())
                     await gameContext.showNextTutorialIntroMessage();
                 }
                 else {
-                    await gameContext.game.startRound();
+                    await gameContext.gameMgr.startRound();
                 }
             };
             await this.showNextTutorialOverlayMessage(continueFunc);
@@ -293,6 +302,8 @@ class TutorialGameContext extends (TutorialModulesAccessor.getSPContextModule())
 
     // override
     async handleRobTrumpCardAvailable(json) {
+        this.gameMgr.updatePlayerCardsEnabled(this.selfPlayer);
+        await this.eventsHandler.sendEventToViewController('showSelfPlayerHand', { "selfPlayer": this.selfPlayer, "isEnabled": true });
         await this.eventsHandler.sendEventToViewController('showSelfPlayerRobbingDialog', 
         { 
             "trumpCard": json.trumpCard, 
