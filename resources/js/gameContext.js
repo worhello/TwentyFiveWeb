@@ -21,8 +21,8 @@ class GameContext {
         this.trumpCard = json.gameInfo.trumpCard;
         this.selfPlayer.id = json.playerDetails.userId;
         this.selfPlayer.cards = json.playerDetails.cards;
-        this.players = json.players; // TODO this overwrites important info, let's change this
-        this.players.find(p => p.id == this.selfPlayer.id).isSelfPlayer = true;
+        this.players = json.players;
+        this.setSelfPlayer(this.players);
         var promises = [
             this.eventsHandler.sendEventToViewController('showSelfPlayerHand', { "selfPlayer": this.selfPlayer, "isEnabled": false }),
             this.eventsHandler.sendEventToViewController('setupInitialState', { "isSelfPlayerCardsEnabled": false, "players": this.players, "trumpCard": this.trumpCard })
@@ -53,7 +53,6 @@ class GameContext {
     async handleCardsUpdated(json) {
         let player = this.players.find(function (p) { return p.id == json.userId; });
         player.cards = json.cards;
-        this.selfPlayer = player;
         await this.eventsHandler.sendEventToViewController('showSelfPlayerHand', { "selfPlayer": this.selfPlayer, "isEnabled": false });
     }
 
@@ -61,7 +60,12 @@ class GameContext {
         await this.eventsHandler.sendEventToViewController('showGameEndScreen', { "sortedPlayers": json.orderedPlayers });
     }
 
+    setSelfPlayer(players) {
+        players.find(p => p.id == this.selfPlayer.id).isSelfPlayer = true;
+    }
+
     async handleRoundFinished(json) {
+        this.setSelfPlayer(json.orderedPlayers);
         var promises = [
             this.handleScoresUpdated(json),
             this.eventsHandler.sendEventToViewController('showEndOfHandStats', { "sortedPlayers": json.orderedPlayers })
