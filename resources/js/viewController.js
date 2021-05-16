@@ -569,7 +569,8 @@ class ViewController {
         for (let playerId of readyPlayerIds) {
             let nameCtr = document.getElementById("PlayerNameCtr_" + playerId);
             if (nameCtr) {
-                nameCtr.textContent = this.localisationManager.getLocalisedString("playerReady", nameCtr.textContent);
+                let playerName = nameCtr.textContent;
+                nameCtr.textContent = this.localisationManager.getLocalisedString("playerReady", playerName);
             }
         }
     }
