@@ -211,7 +211,7 @@ class ViewController {
     showEndOfHandStats(eventDetails) {
         let viewController = this;
         this.showEndOfHandOrGameStats(eventDetails.sortedPlayers, false, true, this.localisationManager.getLocalisedString("startNextRoundButtonText"), function() {
-            if (this.isMultiplayer == false) {
+            if (viewController.isMultiplayer == false) {
                 hideAllOverlays();
             }
             viewController.eventsHandler.sendEventToGameContext('startNextRound', { "startingPlayerId": eventDetails.sortedPlayers[0].id });
@@ -456,7 +456,7 @@ class ViewController {
             viewController.eventsHandler.sendEventToGameContext('skipRobbingTrumpCard', {});
             viewController.isRobbing = false;
         });
-        skipButton.disabled = (skipButtonDisabled === true);
+        skipButton.disabled = (skipButtonDisabled == true);
         var skipButtonContainer = document.createElement("div");
         skipButtonContainer.appendChild(skipButton);
         skipButtonContainer.title = skipButtonDisabledReason;
@@ -575,33 +575,31 @@ class ViewController {
     }
 
     async handleEvent(eventName, eventDetails) {
-        if (eventName === 'setupInitialState') {
+        if (eventName == 'setupInitialState') {
             await this.setupInitialState(eventDetails.isSelfPlayerCardsEnabled, eventDetails.players, eventDetails.trumpCard);
-        } else if (eventName === 'showGameEndScreen') {
+        } else if (eventName == 'showGameEndScreen') {
             await this.showGameEndScreen(eventDetails.sortedPlayers);
-        } else if (eventName === 'highlightWinningPlayer') {
+        } else if (eventName == 'highlightWinningPlayer') {
             await this.highlightWinningCard(eventDetails.winningPlayerId);
-        } else if (eventName === 'highlightCurrentPlayer') {
+        } else if (eventName == 'highlightCurrentPlayer') {
             await this.highlightCurrentPlayer(eventDetails.player);
-        } else if (eventName === 'showSelfPlayerHand') {
+        } else if (eventName == 'showSelfPlayerHand') {
             this.showSelfPlayerHand(eventDetails.selfPlayer, eventDetails.isEnabled);
-        } else if (eventName === 'resetSelfPlayerState') {
+        } else if (eventName == 'resetSelfPlayerState') {
             this.resetSelfPlayerState();
-        } else if (eventName === 'setSelfPlayerCardsEnabled') {
-            this.setSelfPlayerCardsEnabled(eventDetails.isEnabled);
-        } else if (eventName === 'playCard') {
+        } else if (eventName == 'playCard') {
             this.playCard(eventDetails.player, eventDetails.playedCard);
-        } else if (eventName === 'showEndOfHandStats') {
+        } else if (eventName == 'showEndOfHandStats') {
             this.showEndOfHandStats(eventDetails);
-        } else if (eventName === 'showSelfPlayerRobbingDialog') {
+        } else if (eventName == 'showSelfPlayerRobbingDialog') {
             this.showSelfPlayerRobbingDialog(eventDetails.trumpCard, eventDetails.skipButtonDisabled, eventDetails.skipButtonDisabledReason);
-        } else if (eventName === 'updateCurrentWinningCard') {
+        } else if (eventName == 'updateCurrentWinningCard') {
             this.updateCurrentWinningCard(eventDetails.player, eventDetails.card);
-        } else if (eventName === 'showTutorialOverlayMessage') {
+        } else if (eventName == 'showTutorialOverlayMessage') {
             this.showTutorialOverlayMessage(eventDetails.tutorialOverlayMessage, eventDetails.continueFunc);
-        } else if (eventName === 'showMultiplayerNameInput') {
+        } else if (eventName == 'showMultiplayerNameInput') {
             this.showMultiplayerNameInput(eventDetails.continueFunc);
-        } else if (eventName === 'updateMultiplayerWaitingScreen') {
+        } else if (eventName == 'updateMultiplayerWaitingScreen') {
             this.updateMultiplayerWaitingScreen(eventDetails.waitingPlayers, eventDetails.needMorePlayers, eventDetails.gameUrl, eventDetails.continueFunc);
         } else if (eventName == 'multiplayerConnected') {
             this.handleMultiplayerConnected();

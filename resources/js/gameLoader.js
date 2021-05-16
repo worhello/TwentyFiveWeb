@@ -26,19 +26,19 @@ async function startGame(numPlayers, isSinglePlayer, cardDisplayDelay, isTutoria
 
     window.gameViewController = new ViewController(window.eventsHandler, window.localisationManager);
 
-    if (!isSinglePlayer && gameId != null) {
-        await window.gameContext.joinGame(gameId);
-    }
-    else {
-        await window.gameContext.startGame();
-    }
-
     if (isSinglePlayer && !isTutorial) {
         window.gameViewController.hideStartGameOverlay();
     }
     else {
         document.getElementById("startGameButton").disabled = true;
         document.getElementById("connectingLabel").hidden = false;
+    }
+
+    if (!isSinglePlayer && gameId != null) {
+        await window.gameContext.joinGame(gameId);
+    }
+    else {
+        await window.gameContext.startGame();
     }
 }
 

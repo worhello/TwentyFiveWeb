@@ -1,3 +1,4 @@
 {
-    "mochaExplorer.files": "resources/js/test/*.js"
+    "mochaExplorer.files": "resources/js/test/*.js",
+    "liveServer.settings.port": 5503
 }

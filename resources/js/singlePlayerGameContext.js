@@ -10,9 +10,12 @@ class SinglePlayerGameContext extends GameContext {
         let gameContext = this;
         this.notifyEventFunc = async function(playerId, data) { await gameContext.handleGameEvent(playerId, data); };
         this.gameStateChangedFunc = async function(newState) { await gameContext.handleGameStateChanged(newState); };
+        this.gameChangedFunc = async function() {};
         this.disableReneging = true;
 
-        this.game = new (this.getGameModule()).Game(this.gameId, numPlayers, this.notifyEventFunc, this.gameStateChangedFunc, this.disableReneging);
+        this.game = new (this.getGameModule()).Game(this.gameId, numPlayers, this.disableReneging);
+        this.gameMgr = new (this.getGameProcessorModule()).GameProcessor(this.game, this.notifyEventFunc, this.gameStateChangedFunc, this.gameChangedFunc)
+        this.gameMgr.nextActionDelayTime = 300;
 
         this.players = [];
         this.trumpCard = {};
@@ -40,6 +43,16 @@ class SinglePlayerGameContext extends GameContext {
             return window.game;
         }
     }
+
+    getGameProcessorModule() {
+        if (typeof module !== 'undefined' && module.exports != null) {
+            let m = require("./twentyfive-js/gameProcessor");
+            return m;
+        }
+        else {
+            return window.gameProcess;
+        }
+    }
     
     getPlayerModule() {
         if (typeof module !== 'undefined' && module.exports != null) {
@@ -52,14 +65,14 @@ class SinglePlayerGameContext extends GameContext {
     }
 
     async onStartGame() {
-        await this.game.start();
+        await this.gameMgr.start();
     }
 
     async startGame() {
-        await this.game.init();
+        await this.gameMgr.init();
 
-        await this.game.addPlayer(this.selfPlayer);
-        await this.game.fillWithAis();
+        await this.gameMgr.addPlayer(this.selfPlayer);
+        await this.gameMgr.fillWithAis();
 
         await this.eventsHandler.sendEventToViewController('resetSelfPlayerState', {});
 
@@ -67,19 +80,19 @@ class SinglePlayerGameContext extends GameContext {
     }
 
     async playSelfCard(cardName) {
-        await this.game.playCardWithId(this.selfPlayer.id, { cardName: cardName });
+        await this.gameMgr.playCardWithId(this.selfPlayer.id, { cardName: cardName });
     }
     
     async startNextRound(startingPlayerId) {
-        await this.game.markPlayerReadyForNextRound(this.selfPlayer.id);
+        await this.gameMgr.markPlayerReadyForNextRound(this.selfPlayer.id);
     }
     
     async selfPlayerRobTrumpCard(droppedCardName) {
-        await this.game.robTrumpCard(this.selfPlayer.id, { cardName: droppedCardName });
+        await this.gameMgr.robTrumpCard(this.selfPlayer.id, { cardName: droppedCardName });
     }
 
     async skipRobbingTrumpCard() {
-        await this.game.skipRobTrumpCard(this.selfPlayer.id);
+        await this.gameMgr.skipRobTrumpCard(this.selfPlayer.id);
     }
 
     async handleEvent(eventName, eventDetails) {
