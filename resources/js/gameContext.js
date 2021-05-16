@@ -23,8 +23,13 @@ class GameContext {
         this.selfPlayer.cards = json.playerDetails.cards;
         this.players = json.players; // TODO this overwrites important info, let's change this
         this.players.find(p => p.id == this.selfPlayer.id).isSelfPlayer = true;
-        await this.eventsHandler.sendEventToViewController('showSelfPlayerHand', { "selfPlayer": this.selfPlayer, "isEnabled": false });
-        await this.eventsHandler.sendEventToViewController('setupInitialState', { "isSelfPlayerCardsEnabled": false, "players": this.players, "trumpCard": this.trumpCard });
+        var promises = [
+            this.eventsHandler.sendEventToViewController('showSelfPlayerHand', { "selfPlayer": this.selfPlayer, "isEnabled": false }),
+            this.eventsHandler.sendEventToViewController('setupInitialState', { "isSelfPlayerCardsEnabled": false, "players": this.players, "trumpCard": this.trumpCard })
+        ];
+        for (let p of promises) {
+            await p;
+        }
     }
 
     async handleCurrentPlayerMovePending(json) {
@@ -57,8 +62,13 @@ class GameContext {
     }
 
     async handleRoundFinished(json) {
-        await this.handleScoresUpdated(json);
-        await this.eventsHandler.sendEventToViewController('showEndOfHandStats', { "sortedPlayers": json.orderedPlayers });
+        var promises = [
+            this.handleScoresUpdated(json),
+            this.eventsHandler.sendEventToViewController('showEndOfHandStats', { "sortedPlayers": json.orderedPlayers })
+        ];
+        for (let p of promises) {
+            await p;
+        }
     }
 
     handleScoresUpdated(json) {
