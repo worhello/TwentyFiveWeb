@@ -1,11 +1,10 @@
 "use strict";
 
 class SinglePlayerGameContext extends GameContext {
-    constructor(eventsHandler, numPlayers, cardDisplayDelay, localisationManager) {
+    constructor(eventsHandler, numPlayers, localisationManager) {
         super(eventsHandler);
         this.gameId = "SinglePlayerGameId";
         this.eventsHandler = eventsHandler;
-        this.cardDisplayDelay = cardDisplayDelay;
 
         let gameContext = this;
         this.notifyEventFunc = async function(playerId, data) { await gameContext.handleGameEvent(playerId, data); };

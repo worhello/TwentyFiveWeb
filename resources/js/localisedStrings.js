@@ -2,41 +2,9 @@
 
 function getLocalisedStrings() {
     return {
-        "2PlayersOption": {
-            "translator note" : "play a game with 2 players",
-            "en/UK": "2 players"
-        },
-        "3PlayersOption": {
-            "translator note" : "play a game with 3 players",
-            "en/UK": "3 players"
-        },
-        "4PlayersOption": {
-            "translator note" : "play a game with 4 players",
-            "en/UK": "4 players"
-        },
-        "5PlayersOption": {
-            "translator note" : "play a game with 5 players",
-            "en/UK": "5 players"
-        },
-        "6PlayersOption": {
-            "translator note" : "play a game with 6 players",
-            "en/UK": "6 players"
-        },
-        "7PlayersOption": {
-            "translator note" : "play a game with 7 players",
-            "en/UK": "7 players"
-        },
-        "8PlayersOption": {
-            "translator note" : "play a game with 8 players",
-            "en/UK": "8 players"
-        },
-        "9PlayersOption": {
-            "translator note" : "play a game with 9 players",
-            "en/UK": "9 players"
-        },
-        "10PlayersOption": {
-            "translator note" : "play a game with 10 players",
-            "en/UK": "10 players"
+        "nPlayersOption": {
+            "translator note" : "play a game with {{param}} players",
+            "en/UK": "{{param}} players"
         },
         "singlePlayer":{
             "translator note": "text for the label beside the radio button option for a single player game",
@@ -45,18 +13,6 @@ function getLocalisedStrings() {
         "multiPlayer":{
             "translator note": "text for the label beside the radio button option for a multiplayer game",
             "en/UK": "Multiplayer"
-        },
-        "slowSpeedLabel":{
-            "translator note": "text for the label beside the radio button option for a slower paced game (transitions every 600ms)",
-            "en/UK": "Slow"
-        },
-        "mediumSpeedLabel":{
-            "translator note": "text for the label beside the radio button option for a medium paced game (transitions every 400ms)",
-            "en/UK": "Medium"
-        },
-        "fastSpeedLabel":{
-            "translator note": "text for the label beside the radio button option for a faster paced game (transitions every 200ms)",
-            "en/UK": "Fast"
         },
         "startGameButton": {
             "translator note": "text for button to start the game",
@@ -111,7 +67,7 @@ function getLocalisedStrings() {
             "en/UK": "Select a card from your hand below to drop for the Trump card"
         },
         "robbedByPlayerLabelText": {
-            "translator note": "label stating which player robbed the trump card",
+            "translator note": "label stating that player named {{param}} robbed the trump card",
             "en/UK": "Robbed by {{param}}"
         },
         "selfPlayerDisplayName": {
@@ -148,7 +104,7 @@ function getLocalisedStrings() {
         },
         "tutorialMoveThree": {
             "translator note": "tutorial message for the third play, shows in an overlay",
-            "en/UK": "You won because you both played Clubs, where lower values are better"
+            "en/UK": "You won because you both played Clubs, where lower values are better, and the ace is usually treated as having a value of one"
         },
         "tutorialMoveFour": {
             "translator note": "tutorial message for the fourth play, shows in an overlay",

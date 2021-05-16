@@ -75,7 +75,6 @@ class TutorialManager {
 
     getNextIntroMessageType() {
         this.introMessagesShown++;
-        console.log("hit getNextIntroMessageType, this.introMessagesShown=" + this.introMessagesShown);
         if (this.introMessagesShown === 1) {
             return "tutorialIntroOne";
         }
@@ -91,7 +90,6 @@ class TutorialManager {
 
     getNextWinningMessageType() {
         this.playCount++;
-        console.log("hit getNextWinningMessageType, this.playCount=" + this.playCount);
 
         if (this.playCount === 1) {
             return "tutorialMoveOne";
@@ -257,8 +255,8 @@ class TutorialGameProcessor extends (TutorialModulesAccessor.getGameProcessorMod
 }
 
 class TutorialGameContext extends (TutorialModulesAccessor.getSPContextModule()).SinglePlayerGameContext {
-    constructor(eventsHandler, numPlayers, cardDisplayDelay, localisationManager) {
-        super(eventsHandler, numPlayers, cardDisplayDelay, localisationManager);
+    constructor(eventsHandler, numPlayers, localisationManager) {
+        super(eventsHandler, numPlayers, localisationManager);
         this.gameMgr = new TutorialGameProcessor(this.game, this.notifyEventFunc, this.gameStateChangedFunc, this.gameChangedFunc)
         this.tutorialManager = new TutorialManager(localisationManager);
     }
