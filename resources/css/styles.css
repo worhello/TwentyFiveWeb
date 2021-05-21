@@ -52,14 +52,18 @@ a {
 
 .EndGamePlayerInfoContainer {
     display: grid;
-    grid-gap: 15px;
-    grid-template-columns: 50% 30% 10%;
+    grid-template-columns: 20% 60% 20%;
     grid-template-rows: repeat(auto-fit, minmax(20px, 1fr));
     border-style: solid;
-    border-color: black;
+    border-color: white;
     border-width: 1.5px;
     margin: 5px 5px 5px 5px;
     padding: 5px;
+}
+
+.EndGameInnerPlayerInfoContainer {
+    display: flex;
+    justify-content: space-between;
 }
 
 .EndGameStartNewGameButtonContainer {
@@ -71,7 +75,23 @@ a {
     font-weight: 900;
 }
 
-.EndGameSelfPlayer {
+.EndGameAiPlayerIcon {
+    padding-left: 8px;
+    text-align: left;
+}
+
+.EndGameWinnerIcon {
+    padding-right: 8px;
+    text-align: right;
+}
+
+.EndGameHumanPlayer {
+    border-style: solid;
+    border-color: white;
+    border-width: 2px;
+}
+
+.EndGameAiPlayer {
     border-style: dashed;
     border-color: white;
 }
@@ -302,232 +322,4 @@ a {
         position: absolute;
         top: 85vh !important;
     }
-}
-
-/* Auto generated */
-.CardAngle_2_of_2 {
-    left: 272px;
-    top: 8px;
-    z-index: 1;
-}
-.CardAngle_2_of_3 {
-    left: 73px;
-    top: 123px;
-    z-index: 1;
-}
-
-.CardAngle_3_of_3 {
-    left: 471px;
-    top: 123px;
-    z-index: 2;
-}
-.CardAngle_2_of_4 {
-    left: 42px;
-    top: 238px;
-    z-index: 1;
-}
-.CardAngle_3_of_4 {
-    left: 272px;
-    top: 8px;
-    z-index: 1;
-}
-.CardAngle_4_of_4 {
-    left: 502px;
-    top: 238px;
-    z-index: 2;
-}
-.CardAngle_2_of_5 {
-    left: 53px;
-    top: 309px;
-    z-index: 2;
-}
-.CardAngle_3_of_5 {
-    left: 137px;
-    top: 52px;
-    z-index: 1;
-}
-.CardAngle_4_of_5 {
-    left: 407px;
-    top: 52px;
-    z-index: 2;
-}
-.CardAngle_5_of_5 {
-    left: 491px;
-    top: 309px;
-    z-index: 3;
-}
-.CardAngle_2_of_6 {
-    left: 73px;
-    top: 353px;
-    z-index: 2;
-}
-.CardAngle_3_of_6 {
-    left: 73px;
-    top: 123px;
-    z-index: 1;
-}
-.CardAngle_4_of_6 {
-    left: 272px;
-    top: 8px;
-    z-index: 1;
-}
-.CardAngle_5_of_6 {
-    left: 471px;
-    top: 123px;
-    z-index: 2;
-}
-.CardAngle_6_of_6 {
-    left: 471px;
-    top: 353px;
-    z-index: 3;
-}
-.CardAngle_2_of_7 {
-    left: 92px;
-    top: 381px;
-    z-index: 3;
-}
-.CardAngle_3_of_7 {
-    left: 48px;
-    top: 187px;
-    z-index: 2;
-}
-.CardAngle_4_of_7 {
-    left: 172px;
-    top: 31px;
-    z-index: 1;
-}
-.CardAngle_5_of_7 {
-    left: 372px;
-    top: 31px;
-    z-index: 2;
-}
-.CardAngle_6_of_7 {
-    left: 496px;
-    top: 187px;
-    z-index: 3;
-}
-.CardAngle_7_of_7 {
-    left: 452px;
-    top: 381px;
-    z-index: 4;
-}
-.CardAngle_2_of_8 {
-    left: 109px;
-    top: 401px;
-    z-index: 3;
-}
-.CardAngle_3_of_8 {
-    left: 42px;
-    top: 238px;
-    z-index: 2;
-}
-.CardAngle_4_of_8 {
-    left: 109px;
-    top: 75px;
-    z-index: 1;
-}
-.CardAngle_5_of_8 {
-    left: 272px;
-    top: 8px;
-    z-index: 1;
-}
-.CardAngle_6_of_8 {
-    left: 435px;
-    top: 75px;
-    z-index: 2;
-}
-.CardAngle_7_of_8 {
-    left: 502px;
-    top: 238px;
-    z-index: 3;
-}
-.CardAngle_8_of_8 {
-    left: 435px;
-    top: 401px;
-    z-index: 4;
-}
-.CardAngle_2_of_9 {
-    left: 124px;
-    top: 414px;
-    z-index: 4;
-}
-.CardAngle_3_of_9 {
-    left: 45px;
-    top: 278px;
-    z-index: 3;
-}
-.CardAngle_4_of_9 {
-    left: 73px;
-    top: 123px;
-    z-index: 2;
-}
-.CardAngle_5_of_9 {
-    left: 193px;
-    top: 22px;
-    z-index: 1;
-}
-.CardAngle_6_of_9 {
-    left: 351px;
-    top: 22px;
-    z-index: 2;
-}
-.CardAngle_7_of_9 {
-    left: 471px;
-    top: 123px;
-    z-index: 3;
-}
-.CardAngle_8_of_9 {
-    left: 499px;
-    top: 278px;
-    z-index: 4;
-}
-.CardAngle_9_of_9 {
-    left: 420px;
-    top: 414px;
-    z-index: 5;
-}
-.CardAngle_2_of_10 {
-    left: 137px;
-    top: 424px;
-    z-index: 4;
-}
-.CardAngle_3_of_10 {
-    left: 53px;
-    top: 309px;
-    z-index: 3;
-}
-.CardAngle_4_of_10 {
-    left: 53px;
-    top: 167px;
-    z-index: 2;
-}
-.CardAngle_5_of_10 {
-    left: 137px;
-    top: 52px;
-    z-index: 1;
-}
-.CardAngle_6_of_10 {
-    left: 272px;
-    top: 8px;
-    z-index: 1;
-}
-.CardAngle_7_of_10 {
-    left: 407px;
-    top: 52px;
-    z-index: 2;
-}
-.CardAngle_8_of_10 {
-    left: 491px;
-    top: 167px;
-    z-index: 3;
-}
-.CardAngle_9_of_10 {
-    left: 491px;
-    top: 309px;
-    z-index: 4;
-}
-.CardAngle_10_of_10 {
-    left: 407px;
-    top: 424px;
-    z-index: 5
 }

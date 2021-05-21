@@ -166,6 +166,7 @@ class MultiPlayerGameContext extends GameContext {
         let convertToTfPlayer = function(details) {
             var p = new playersModule.Player(details.name, details.userId == gameContext.userId);
             p.id = details.userId;
+            p.isAi = details.isAi ?? false;
             return p;
         }
         this.players = playersDetails.map(convertToTfPlayer);
