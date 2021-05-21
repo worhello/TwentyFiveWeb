@@ -169,30 +169,49 @@ class ViewController {
             let outer = document.createElement("div");
             outer.classList.add("EndGamePlayerInfoContainer");
 
+            let leftIcon = document.createElement("div");
+            leftIcon.classList.add("EndGameAiPlayerIcon");
+            outer.appendChild(leftIcon);
+
+            let innerPlayerInfoContainer = document.createElement("div");
+            innerPlayerInfoContainer.classList.add("EndGameInnerPlayerInfoContainer");
+            outer.appendChild(innerPlayerInfoContainer);
+
+            let rightIcon = document.createElement("div");
+            rightIcon.classList.add("EndGameWinnerIcon");
+            outer.appendChild(rightIcon);
+
+            if (player.isAi) {
+                outer.classList.add("EndGameAiPlayer");
+                leftIcon.textContent = "🤖";
+                leftIcon.title = this.localisationManager.getLocalisedString("playerIsAiTooltip", [ player.name ]);
+            }
+            else {
+                outer.classList.add("EndGameHumanPlayer");
+            }
+
             let playerNameCtr = document.createElement("div");
             playerNameCtr.id = "PlayerNameCtr_" + player.id;
-            playerNameCtr.textContent = player.name;
-            playerNameCtr.classList.add("RightAlign");
-            outer.appendChild(playerNameCtr);
+
+            if (player.isSelfPlayer && this.isMultiplayer) {
+                playerNameCtr.textContent = this.localisationManager.getLocalisedString("selfPlayerInListofPlayersName", [ player.name ]);
+            }
+            else {
+                playerNameCtr.textContent = player.name;
+            }
+
+            innerPlayerInfoContainer.appendChild(playerNameCtr);
 
             if (showScores) {
                 let playerScoreCtr = document.createElement("div");
                 playerScoreCtr.textContent = player.score;
-                outer.appendChild(playerScoreCtr);
-            }
-
-            if (player.isSelfPlayer) {
-                outer.classList.add("EndGameSelfPlayer");
-                if (this.isMultiplayer) {
-                    playerNameCtr.textContent = this.localisationManager.getLocalisedString("selfPlayerInListofPlayersName", [ player.name ]);
-                }
+                innerPlayerInfoContainer.appendChild(playerScoreCtr);
             }
 
             if (isWinner) {
                 outer.classList.add("EndGameWinningPlayer");
-                let rightStar = document.createElement("div");
-                rightStar.textContent = "🎉";
-                outer.appendChild(rightStar);
+                rightIcon.textContent = "🎉";
+                rightIcon.title =  this.localisationManager.getLocalisedString("playerIsWinnerTooltip", [ player.name ]);
             }
 
             playersContainer.appendChild(outer);
