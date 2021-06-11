@@ -12,7 +12,7 @@ function buildCardNode(playerId, card) {
     let cardNodeContainer = document.createElement("div");
     let cardNode = document.createElement("img");
     cardNode.className = 'Card';
-    cardNode.src = card.url;
+    cardNode.src = card.url; // TODO - build URL with card.cardName - card.url will soon be deprecated
     cardNode.playerId = playerId;
 
     cardNodeContainer.appendChild(cardNode);
@@ -281,6 +281,7 @@ class ViewController {
         if (this.selfPlayerCardsEnabled)
         {
             if (this.isRobbing) {
+                hideAllOverlays();
                 await this.eventsHandler.sendEventToGameContext('selfPlayerRobTrumpCard', { "droppedCardName": cardName });
                 this.isRobbing = false;
             } else {
@@ -595,8 +596,11 @@ class ViewController {
     }
 
     async handleEvent(eventName, eventDetails) {
+        //console.log("ViewController received event: "+ eventName);
         if (eventName == 'setupInitialState') {
             await this.setupInitialState(eventDetails.isSelfPlayerCardsEnabled, eventDetails.players, eventDetails.trumpCard);
+        } else if (eventName == 'redrawTrumpCard') {
+            this.redrawTrumpCard(eventDetails.trumpCard);
         } else if (eventName == 'showGameEndScreen') {
             await this.showGameEndScreen(eventDetails.sortedPlayers);
         } else if (eventName == 'highlightWinningPlayer') {

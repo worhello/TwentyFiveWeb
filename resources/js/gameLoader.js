@@ -1,5 +1,7 @@
 "use strict";
 
+var useStateMachineGameContext = false;
+
 async function startGame(numPlayers, isSinglePlayer, isTutorial, gameId) {
 
     window.eventsHandler = new EventsHandler();
@@ -7,7 +9,14 @@ async function startGame(numPlayers, isSinglePlayer, isTutorial, gameId) {
     if (isTutorial) {
         window.gameContext = new TutorialGameContext(window.eventsHandler, numPlayers, window.localisationManager);
     } else if (isSinglePlayer) {
-        window.gameContext = new SinglePlayerGameContext(window.eventsHandler, numPlayers, window.localisationManager);
+        // this should be temporary - we should be able to remove the old classes in time
+        if (useStateMachineGameContext) {
+            console.log("Using StateMachineGameContext");
+            window.gameContext = new StateMachineGameContext(window.eventsHandler, numPlayers, window.localisationManager);
+        }
+        else {
+            window.gameContext = new SinglePlayerGameContext(window.eventsHandler, numPlayers, window.localisationManager);
+        }
     } else {
         window.gameContext = new MultiPlayerGameContext(window.eventsHandler, numPlayers);
     }
@@ -31,7 +40,9 @@ async function startGame(numPlayers, isSinglePlayer, isTutorial, gameId) {
 }
 
 function onStartButtonClicked() {
-    let isSinglePlayer = document.getElementById("singlePlayer").checked;
+    var isSinglePlayer = document.getElementById("singlePlayer").checked;
+    useStateMachineGameContext = document.getElementById("singlePlayer2").checked;
+    isSinglePlayer = isSinglePlayer || useStateMachineGameContext;
     createGame(isSinglePlayer, null);
 }
 
@@ -39,7 +50,7 @@ function createGame(isSinglePlayer, gameId) {
     let numPlayersSelect = document.getElementById("numPlayersSelect");
     let numPlayers = numPlayersSelect.options[numPlayersSelect.selectedIndex].value;
 
-    startGame(numPlayers, isSinglePlayer,  false, gameId);
+    startGame(numPlayers, isSinglePlayer, false, gameId);
 }
 
 function onTutorialButtonClicked() {
@@ -53,12 +64,19 @@ function onTutorialButtonClicked() {
     startGame(numPlayers, isSinglePlayer, true, null);
 }
 
+function getCardUrl(card) {
+    // TODO change to building up URL here using card.cardName
+    // card.url will soon be deprecated
+    //return "resources/images/Cards/" + card.cardName + ".svg";
+    return card.url;
+}
+
 function preloadCards() {
     let deck = new Deck();
     let cards = deck.cards;
     for (let card of cards) {
         var _img = new Image();
-        _img.src = card.url;
+        _img.src = getCardUrl(card);
     }
 }
 
@@ -68,11 +86,11 @@ function detectLocale() {
     }
     else if (/^fr\b/.test(navigator.language)) {
         console.log("French is not currently supported!");
-        return "fr";
+        //return "fr";
     }
     else if (/^de\b/.test(navigator.language)) {
         console.log("German is not currently supported!");
-        return "de";
+        //return "de";
     }
 
     return "en";
@@ -94,6 +112,7 @@ function initLocalisation() {
     document.getElementById("10PlayersOption").textContent = window.localisationManager.getLocalisedString("nPlayersOption", [10]);
 
     document.getElementById("singlePlayerLabel").textContent = window.localisationManager.getLocalisedString("singlePlayer");
+    document.getElementById("singlePlayer2Label").textContent = "Alpha release Single Player";// TODO use: window.localisationManager.getLocalisedString("singlePlayer");
     document.getElementById("multiPlayerLabel").textContent  = window.localisationManager.getLocalisedString("multiPlayer");
 
     document.getElementById("startGameButton").textContent     = window.localisationManager.getLocalisedString("startGameButton");
@@ -120,6 +139,10 @@ window.onload = function() {
     this.document.getElementById("startTutorialButton").addEventListener("click", function() {
         onTutorialButtonClicked();
     });
+
+    // Disable for prod builds - this will be removed once we switch over fully
+    document.getElementById("singlePlayer2").disabled = true;
+    document.getElementById("singlePlayer").checked = true;
 
     initLocalisation();
     showStartGameOverlay();
