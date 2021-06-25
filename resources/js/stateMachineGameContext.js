@@ -64,6 +64,7 @@ class StateMachineGameContext {
     }
 
     async handleUpdatedGameState() {
+        //console.log("currentState2 = " + this.game.currentState2);
         let gameModule = StateMachineGameContextModuleHelper.getGameModule();
 
         if (this.game.currentState2 == gameModule.GameState2.dealCards) {
@@ -81,6 +82,9 @@ class StateMachineGameContext {
         else if (this.game.currentState2 == gameModule.GameState2.roundFinished) {
             await this.handleRoundFinished();
         }
+        else if (this.game.currentState2 == gameModule.GameState2.waitingForPlayersToMarkAsReady) {
+            await this.handleWaitingForPlayersToMarkAsReady();
+        }
     }
 
     async handleCardsDealt() {
@@ -90,7 +94,6 @@ class StateMachineGameContext {
     }
 
     async handlePlayerRobbing() {
-        console.log("handlePlayerRobbing");
         let player = this.game.players[this.game.roundRobbingInfo.playerCanRobIndex];
         if (player.id == this.selfPlayer.id) {
             await this.eventsHandler.sendEventToViewController('showSelfPlayerRobbingDialog', { 
@@ -106,7 +109,6 @@ class StateMachineGameContext {
     }
 
     async handleWaitingForPlayerMove() {
-        console.log("handleWaitingForPlayerMove");
         let player = this.game.players[this.game.currentHandInfo.currentPlayerIndex];
         await this.eventsHandler.sendEventToViewController('highlightCurrentPlayer', { "player": player });
 
@@ -143,6 +145,11 @@ class StateMachineGameContext {
             await this.eventsHandler.sendEventToViewController('setupInitialState', { "isSelfPlayerCardsEnabled": false, "players": this.game.players, "trumpCard": this.game.trumpCard });
             await this.updateGameState();
         }
+    }
+
+    async handleWaitingForPlayersToMarkAsReady() {
+        this.gameStateMachine.markPlayerReadyForNextRound(this.game, this.selfPlayer.id);
+        await this.updateGameState();
     }
 
     async playSelfCard(cardName) {
