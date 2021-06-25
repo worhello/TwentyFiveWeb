@@ -85,6 +85,7 @@ class MultiPlayerGameContext extends GameContext {
     }
 
     requestAIs() {
+        this.setUseQueueIfAllAis();
         let data = {
             type: "requestAIs",
             gameId: this.gameId
@@ -188,6 +189,57 @@ class MultiPlayerGameContext extends GameContext {
         this.websocket.close();
     }
 
+    useQueue = false;
+    setUseQueueIfAllAis() {
+        //this.useQueue = this.players.length == 1;
+    }
+
+    eventsQueue = [];
+    addEventToQueue(asyncFunc) {
+        this.eventsQueue.push(asyncFunc);
+        if (!this.eventInProgress) {
+            this.processNextEvent();
+        }
+    }
+
+    eventInProgress = false;
+    processNextEvent() {
+        this.eventInProgress = true;
+        new Promise(r => setTimeout(r, 200)).then(async () => {
+            let nextEntry = this.eventsQueue.shift();
+            await nextEntry();
+
+            if (this.eventsQueue.length == 0) {
+                this.eventInProgress = false;
+            }
+            else {
+                this.processNextEvent();
+            }
+        });
+    }
+
+    excludedEventTypes = [
+        "playerListChanged"
+    ]
+
+    shouldQueueEvent(json) {
+        if (!this.useQueue) {
+            return false;
+        }
+
+        if (this.excludedEventTypes.indexOf(json.type) > -1) {
+            return false;
+        }
+
+        if (json.userId == this.selfPlayer.id) {
+            if (json.type == "cardPlayed" || json.type == "cardsUpdated") {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     async handleWebsocketEvent(event) {
         let json = JSON.parse(event.data);
         if (json.type == "wsConnectionAck") {
@@ -196,6 +248,12 @@ class MultiPlayerGameContext extends GameContext {
         else if (json.type == "createGameAck" || json.type == "joinGameAck") {
             this.gameId = json.gameId;
             this.gameUrl = json.gameUrl;
+        }
+        else if (this.shouldQueueEvent(json)) {
+            let gc = this;
+            this.addEventToQueue(async function() {
+                await gc.handleTfGameEvent(json);
+            });
         }
         else {
             await this.handleTfGameEvent(json);
