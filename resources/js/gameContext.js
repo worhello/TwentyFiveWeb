@@ -51,9 +51,10 @@ class GameContext {
     }
 
     async handleCardsUpdated(json) {
-        let player = this.players.find(function (p) { return p.id == json.userId; });
-        player.cards = json.cards;
-        await this.eventsHandler.sendEventToViewController('showSelfPlayerHand', { "selfPlayer": this.selfPlayer, "isEnabled": false });
+        if (json.userId == this.selfPlayer.id) {
+            this.selfPlayer.cards = json.cards;
+            await this.eventsHandler.sendEventToViewController('showSelfPlayerHand', { "selfPlayer": this.selfPlayer, "isEnabled": false });
+        }
     }
 
     async handleGameFinished(json) {
