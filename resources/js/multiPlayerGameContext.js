@@ -21,7 +21,7 @@ class MultiPlayerGameContext extends GameContext {
         this.gameUrl = "";
         this.selfPlayer = {};
 
-        //this.websocket = new WebSocket('ws://localhost:3000');
+        // this.websocket = new WebSocket('ws://localhost:3000');
         this.websocket = new WebSocket('ws://twentyfive-env.eba-jrs4p3fm.eu-west-1.elasticbeanstalk.com/');
         let gameContext = this;
         this.websocket.onmessage = function (event) {
@@ -191,13 +191,13 @@ class MultiPlayerGameContext extends GameContext {
 
     useQueue = false;
     setUseQueueIfAllAis() {
-        //this.useQueue = this.players.length == 1;
+        this.useQueue = this.players.length == 1;
     }
 
     eventsQueue = [];
     addEventToQueue(asyncFunc) {
         this.eventsQueue.push(asyncFunc);
-        if (!this.eventInProgress) {
+        if (this.eventInProgress == false) {
             this.processNextEvent();
         }
     }
@@ -205,7 +205,7 @@ class MultiPlayerGameContext extends GameContext {
     eventInProgress = false;
     processNextEvent() {
         this.eventInProgress = true;
-        new Promise(r => setTimeout(r, 200)).then(async () => {
+        new Promise(r => setTimeout(r, 150)).then(async () => {
             let nextEntry = this.eventsQueue.shift();
             await nextEntry();
 
@@ -220,10 +220,15 @@ class MultiPlayerGameContext extends GameContext {
 
     excludedEventTypes = [
         "playerListChanged"
-    ]
+    ];
+
+    excludedSelfPlayerEventTypes = [
+        "cardPlayed",
+        "cardsUpdated"
+    ];
 
     shouldQueueEvent(json) {
-        if (!this.useQueue) {
+        if (this.useQueue == false) {
             return false;
         }
 
@@ -232,7 +237,7 @@ class MultiPlayerGameContext extends GameContext {
         }
 
         if (json.userId == this.selfPlayer.id) {
-            if (json.type == "cardPlayed" || json.type == "cardsUpdated") {
+            if (this.excludedSelfPlayerEventTypes.indexOf(json.type) > -1) {
                 return false;
             }
         }
