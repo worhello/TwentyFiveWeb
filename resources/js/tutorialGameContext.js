@@ -1,12 +1,12 @@
 "use strict";
 
 class TutorialModulesAccessor {
-    static getSPContextModule() {
+    static getStateMachineContextModule() {
         if (typeof module !== 'undefined' && module.exports != null) {
-            return require("./singlePlayerGameContext");
+            return require("./stateMachineGameContext");
         }
         else {
-            return window.SinglePlayerGameContextModule;
+            return window.StateMachineGameContext;
         }
     }
 
@@ -17,16 +17,6 @@ class TutorialModulesAccessor {
         }
         else {
             return window.game;
-        }
-    }
-
-    static getGameProcessorModule() {
-        if (typeof module !== 'undefined' && module.exports != null) {
-            let m = require("./twentyfive-js/gameProcessor");
-            return m;
-        }
-        else {
-            return window.gameProcess;
         }
     }
 
@@ -138,7 +128,7 @@ class TutorialGameManager {
     }
 
     sortDeckIfNeeded(deckCards) {
-        if (this.deckSorted === true) {
+        if (this.deckSorted == true) {
             return;
         }
         this.deckSorted = true;
@@ -176,7 +166,7 @@ class TutorialGameManager {
         ];
 
         for (var i = 0; i < cardsToFindAndReplace.length; i++) {
-            let deckIndex = 51 - i;
+            let deckIndex = i;
             let cardIndex = deckCards.findIndex(function(card) { return gameLogic.isSameCard(card, cardsToFindAndReplace[i]); } );
             var tmp = deckCards[deckIndex];
             deckCards[deckIndex] = deckCards[cardIndex];
@@ -208,103 +198,80 @@ class TutorialGameManager {
     }
 }
 
-class TutorialGameProcessor extends (TutorialModulesAccessor.getGameProcessorModule()).GameProcessor {
-    constructor(game, notifyOnePlayerFunc, notifyStateChangeFunc, notifyGameChangedFunc) {
-        super(game, notifyOnePlayerFunc, notifyStateChangeFunc, notifyGameChangedFunc);
-        this.tutorialGameManager = new TutorialGameManager();
-        this.nextActionDelayTime = 500;
-    }
-
-    // override
-    resetDeckIfNeeded() {
-        super.resetDeckIfNeeded();
-        this.tutorialGameManager.sortDeckIfNeeded(this.game.deck.cards);
-    }
-
-    // override
-    rotateDealer() {
-        let dealerIndex = this.tutorialGameManager.getDealerIndex(this.getSelfPlayerIndex());
-        this.game.players[dealerIndex].isDealer = true;
-    }
-
-    getSelfPlayerIndex() {
-        return this.game.players.findIndex(p => p.isAi == false); // only one non-AI in a tutorial
-    }
-
-    // override
-    updatePlayerCardsEnabled(player) {
-        this.tutorialGameManager.enableCardsForPlay(player.cards);
-    }
-
-    // override
-    playerBestCardAi(player) {
-        return this.getPlayerModule().PlayerLogic.playCard(player, this.tutorialGameManager.getNextAiCardToPlay(player));    }
-
-    async notifyShowNextTutorialOverlayMessage(continueFunc) {
-        let data = {
-            type: "tutorialRoundEnded",
-            continueFunc: continueFunc
-        }
-        await this.notifyAllPlayers(data);
-    }
-
-    // override
-    async onRoundEnded(continueFunc) {
-        await this.notifyShowNextTutorialOverlayMessage(continueFunc);
-    }
-}
-
-class TutorialGameContext extends (TutorialModulesAccessor.getSPContextModule()).SinglePlayerGameContext {
+class TutorialGameContext extends (TutorialModulesAccessor.getStateMachineContextModule()).StateMachineGameContext {
     constructor(eventsHandler, numPlayers, localisationManager) {
         super(eventsHandler, numPlayers, localisationManager);
-        this.gameMgr = new TutorialGameProcessor(this.game, this.notifyEventFunc, this.gameStateChangedFunc, this.gameChangedFunc)
         this.tutorialManager = new TutorialManager(localisationManager);
+        this.tutorialGameManager = new TutorialGameManager();
     }
 
     // override
-    async onStartGame() {
+    async startGame() {
         await this.showNextTutorialIntroMessage();
     }
 
+    async startGameAfterIntroMessages() {
+        await super.startGame();
+    }
+
     async showNextTutorialOverlayMessage(continueFunc) {
-        if (this.tutorialManager) {
-            let tutorialOverlayMessage = this.tutorialManager.getNextTutorialOverlayMessage();
-            await this.eventsHandler.sendEventToViewController('showTutorialOverlayMessage', { "tutorialOverlayMessage": tutorialOverlayMessage, "continueFunc": continueFunc });
-        }
+        let tutorialOverlayMessage = this.tutorialManager.getNextTutorialOverlayMessage();
+        await this.eventsHandler.sendEventToViewController('showTutorialOverlayMessage', { "tutorialOverlayMessage": tutorialOverlayMessage, "continueFunc": continueFunc });
     }
 
     async showNextTutorialIntroMessage() {
-        if (this.tutorialManager) {
-            let gameContext = this;
-            let continueFunc = async function() {
-                if (gameContext.tutorialManager.hasMoreIntroMessages()) {
-                    await gameContext.showNextTutorialIntroMessage();
-                }
-                else {
-                    await gameContext.gameMgr.startRound();
-                }
-            };
-            await this.showNextTutorialOverlayMessage(continueFunc);
+        let gameContext = this;
+        let continueFunc = async function() {
+            if (gameContext.tutorialManager.hasMoreIntroMessages()) {
+                await gameContext.showNextTutorialIntroMessage();
+            }
+            else {
+                await gameContext.startGameAfterIntroMessages();
+            }
+        };
+        await this.showNextTutorialOverlayMessage(continueFunc);
+    }
+
+    async handleTutorialRoundFinished() {
+        let gameContext = this;
+        let continueFunc = async function() {
+            await gameContext.handleRoundFinished();
+        };
+        await this.defaultSleep();
+        await this.showNextTutorialOverlayMessage(continueFunc);
+    }
+
+    // override
+    async handleUpdatedGameState() {
+        let gameModule = TutorialModulesAccessor.getGameModule();
+        var callParentFunc = true;
+        if (this.game.currentState2 == gameModule.GameState2.readyToPlay) {
+            let dealerIndex = this.tutorialGameManager.getDealerIndex(this.game.players.findIndex(p => p.isAi == false));
+            this.game.players[dealerIndex].isDealer = true;
+        }
+        else if (this.game.currentState2 == gameModule.GameState2.dealCards) {
+            this.tutorialGameManager.sortDeckIfNeeded(this.game.deck.cards);
+        }
+        else if (this.game.currentState2 == gameModule.GameState2.roundFinished) {
+            callParentFunc = false;
+            await this.handleTutorialRoundFinished();
+        }
+        else if (this.game.currentState2 == gameModule.GameState2.waitingForPlayerMove) {
+            let player = this.game.players[this.game.currentHandInfo.currentPlayerIndex];
+            this.tutorialGameManager.enableCardsForPlay(player.cards);
+        }
+
+        if (callParentFunc == true) {
+            await super.handleUpdatedGameState();
         }
     }
 
     // override
-    async handleTfGameEvent(data) {
-        if (data.type == "tutorialRoundEnded") {
-            await this.showNextTutorialOverlayMessage(data.continueFunc);
-        }
-        else {
-            await super.handleTfGameEvent(data);
-        }
-    }
-
-    // override
-    async handleRobTrumpCardAvailable(json) {
-        this.gameMgr.updatePlayerCardsEnabled(this.selfPlayer);
+    async handleSelfPlayerRobbing() {
         await this.eventsHandler.sendEventToViewController('showSelfPlayerHand', { "selfPlayer": this.selfPlayer, "isEnabled": true });
         await this.eventsHandler.sendEventToViewController('showSelfPlayerRobbingDialog', 
         { 
-            "trumpCard": json.trumpCard, 
+            "trumpCard": this.game.trumpCard, 
             "skipButtonDisabled": true,
             "skipButtonDisabledReason": this.tutorialManager.getSkipTrumpButtonDisabledReason()
         });

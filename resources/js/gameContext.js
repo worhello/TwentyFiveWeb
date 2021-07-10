@@ -101,7 +101,7 @@ class GameContext {
     }
 
     async handleTfGameEvent(json) {
-        console.log("Received TF Event with type=" + json.type);
+        // console.log("Received TF Event with type=" + json.type);
         if (json.type == "playerListChanged") {
             await this.handlePlayerListChanged(json);
         }

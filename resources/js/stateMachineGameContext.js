@@ -93,14 +93,18 @@ class StateMachineGameContext {
         await this.updateGameState();
     }
 
+    async handleSelfPlayerRobbing() {
+        await this.eventsHandler.sendEventToViewController('showSelfPlayerRobbingDialog', { 
+            "trumpCard": this.game.trumpCard, 
+            "skipButtonDisabled": false,
+            "skipButtonDisabledReason": ""
+        });
+    }
+
     async handlePlayerRobbing() {
         let player = this.game.players[this.game.roundRobbingInfo.playerCanRobIndex];
         if (player.id == this.selfPlayer.id) {
-            await this.eventsHandler.sendEventToViewController('showSelfPlayerRobbingDialog', { 
-                "trumpCard": this.game.trumpCard, 
-                "skipButtonDisabled": false,
-                "skipButtonDisabledReason": ""
-            });
+            await this.handleSelfPlayerRobbing();
         }
         else {
             this.gameStateMachine.handleAiPlayerRob(this.game);
@@ -108,12 +112,16 @@ class StateMachineGameContext {
         }
     }
 
+    async handleWaitingForSelfPlayerMove() {
+        await this.eventsHandler.sendEventToViewController('showSelfPlayerHand', { "selfPlayer": this.selfPlayer, "isEnabled": true });
+    }
+
     async handleWaitingForPlayerMove() {
         let player = this.game.players[this.game.currentHandInfo.currentPlayerIndex];
         await this.eventsHandler.sendEventToViewController('highlightCurrentPlayer', { "player": player });
 
         if (player.id == this.selfPlayer.id) {
-            await this.eventsHandler.sendEventToViewController('showSelfPlayerHand', { "selfPlayer": this.selfPlayer, "isEnabled": true });
+            await this.handleWaitingForSelfPlayerMove();
         }
         else {
             await this.defaultSleep();
@@ -196,5 +204,7 @@ class StateMachineGameContext {
     
     if (typeof module !== 'undefined' && module.exports != null) {
         module.exports = e;
+    } else {
+        window.StateMachineGameContext = e;
     }
 })();
