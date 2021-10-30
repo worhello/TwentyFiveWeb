@@ -96,7 +96,8 @@ class GameContext {
 
     async handlePlayersReadyForNextRoundChanged(json) {
         await this.eventsHandler.sendEventToViewController('playersReadyForNextRoundChanged', { 
-            "readyPlayerIds": json.readyPlayerIds
+            "readyPlayerIds": json.readyPlayerIds,
+            "disableButtons": json.readyPlayerIds.indexOf(this.userId) >= 0
         });
     }
 

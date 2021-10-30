@@ -150,6 +150,10 @@ function getLocalisedStrings() {
             "translator note": "button text to add AIs for multiplayer game",
             "en": "Add AIs"
         },
+        "markAsReadyButton": {
+            "translator note": "button text to mark yourself as ready for next round of multiplayer game",
+            "en": "Ready for next round"
+        },
         "copyLinkToShareGameLabel": {
             "translator note": "label text for a copyable URL to join a multiplayer game",
             "en": "You can share the link below with your friends to play a game together"
