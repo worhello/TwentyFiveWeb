@@ -85,7 +85,6 @@ class MultiPlayerGameContext extends GameContext {
     }
 
     requestAIs() {
-        this.setUseQueueIfAllAis();
         let data = {
             type: "requestAIs",
             gameId: this.gameId
@@ -189,11 +188,6 @@ class MultiPlayerGameContext extends GameContext {
         this.websocket.close();
     }
 
-    useQueue = false;
-    setUseQueueIfAllAis() {
-        this.useQueue = this.players.length == 1;
-    }
-
     eventsQueue = [];
     addEventToQueue(asyncFunc) {
         this.eventsQueue.push(asyncFunc);
@@ -228,10 +222,6 @@ class MultiPlayerGameContext extends GameContext {
     ];
 
     shouldQueueEvent(json) {
-        if (this.useQueue == false) {
-            return false;
-        }
-
         if (this.excludedEventTypes.indexOf(json.type) > -1) {
             return false;
         }
