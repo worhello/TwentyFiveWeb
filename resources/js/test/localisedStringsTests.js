@@ -54,6 +54,16 @@ describe("check returned strings are formatted correctly", function() {
             let actual = localisedStringManager.getLocalisedString(knownParamStringId, ["my param"]);
             assert.strictEqual(actual, "Robbed by my param");
         });
+
+        it("known localised string with invalid param tokens", function() {
+            var exceptionThrown = false;
+            try {
+                let actual = localisedStringManager.getLocalisedString(knownParamStringId, "my param");
+            } catch (err) {
+                exceptionThrown = true;
+            }
+            assert.strictEqual(exceptionThrown, true);
+        });
     });
 });
 
