@@ -179,7 +179,7 @@ class MultiPlayerGameContext extends GameContext {
             needMorePlayers: json.needMorePlayers,
             gameUrl: this.gameUrl,
             buttonsEnabled: this.players.find(p => p.id == this.userId).isHost,
-            continueFunc: function () { json.needMorePlayers? gameContext.requestAIs() : gameContext.startGameOnServer(); }
+            continueFunc: function () { json.needMorePlayers ? gameContext.requestAIs() : gameContext.startGameOnServer(); }
         });
 
         if (!this.selfPlayer) {
