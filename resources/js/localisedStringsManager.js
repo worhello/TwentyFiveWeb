@@ -7,6 +7,9 @@ class LocalisedStringManager {
     }
 
     getLocalisedString(localisedStringId, params) {
+        if (params && !Array.isArray(params)) {
+            throw "'params' must be an array!";
+        }
         var localisedString = "";
         var localisedStringObj = this.localisedStrings[localisedStringId];
         if (localisedStringObj) {
@@ -19,8 +22,7 @@ class LocalisedStringManager {
                 }
             }
         }
-        if (!localisedString)
-        {
+        if (!localisedString) {
             localisedString = "UNLOCALISED_STRING: Unknown string ID - " + localisedStringId;
         }
 

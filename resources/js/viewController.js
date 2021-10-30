@@ -604,7 +604,7 @@ class ViewController {
             let playerInfoCtr = document.getElementById("EndGamePlayerStatusInfoContainer_" + playerId);
             if (playerInfoCtr && nameCtr) {
                 playerInfoCtr.textContent = "✔️";
-                playerInfoCtr.title = this.localisationManager.getLocalisedString("playerReady", nameCtr.textContent);
+                playerInfoCtr.title = this.localisationManager.getLocalisedString("playerReady", [nameCtr.textContent]);
             }
         }
 
