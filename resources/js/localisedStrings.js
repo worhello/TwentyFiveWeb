@@ -177,6 +177,10 @@ function getLocalisedStrings() {
         "playerIsWinnerTooltip": {
             "translator note": "indicate that this player is the winner of the game",
             "en": "{{param}} is the winner!"
+        },
+        "multiplayerLobbyButtonDisabledTooltip": {
+            "translator note": "indicate that the button to add AIs or start the game in multiplayer is disabled because the player is not the host",
+            "en": "Only the first player can add AIs or start the game"
         }
     }
 }

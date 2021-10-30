@@ -149,6 +149,7 @@ class ViewController {
         startButtonCtr.classList.add("EndGameStartNewGameButtonContainer");
 
         var startNewGameButton = document.createElement("button");
+        startNewGameButton.id = "endGameStatsContainer_button";
         startNewGameButton.textContent = buttonText;
         startNewGameButton.addEventListener("click", buttonFunc);
         startButtonCtr.appendChild(startNewGameButton);
@@ -534,15 +535,19 @@ class ViewController {
         input.type = "text";
         input.placeholder = this.localisationManager.getLocalisedString("inputNamePlaceholder");
         container.appendChild(input);
-        // TODO - tie button enabled to input not being empty
 
         this.showOverlayWithButton(container, this.localisationManager.getLocalisedString("tutorialContinueToNextHand"), function() {
             hideAllOverlays();
             continueFunc(input.value);
         });
+
+        document.getElementById("endGameStatsContainer_button").disabled = true;
+        input.addEventListener("keyup", function() {
+            document.getElementById("endGameStatsContainer_button").disabled = input.value.length < 3;
+        });
     }
 
-    updateMultiplayerWaitingScreen(waitingPlayers, needMorePlayers, gameUrl, continueFunc) {
+    updateMultiplayerWaitingScreen(waitingPlayers, needMorePlayers, gameUrl, buttonsEnabled, continueFunc) {
         let buttonText = needMorePlayers ? this.localisationManager.getLocalisedString("addAIsButton")
                                          : this.localisationManager.getLocalisedString("startGameButton");
         this.showEndOfHandOrGameStats(waitingPlayers, false, false, buttonText, function() {
@@ -572,6 +577,11 @@ class ViewController {
         gameUrlContainer.appendChild(copyUrlButton);
 
         document.getElementById("playersContainer").appendChild(gameUrlContainer);
+
+        document.getElementById("endGameStatsContainer_button").disabled = !buttonsEnabled;
+        if (!buttonsEnabled) {
+            document.getElementById("endGameStatsContainer_button").title = this.localisationManager.getLocalisedString("multiplayerLobbyButtonDisabledTooltip");
+        }
     }
 
     handleMultiplayerConnected() {
@@ -624,7 +634,7 @@ class ViewController {
         } else if (eventName == 'showMultiplayerNameInput') {
             this.showMultiplayerNameInput(eventDetails.continueFunc);
         } else if (eventName == 'updateMultiplayerWaitingScreen') {
-            this.updateMultiplayerWaitingScreen(eventDetails.waitingPlayers, eventDetails.needMorePlayers, eventDetails.gameUrl, eventDetails.continueFunc);
+            this.updateMultiplayerWaitingScreen(eventDetails.waitingPlayers, eventDetails.needMorePlayers, eventDetails.gameUrl, eventDetails.buttonsEnabled, eventDetails.continueFunc);
         } else if (eventName == 'multiplayerConnected') {
             this.handleMultiplayerConnected();
         } else if (eventName == 'multiplayerErrorHappened') {

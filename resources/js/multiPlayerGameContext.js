@@ -163,10 +163,13 @@ class MultiPlayerGameContext extends GameContext {
         let gameContext = this;
         let playersDetails = json.playersDetails;
         let playersModule = getPlayerModule();
+
+        // TODO - make better way to build up TF types from Json
         let convertToTfPlayer = function(details) {
-            var p = new playersModule.Player(details.name, details.userId == gameContext.userId);
-            p.id = details.userId;
+            var p = new playersModule.Player(details.name, details.id == gameContext.userId);
+            p.id = details.id;
             p.isAi = details.isAi ?? false;
+            p.isHost = details.isHost;
             return p;
         }
         this.players = playersDetails.map(convertToTfPlayer);
@@ -175,6 +178,7 @@ class MultiPlayerGameContext extends GameContext {
             waitingPlayers: this.players,
             needMorePlayers: json.needMorePlayers,
             gameUrl: this.gameUrl,
+            buttonsEnabled: this.players.find(p => p.id == this.userId).isHost,
             continueFunc: function () { json.needMorePlayers? gameContext.requestAIs() : gameContext.startGameOnServer(); }
         });
 
