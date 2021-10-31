@@ -7,12 +7,16 @@ function clearChildrenOfElementById(elementId) {
     }
 }
 
+function getCardUrl(card) {
+    return "resources/images/Cards/" + card.cardName + ".svg";
+}
+
 function buildCardNode(playerId, card) {
     let cardName = card.cardName;
     let cardNodeContainer = document.createElement("div");
     let cardNode = document.createElement("img");
     cardNode.className = 'Card';
-    cardNode.src = card.url; // TODO - build URL with card.cardName - card.url will soon be deprecated
+    cardNode.src = getCardUrl(card);
     cardNode.playerId = playerId;
 
     cardNodeContainer.appendChild(cardNode);
