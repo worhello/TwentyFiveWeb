@@ -644,7 +644,7 @@ class ViewController {
         } else if (eventName == 'showMultiplayerNameInput') {
             this.showMultiplayerNameInput(eventDetails.continueFunc);
         } else if (eventName == 'updateMultiplayerWaitingScreen') {
-            this.updateMultiplayerWaitingScreen(eventDetails.waitingPlayers, eventDetails.buttonState, eventDetails.gameUrl, eventDetails.buttonsEnabled, eventDetails.continueFunc);
+            this.updateMultiplayerWaitingScreen(eventDetails.waitingPlayers, eventDetails.needMorePlayers, eventDetails.gameUrl, eventDetails.buttonsEnabled, eventDetails.continueFunc);
         } else if (eventName == 'multiplayerConnected') {
             this.handleMultiplayerConnected();
         } else if (eventName == 'multiplayerErrorHappened') {
