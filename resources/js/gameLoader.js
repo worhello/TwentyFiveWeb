@@ -53,13 +53,6 @@ function onTutorialButtonClicked() {
     startGame(numPlayers, isSinglePlayer, true, null);
 }
 
-function getCardUrl(card) {
-    // TODO change to building up URL here using card.cardName
-    // card.url will soon be deprecated
-    //return "resources/images/Cards/" + card.cardName + ".svg";
-    return card.url;
-}
-
 function preloadCards() {
     let deck = new Deck();
     let cards = deck.cards;
