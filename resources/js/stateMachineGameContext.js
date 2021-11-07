@@ -37,7 +37,7 @@ class StateMachineGameContext {
         this.selfPlayer = new (StateMachineGameContextModuleHelper.getPlayerModule()).Player(localisationManager.getLocalisedString("selfPlayerDisplayName"), true);
         this.gameStateMachine = (StateMachineGameContextModuleHelper.getGameStateMachineModule()).GameStateMachine;
 
-        this.game = new (StateMachineGameContextModuleHelper.getGameModule()).Game(this.gameId, numPlayers, this.disableReneging);
+        this.game = new (StateMachineGameContextModuleHelper.getGameModule()).Game(this.gameId, numPlayers); // TODO - we should be able to set rules here
     }
 
     async defaultSleep() {
