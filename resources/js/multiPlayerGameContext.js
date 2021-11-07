@@ -33,6 +33,9 @@ class MultiPlayerGameContext extends GameContext {
         this.websocket.onerror = function(event) {
             gameContext.handleWebsocketError();
         }
+        this.websocket.onclose = function(event) {
+            gameContext.handleWebsocketError();
+        }
     }
 
     async startGame() {
@@ -189,6 +192,7 @@ class MultiPlayerGameContext extends GameContext {
 
     async handleGameFinished(json) {
         await super.handleGameFinished(json);
+        this.websocket.onclose = function(event) { /* no-op */ };
         this.websocket.close();
     }
 
@@ -261,7 +265,7 @@ class MultiPlayerGameContext extends GameContext {
 
     handleWebsocketConnected() {
         this.eventsHandler.sendEventToViewController('multiplayerConnected', {});
-    }
+}
 
     handleWebsocketError() {
         this.eventsHandler.sendEventToViewController('multiplayerErrorHappened', {});
