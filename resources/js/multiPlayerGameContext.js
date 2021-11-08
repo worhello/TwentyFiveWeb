@@ -75,13 +75,18 @@ class MultiPlayerGameContext extends GameContext {
     }
 
     createGameWithName(playerName) {
-        // TODO lots of input validation needed here...
+        // TODO - input validation needed for playerName
         let data = {
             type: "createGame",
             numberOfPlayers: this.numPlayers,
             playerDetails: {
                 name: playerName,
                 userId: this.userId
+            },
+            gameRules: {
+                "winningScore": 25,
+                "renegingAllowed": true,
+                "useTeams": null
             }
         };
         this.websocket.send(JSON.stringify(data));
