@@ -185,6 +185,18 @@ function getLocalisedStrings() {
         "multiplayerLobbyButtonDisabledTooltip": {
             "translator note": "indicate that the button to add AIs or start the game in multiplayer is disabled because the player is not the host",
             "en": "Only the first player can add AIs or start the game"
+        },
+        "winningScoreSelect": {
+            "translator note": "label for drop-down menu selecting the winning score for the game",
+            "en": "Winning score"
+        },
+        "useTeamsCheckBox": {
+            "translator note": "label for checkbox to play as part of a team or individually",
+            "en": "Use Teams?"
+        },
+        "n_n_teamConfig": {
+            "translator note": "dropdown menu item for n teams of n players each",
+            "en": "{{param}} teams of {{param}} players"
         }
     }
 }

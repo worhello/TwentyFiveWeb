@@ -2,8 +2,8 @@
 
 function clearChildrenOfElementById(elementId) {
     let node = document.getElementById(elementId);
-    while (node && node.firstChild) {
-        node.removeChild(node.firstChild);
+    while (node && node.lastChild) {
+        node.removeChild(node.lastChild);
     }
 }
 

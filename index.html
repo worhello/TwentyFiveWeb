@@ -18,6 +18,7 @@
         <script src="resources/js/stateMachineGameContext.js"></script>
         <script src="resources/js/multiPlayerGameContext.js"></script>
         <script src="resources/js/tutorialGameContext.js"></script>
+        <script src="resources/js/startGameViewController.js"></script>
         <script src="resources/js/viewController.js"></script>
         <script src="resources/js/eventsHandler.js"></script>
         <script src="resources/js/localisedStringsManager.js"></script>
@@ -30,30 +31,29 @@
             <div id="menuContainer" class="Overlay">
                 <div id="startGameContainer">
                     <div>
-                        <select name="numPlayers" id="numPlayersSelect">
-                            <option id="2PlayersOption" value="2" selected></option>
-                            <option id="3PlayersOption" value="3"></option>
-                            <option id="4PlayersOption" value="4"></option>
-                            <option id="5PlayersOption" value="5"></option>
-                            <option id="6PlayersOption" value="6"></option>
-                            <option id="7PlayersOption" value="7"></option>
-                            <option id="8PlayersOption" value="8"></option>
-                            <option id="9PlayersOption" value="9"></option>
-                            <option id="10PlayersOption" value="10"></option>
-                        </select>
+                        <h2>Welcome to the Twenty Five card game!</h2>
+                    </div>
+                    <div>
+                        <button id="startTutorialButton"></button>
                     </div>
                     <div>
                         <input type="radio" id="singlePlayer" value="singlePlayer" name="playMode" checked>
-                        <label id="singlePlayerLabel" for="singlePlayer"></label><br/>
+                        <label id="singlePlayerLabel" for="singlePlayer"></label>
                         <input type="radio" id="multiPlayer" name="playMode" value="multiPlayer" >
                         <label id="multiPlayerLabel" for="multiPlayer"></label>
                     </div>
                     <div>
-                        <button id="startGameButton">Start Game</button>
-                        <p id="connectingLabel">Connecting...</p>
+                        <input type="checkbox" id="useTeamsCheckBox"></input>
+                        <label id="useTeamsCheckBoxLabel" for="useTeamsCheckBox"></label><br>
+                        <select name="numPlayers" id="numPlayersSelect"></select>
                     </div>
                     <div>
-                        <button id="startTutorialButton">Tutorial</button>
+                        <label id="winningScoreSelectLabel" for="winningScoreSelect">Winning Score</label>
+                        <select name="winningScore" id="winningScoreSelect"></select>
+                    </div>
+                    <div>
+                        <button id="startGameButton"></button>
+                        <p id="connectingLabel"></p>
                     </div>
                 </div>
             </div>

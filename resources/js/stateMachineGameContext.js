@@ -30,14 +30,14 @@ class StateMachineGameContextModuleHelper {
 }
 
 class StateMachineGameContext {
-    constructor(eventsHandler, numPlayers, localisationManager) {
+    constructor(eventsHandler, numPlayers, localisationManager, gameRules) {
         this.eventsHandler = eventsHandler;
         this.gameId = "StateMachineGameId";
 
         this.selfPlayer = new (StateMachineGameContextModuleHelper.getPlayerModule()).Player(localisationManager.getLocalisedString("selfPlayerDisplayName"), true);
         this.gameStateMachine = (StateMachineGameContextModuleHelper.getGameStateMachineModule()).GameStateMachine;
 
-        this.game = new (StateMachineGameContextModuleHelper.getGameModule()).Game(this.gameId, numPlayers); // TODO - we should be able to set rules here
+        this.game = new (StateMachineGameContextModuleHelper.getGameModule()).Game(this.gameId, numPlayers, gameRules);
     }
 
     async defaultSleep() {
@@ -88,6 +88,7 @@ class StateMachineGameContext {
     }
 
     async handleCardsDealt() {
+        // TODO - update this to show your team
         await this.eventsHandler.sendEventToViewController('showSelfPlayerHand', { "selfPlayer": this.selfPlayer, "isEnabled": false });
         await this.eventsHandler.sendEventToViewController('setupInitialState', { "isSelfPlayerCardsEnabled": false, "players": this.game.players, "trumpCard": this.game.trumpCard });
         await this.updateGameState();
@@ -141,6 +142,7 @@ class StateMachineGameContext {
     }
 
     async handleRoundFinished() {
+        // TODO - change this to account for teams
         this.gameStateMachine.updateToNextGameState(this.game);
         if (this.game.endOfHandInfo.gameFinished == true) {
             await this.eventsHandler.sendEventToViewController('showGameEndScreen', { "sortedPlayers": this.game.endOfHandInfo.orderedPlayers });
