@@ -252,6 +252,10 @@ class MultiPlayerGameContext extends GameContext {
             this.gameId = json.gameId;
             this.gameUrl = json.gameUrl;
         }
+        else if (json.type == "errorMessage") {
+            console.log("server error received: " + json.errorMessage);
+            this.websocket.close();
+        }
         else if (this.shouldQueueEvent(json)) {
             let gc = this;
             this.addEventToQueue(async function() {
