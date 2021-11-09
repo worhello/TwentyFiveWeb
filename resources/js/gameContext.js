@@ -18,6 +18,7 @@ class GameContext {
     }
 
     async handleGameInitialState(json) {
+        // TODO - update this to show your team
         this.trumpCard = json.gameInfo.trumpCard;
         this.selfPlayer.id = json.playerDetails.userId;
         this.selfPlayer.cards = json.playerDetails.cards;

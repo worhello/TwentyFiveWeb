@@ -245,6 +245,10 @@ class ViewController {
         });
     }
 
+    showEndOfHandOrGameStats_teams(teamPlayersInfos, gameFinished) {
+        // TODO
+    }
+
     cardDragStartHandler(ev) {
         if (this.selfPlayerCardsEnabled && ev.target.disabled === false) {
             document.getElementById("playedCardsContainer").classList.add("DroppableTargetHighlight");
@@ -651,6 +655,8 @@ class ViewController {
             this.handleMultiplayerError();
         } else if (eventName == 'playersReadyForNextRoundChanged') {
             this.handlePlayersReadyForNextRoundChanged(eventDetails.readyPlayerIds, eventDetails.disableButtons);
+        } else if (eventName == 'showEndOfHandOrGameStats_teams') {
+            this.showEndOfHandOrGameStats_teams(eventDetails.teamPlayersInfos, eventDetails.gameFinished);
         }
     }
 

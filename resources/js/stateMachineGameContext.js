@@ -141,14 +141,33 @@ class StateMachineGameContext {
         }
     }
 
+    async handleShowEndOfRoundOrGame(gameFinished) {
+        if (this.game.teams.length == 0) {
+            await this.eventsHandler.sendEventToViewController(gameFinished ? 'showGameEndScreen' : 'showEndOfHandStats', { "sortedPlayers": this.game.endOfHandInfo.orderedPlayers });
+        }
+        else {
+            let teamPlayersInfos = [];
+            for (let team of this.game.teams) {
+                let teamPlayersInfo = {};
+                teamPlayersInfo.teamId = team.id;
+                teamPlayersInfo.totalScore = team.totalScore;
+                teamPlayersInfo.players = [];
+                for (let playerId of team.playerIds) {
+                    teamPlayersInfo.players.push(this.game.players.find(p => p.id == playerId));
+                }
+                teamPlayersInfos.push(teamPlayersInfo);
+            }
+            await this.eventsHandler.sendEventToViewController('showEndOfHandOrGameStats_teams', { "teamPlayersInfos": teamPlayersInfos, "gameFinished": gameFinished });
+        }
+    }
+
     async handleRoundFinished() {
-        // TODO - change this to account for teams
         this.gameStateMachine.updateToNextGameState(this.game);
         if (this.game.endOfHandInfo.gameFinished == true) {
-            await this.eventsHandler.sendEventToViewController('showGameEndScreen', { "sortedPlayers": this.game.endOfHandInfo.orderedPlayers });
+            await this.handleShowEndOfRoundOrGame(true);
         }
         else if (this.game.currentHandInfo.needMoreCardsDealt) {
-            await this.eventsHandler.sendEventToViewController('showEndOfHandStats', { "sortedPlayers": this.game.endOfHandInfo.orderedPlayers });
+            await this.handleShowEndOfRoundOrGame(false);
         }
         else {
             await this.defaultSleep();
