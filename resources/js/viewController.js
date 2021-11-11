@@ -202,7 +202,12 @@ class ViewController {
                     aggregateAiNames += ", " + aiPlayers[i].name;
                 }
             }
-            leftIcon.title = this.localisationManager.getLocalisedString("playerIsAiTooltip", [ aggregateAiNames ]);
+            if (aiPlayers.length > 1) {
+                leftIcon.title = this.localisationManager.getLocalisedString("playersAreAisTooltip", [ aggregateAiNames ]);
+            }
+            else {
+                leftIcon.title = this.localisationManager.getLocalisedString("playerIsAiTooltip", [ aggregateAiNames ]);
+            }
         }
         else {
             outer.classList.add("EndGameHumanPlayer");

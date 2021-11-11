@@ -178,6 +178,10 @@ function getLocalisedStrings() {
             "translator note": "indicate that this player is an automatically generated AI",
             "en": "{{param}} is a robot"
         },
+        "playersAreAisTooltip": {
+            "translator note": "indicate that the players listed are automatically generated AIs",
+            "en": "{{param}} are robots"
+        },
         "playerIsWinnerTooltip": {
             "translator note": "indicate that this player is the winner of the game",
             "en": "{{param}} is the winner!"
