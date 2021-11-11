@@ -263,25 +263,18 @@ class ViewController {
     }
 
     showEndGameStats(sortedPlayers) {
-        this.buildAndshowEndOfHandOrGameStats_noTeams(sortedPlayers, true, true, this.localisationManager.getLocalisedString("startNewGameButtonText"), function() {
-            showStartGameOverlay();
-            clearChildrenOfElementById("endGameStatsContainer");
-        });
+        this.showEndOfHandOrGameStats_teamsAndNoTeams([], sortedPlayers, true, false);
     }
     
-    showEndOfHandStats(eventDetails) {
-        let viewController = this;
-        let buttonText = this.isMultiplayer ? this.localisationManager.getLocalisedString("markAsReadyButton")
-                                            : this.localisationManager.getLocalisedString("startNextRoundButtonText");
-        this.buildAndshowEndOfHandOrGameStats_noTeams(eventDetails.sortedPlayers, false, true, buttonText, function() {
-            if (viewController.isMultiplayer == false) {
-                hideAllOverlays();
-            }
-            viewController.eventsHandler.sendEventToGameContext('startNextRound', { "startingPlayerId": eventDetails.sortedPlayers[0].id });
-        });
+    showEndOfHandStats(sortedPlayers) {
+        this.showEndOfHandOrGameStats_teamsAndNoTeams([], sortedPlayers, false, false);
     }
 
     showEndOfHandOrGameStats_teams(teamPlayersInfos, gameFinished) {
+        this.showEndOfHandOrGameStats_teamsAndNoTeams(teamPlayersInfos, [], gameFinished, true);
+    }
+
+    showEndOfHandOrGameStats_teamsAndNoTeams(teamPlayersInfos, sortedPlayers, gameFinished, isTeams) {
         var buttonText;
         var buttonFunc;
         if (gameFinished) {
@@ -299,10 +292,16 @@ class ViewController {
                 if (viewController.isMultiplayer == false) {
                     hideAllOverlays();
                 }
-                viewController.eventsHandler.sendEventToGameContext('startNextRound', { "startingPlayerId": eventDetails.sortedPlayers[0].id });
+                viewController.eventsHandler.sendEventToGameContext('startNextRound', {});
             }
         }
-        this.buildAndshowEndOfHandOrGameStats_teams(teamPlayersInfos, gameFinished, true, buttonText, buttonFunc);
+
+        if (isTeams) {
+            this.buildAndshowEndOfHandOrGameStats_teams(teamPlayersInfos, gameFinished, true, buttonText, buttonFunc);
+        }
+        else {
+            this.buildAndshowEndOfHandOrGameStats_noTeams(sortedPlayers, gameFinished, true, buttonText, buttonFunc);
+        }
     }
 
     cardDragStartHandler(ev) {
@@ -683,8 +682,8 @@ class ViewController {
         for (let player of readyPlayers) {
             let playerReadyIcon = document.getElementById("EndGamePlayerStatusInfo_" + player.id);
             if (playerReadyIcon) {
-                playerInfoCtr.textContent = "✔️";
-                playerInfoCtr.title = this.localisationManager.getLocalisedString("playerReady", [player.name]);
+                playerReadyIcon.textContent = "✔️";
+                playerReadyIcon.title = this.localisationManager.getLocalisedString("playerReady", [player.name]);
             }
         }
 
@@ -710,7 +709,7 @@ class ViewController {
         } else if (eventName == 'playCard') {
             this.playCard(eventDetails.player, eventDetails.playedCard);
         } else if (eventName == 'showEndOfHandStats') {
-            this.showEndOfHandStats(eventDetails);
+            this.showEndOfHandStats(eventDetails.sortedPlayers);
         } else if (eventName == 'showSelfPlayerRobbingDialog') {
             this.showSelfPlayerRobbingDialog(eventDetails.trumpCard, eventDetails.skipButtonDisabled, eventDetails.skipButtonDisabledReason);
         } else if (eventName == 'updateCurrentWinningCard') {

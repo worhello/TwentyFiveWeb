@@ -155,7 +155,7 @@ class MultiPlayerGameContext extends GameContext {
         if (eventName == 'playSelfCard') {
             await this.playSelfCard(eventDetails.cardName);
         } else if (eventName == 'startNextRound') {
-            await this.startNextRound(eventDetails.startingPlayerId);
+            await this.startNextRound();
         } else if (eventName == 'selfPlayerRobTrumpCard') {
             await this.selfPlayerRobTrumpCard(eventDetails.droppedCardName);
         } else if (eventName == 'skipRobbingTrumpCard') {
