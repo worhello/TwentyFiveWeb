@@ -199,8 +199,8 @@ class TutorialGameManager {
 }
 
 class TutorialGameContext extends (TutorialModulesAccessor.getStateMachineContextModule()).StateMachineGameContext {
-    constructor(eventsHandler, numPlayers, localisationManager) {
-        super(eventsHandler, numPlayers, localisationManager);
+    constructor(eventsHandler, numPlayers, localisationManager, gameRules) {
+        super(eventsHandler, numPlayers, localisationManager, gameRules);
         this.tutorialManager = new TutorialManager(localisationManager);
         this.tutorialGameManager = new TutorialGameManager();
     }

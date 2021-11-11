@@ -30,14 +30,14 @@ class StateMachineGameContextModuleHelper {
 }
 
 class StateMachineGameContext {
-    constructor(eventsHandler, numPlayers, localisationManager) {
+    constructor(eventsHandler, numPlayers, localisationManager, gameRules) {
         this.eventsHandler = eventsHandler;
         this.gameId = "StateMachineGameId";
 
         this.selfPlayer = new (StateMachineGameContextModuleHelper.getPlayerModule()).Player(localisationManager.getLocalisedString("selfPlayerDisplayName"), true);
         this.gameStateMachine = (StateMachineGameContextModuleHelper.getGameStateMachineModule()).GameStateMachine;
 
-        this.game = new (StateMachineGameContextModuleHelper.getGameModule()).Game(this.gameId, numPlayers); // TODO - we should be able to set rules here
+        this.game = new (StateMachineGameContextModuleHelper.getGameModule()).Game(this.gameId, numPlayers, gameRules);
     }
 
     async defaultSleep() {
@@ -53,7 +53,7 @@ class StateMachineGameContext {
         
         await this.eventsHandler.sendEventToViewController('resetSelfPlayerState', {});
         await this.eventsHandler.sendEventToViewController('showSelfPlayerHand', { "selfPlayer": this.selfPlayer, "isEnabled": false });
-        await this.eventsHandler.sendEventToViewController('setupInitialState', { "isSelfPlayerCardsEnabled": false, "players": this.game.players, "trumpCard": this.game.trumpCard });
+        await this.eventsHandler.sendEventToViewController('setupInitialState', { "isSelfPlayerCardsEnabled": false, "players": this.game.players, "trumpCard": this.game.trumpCard, "teams": this.game.teams });
 
         await this.updateGameState();
     }
@@ -89,7 +89,7 @@ class StateMachineGameContext {
 
     async handleCardsDealt() {
         await this.eventsHandler.sendEventToViewController('showSelfPlayerHand', { "selfPlayer": this.selfPlayer, "isEnabled": false });
-        await this.eventsHandler.sendEventToViewController('setupInitialState', { "isSelfPlayerCardsEnabled": false, "players": this.game.players, "trumpCard": this.game.trumpCard });
+        await this.eventsHandler.sendEventToViewController('setupInitialState', { "isSelfPlayerCardsEnabled": false, "players": this.game.players, "trumpCard": this.game.trumpCard, "teams": this.game.teams });
         await this.updateGameState();
     }
 
@@ -140,17 +140,37 @@ class StateMachineGameContext {
         }
     }
 
+    async handleShowEndOfRoundOrGame(gameFinished) {
+        if (this.game.teams.length == 0) {
+            await this.eventsHandler.sendEventToViewController(gameFinished ? 'showGameEndScreen' : 'showEndOfHandStats', { "sortedPlayers": this.game.endOfHandInfo.orderedPlayers });
+        }
+        else {
+            let teamPlayersInfos = [];
+            for (let team of this.game.teams) {
+                let teamPlayersInfo = {};
+                teamPlayersInfo.teamId = team.id;
+                teamPlayersInfo.totalScore = team.totalScore;
+                teamPlayersInfo.players = [];
+                for (let playerId of team.playerIds) {
+                    teamPlayersInfo.players.push(this.game.players.find(p => p.id == playerId));
+                }
+                teamPlayersInfos.push(teamPlayersInfo);
+            }
+            await this.eventsHandler.sendEventToViewController('showEndOfHandOrGameStats_teams', { "teamPlayersInfos": teamPlayersInfos, "gameFinished": gameFinished });
+        }
+    }
+
     async handleRoundFinished() {
         this.gameStateMachine.updateToNextGameState(this.game);
         if (this.game.endOfHandInfo.gameFinished == true) {
-            await this.eventsHandler.sendEventToViewController('showGameEndScreen', { "sortedPlayers": this.game.endOfHandInfo.orderedPlayers });
+            await this.handleShowEndOfRoundOrGame(true);
         }
         else if (this.game.currentHandInfo.needMoreCardsDealt) {
-            await this.eventsHandler.sendEventToViewController('showEndOfHandStats', { "sortedPlayers": this.game.endOfHandInfo.orderedPlayers });
+            await this.handleShowEndOfRoundOrGame(false);
         }
         else {
             await this.defaultSleep();
-            await this.eventsHandler.sendEventToViewController('setupInitialState', { "isSelfPlayerCardsEnabled": false, "players": this.game.players, "trumpCard": this.game.trumpCard });
+            await this.eventsHandler.sendEventToViewController('setupInitialState', { "isSelfPlayerCardsEnabled": false, "players": this.game.players, "trumpCard": this.game.trumpCard, "teams": this.game.teams });
             await this.updateGameState();
         }
     }
@@ -189,7 +209,7 @@ class StateMachineGameContext {
         if (eventName === 'playSelfCard') {
             await this.playSelfCard(eventDetails.cardName);
         } else if (eventName === 'startNextRound') {
-            await this.startNextRound(eventDetails.startingPlayerId);
+            await this.startNextRound();
         } else if (eventName === 'selfPlayerRobTrumpCard') {
             await this.selfPlayerRobTrumpCard(eventDetails.droppedCardName);
         } else if (eventName === 'skipRobbingTrumpCard') {

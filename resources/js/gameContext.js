@@ -10,6 +10,7 @@ class GameContext {
         this.trumpCard = {};
         this.gameId = "";
         this.gameUrl = "";
+        this.teams = [];
     }
 
     
@@ -22,10 +23,11 @@ class GameContext {
         this.selfPlayer.id = json.playerDetails.userId;
         this.selfPlayer.cards = json.playerDetails.cards;
         this.players = json.players;
+        this.teams = json.teams;
         this.setSelfPlayer(this.players);
         var promises = [
             this.eventsHandler.sendEventToViewController('showSelfPlayerHand', { "selfPlayer": this.selfPlayer, "isEnabled": false }),
-            this.eventsHandler.sendEventToViewController('setupInitialState', { "isSelfPlayerCardsEnabled": false, "players": this.players, "trumpCard": this.trumpCard })
+            this.eventsHandler.sendEventToViewController('setupInitialState', { "isSelfPlayerCardsEnabled": false, "players": this.players, "trumpCard": this.trumpCard, "teams": this.teams })
         ];
         for (let p of promises) {
             await p;
@@ -38,7 +40,9 @@ class GameContext {
     }
 
     async handlePlayerMoveRequested(json) {
-        await this.eventsHandler.sendEventToViewController('showSelfPlayerHand', { "selfPlayer": this.selfPlayer, "isEnabled": true });
+        if (json.userId == this.selfPlayer.id) {
+            await this.eventsHandler.sendEventToViewController('showSelfPlayerHand', { "selfPlayer": this.selfPlayer, "isEnabled": true });
+        }
     }
 
     async handleCardPlayed(json) {
@@ -57,8 +61,28 @@ class GameContext {
         }
     }
 
+    async handleTeamGameEndOfHandOrGame(json, gameFinished) {
+        let teamPlayersInfos = [];
+        for (let team of json.teams) {
+            let teamPlayersInfo = {};
+            teamPlayersInfo.teamId = team.id;
+            teamPlayersInfo.totalScore = team.totalScore;
+            teamPlayersInfo.players = [];
+            for (let playerId of team.playerIds) {
+                teamPlayersInfo.players.push(json.orderedPlayers.find(p => p.id == playerId));
+            }
+            teamPlayersInfos.push(teamPlayersInfo);
+        }
+        await this.eventsHandler.sendEventToViewController('showEndOfHandOrGameStats_teams', { "teamPlayersInfos": teamPlayersInfos, "gameFinished": gameFinished });
+    }
+
     async handleGameFinished(json) {
-        await this.eventsHandler.sendEventToViewController('showGameEndScreen', { "sortedPlayers": json.orderedPlayers });
+        if (this.teams.length == 0) {
+            await this.eventsHandler.sendEventToViewController('showGameEndScreen', { "sortedPlayers": json.orderedPlayers });
+        }
+        else {
+            await this.handleTeamGameEndOfHandOrGame(json, true);
+        }
     }
 
     setSelfPlayer(players) {
@@ -67,10 +91,13 @@ class GameContext {
 
     async handleRoundFinished(json) {
         this.setSelfPlayer(json.orderedPlayers);
-        var promises = [
-            this.handleScoresUpdated(json),
-            this.eventsHandler.sendEventToViewController('showEndOfHandStats', { "sortedPlayers": json.orderedPlayers })
-        ];
+        var promises = [ this.handleScoresUpdated(json) ];
+        if (this.teams.length == 0) {
+            promises.push(this.eventsHandler.sendEventToViewController('showEndOfHandStats', { "sortedPlayers": json.orderedPlayers }));
+        }
+        else {
+            await this.handleTeamGameEndOfHandOrGame(json, false);
+        }
         for (let p of promises) {
             await p;
         }
@@ -96,13 +123,13 @@ class GameContext {
 
     async handlePlayersReadyForNextRoundChanged(json) {
         await this.eventsHandler.sendEventToViewController('playersReadyForNextRoundChanged', { 
-            "readyPlayerIds": json.readyPlayerIds,
-            "disableButtons": json.readyPlayerIds.indexOf(this.userId) >= 0
+            "readyPlayers": this.players.filter(p => json.readyPlayerIds.findIndex(pId => pId == p.id) != -1),
+            "disableButtons": json.readyPlayerIds.indexOf(this.userId) != -1
         });
     }
 
     async handleTfGameEvent(json) {
-        // console.log("Received TF Event with type=" + json.type);
+        // console.log(json);
         if (json.type == "playerListChanged") {
             await this.handlePlayerListChanged(json);
         }

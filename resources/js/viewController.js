@@ -2,8 +2,8 @@
 
 function clearChildrenOfElementById(elementId) {
     let node = document.getElementById(elementId);
-    while (node && node.firstChild) {
-        node.removeChild(node.firstChild);
+    while (node && node.lastChild) {
+        node.removeChild(node.lastChild);
     }
 }
 
@@ -46,6 +46,7 @@ function showStartGameOverlay() {
     document.getElementById("menuContainer").style.display = "block";
     document.getElementById("startGameButton").disabled = false;
     document.getElementById("connectingLabel").hidden = true;
+    document.getElementById("selfTeamIndicator").hidden = true;
 }
 
 function getPlayedCardDisplayTitle(player) {
@@ -160,89 +161,152 @@ class ViewController {
         document.getElementById("endGameStatsContainer").appendChild(startButtonCtr);
     }
 
-    showEndOfHandOrGameStats(sortedPlayers, showWinningPlayer, showScores, buttonText, buttonFunc) {
+    buildRosterEntry(players, totalScore, isWinner) {
+        let outer = document.createElement("div");
+        outer.classList.add("EndGamePlayerInfoContainer");
+
+        let leftIcon = document.createElement("div");
+        leftIcon.classList.add("EndGameAiPlayerIcon");
+        outer.appendChild(leftIcon);
+
+        let innerPlayerInfoContainer = document.createElement("div");
+        innerPlayerInfoContainer.classList.add("EndGameInnerPlayerInfoContainer");
+        outer.appendChild(innerPlayerInfoContainer);
+
+        var aggregateNames = players[0].name;
+        var aggregateIds = players[0].id;
+        for (var i = 1; i < players.length; i++) {
+            aggregateIds += "_" + players[i].id;
+            aggregateNames += ", " + players[i].name;
+        }
+
+        let rightIcon = document.createElement("div");
+        for (let player of players) {
+            let readyIconCtr = document.createElement("span");
+            readyIconCtr.id = "EndGamePlayerStatusInfo_" + player.id;
+            readyIconCtr.classList.add("EndGameWinnerIcon");
+            rightIcon.appendChild(readyIconCtr);
+        }
+        rightIcon.id = "EndGamePlayerStatusInfoContainer_" + aggregateIds;
+        rightIcon.classList.add("EndGameWinnerIcon");
+        outer.appendChild(rightIcon);
+
+        let aiPlayers = players.filter(p => p.isAi);
+        if (aiPlayers.length > 0) {
+            outer.classList.add("EndGameAiPlayer");
+            var aggregateAiNames = aiPlayers[0].name;
+            leftIcon.textContent = "🤖";
+            for (var i = 1; i < aiPlayers.length; i++) {
+                leftIcon.textContent += "🤖";
+                if (i > 0) {
+                    aggregateAiNames += ", " + aiPlayers[i].name;
+                }
+            }
+            if (aiPlayers.length > 1) {
+                leftIcon.title = this.localisationManager.getLocalisedString("playersAreAisTooltip", [ aggregateAiNames ]);
+            }
+            else {
+                leftIcon.title = this.localisationManager.getLocalisedString("playerIsAiTooltip", [ aggregateAiNames ]);
+            }
+        }
+        else {
+            outer.classList.add("EndGameHumanPlayer");
+        }
+
+        let playerNameCtr = document.createElement("div");
+        playerNameCtr.id = "PlayerNameCtr_" + aggregateIds;
+        playerNameCtr.textContent = aggregateNames;
+
+        innerPlayerInfoContainer.appendChild(playerNameCtr);
+
+        if (totalScore != -1) {
+            let playerScoreCtr = document.createElement("div");
+            playerScoreCtr.textContent = totalScore;
+            innerPlayerInfoContainer.appendChild(playerScoreCtr);
+        }
+
+        if (isWinner) {
+            outer.classList.add("EndGameWinningPlayer");
+            rightIcon.textContent = "🎉";
+            rightIcon.title =  this.localisationManager.getLocalisedString("playerIsWinnerTooltip", [ aggregateNames ]);
+        }
+
+        return outer;
+
+    }
+
+    buildAndshowEndOfHandOrGameStats_teams(teamsInfos, showWinningPlayer, showScores, buttonText, buttonFunc) {
         let playersContainer = document.createElement("div");
         playersContainer.id = "playersContainer";
         var first = true;
 
-        for (let player of sortedPlayers) {
+        teamsInfos.sort((a, b) => b.totalScore - a.totalScore);
+
+        for (let teamInfo of teamsInfos) {
             let isWinner = showWinningPlayer && first;
             if (isWinner) {
                 first = false;
             }
 
-            let outer = document.createElement("div");
-            outer.classList.add("EndGamePlayerInfoContainer");
+            let totalScore = showScores ? teamInfo.totalScore : -1;
 
-            let leftIcon = document.createElement("div");
-            leftIcon.classList.add("EndGameAiPlayerIcon");
-            outer.appendChild(leftIcon);
-
-            let innerPlayerInfoContainer = document.createElement("div");
-            innerPlayerInfoContainer.classList.add("EndGameInnerPlayerInfoContainer");
-            outer.appendChild(innerPlayerInfoContainer);
-
-            let rightIcon = document.createElement("div");
-            rightIcon.id = "EndGamePlayerStatusInfoContainer_" + player.id;
-            rightIcon.classList.add("EndGameWinnerIcon");
-            outer.appendChild(rightIcon);
-
-            if (player.isAi) {
-                outer.classList.add("EndGameAiPlayer");
-                leftIcon.textContent = "🤖";
-                leftIcon.title = this.localisationManager.getLocalisedString("playerIsAiTooltip", [ player.name ]);
-            }
-            else {
-                outer.classList.add("EndGameHumanPlayer");
-            }
-
-            let playerNameCtr = document.createElement("div");
-            playerNameCtr.id = "PlayerNameCtr_" + player.id;
-
-            if (player.isSelfPlayer && this.isMultiplayer) {
-                playerNameCtr.textContent = this.localisationManager.getLocalisedString("selfPlayerInListofPlayersName", [ player.name ]);
-            }
-            else {
-                playerNameCtr.textContent = player.name;
-            }
-
-            innerPlayerInfoContainer.appendChild(playerNameCtr);
-
-            if (showScores) {
-                let playerScoreCtr = document.createElement("div");
-                playerScoreCtr.textContent = player.score;
-                innerPlayerInfoContainer.appendChild(playerScoreCtr);
-            }
-
-            if (isWinner) {
-                outer.classList.add("EndGameWinningPlayer");
-                rightIcon.textContent = "🎉";
-                rightIcon.title =  this.localisationManager.getLocalisedString("playerIsWinnerTooltip", [ player.name ]);
-            }
-
+            let outer = this.buildRosterEntry(teamInfo.players, totalScore, isWinner);
             playersContainer.appendChild(outer);
         }
 
         this.showOverlayWithButton(playersContainer, buttonText, buttonFunc);
     }
 
-    showEndGameStats(sortedPlayers) {
-        this.showEndOfHandOrGameStats(sortedPlayers, true, true, this.localisationManager.getLocalisedString("startNewGameButtonText"), function() {
-            showStartGameOverlay();
-            clearChildrenOfElementById("endGameStatsContainer");
+    buildAndshowEndOfHandOrGameStats_noTeams(sortedPlayers, showWinningPlayer, showScores, buttonText, buttonFunc) {
+        let teamInfos = sortedPlayers.map(function(p) {
+            return {
+                totalScore: p.score,
+                players: [ p ]
+            };
         });
+        this.buildAndshowEndOfHandOrGameStats_teams(teamInfos, showWinningPlayer, showScores, buttonText, buttonFunc);
+    }
+
+    showEndGameStats(sortedPlayers) {
+        this.showEndOfHandOrGameStats_teamsAndNoTeams([], sortedPlayers, true, false);
     }
     
-    showEndOfHandStats(eventDetails) {
-        let viewController = this;
-        let buttonText = this.isMultiplayer ? this.localisationManager.getLocalisedString("markAsReadyButton")
+    showEndOfHandStats(sortedPlayers) {
+        this.showEndOfHandOrGameStats_teamsAndNoTeams([], sortedPlayers, false, false);
+    }
+
+    showEndOfHandOrGameStats_teams(teamPlayersInfos, gameFinished) {
+        this.showEndOfHandOrGameStats_teamsAndNoTeams(teamPlayersInfos, [], gameFinished, true);
+    }
+
+    showEndOfHandOrGameStats_teamsAndNoTeams(teamPlayersInfos, sortedPlayers, gameFinished, isTeams) {
+        var buttonText;
+        var buttonFunc;
+        if (gameFinished) {
+            buttonText = this.localisationManager.getLocalisedString("startNewGameButtonText");
+            buttonFunc = function() {
+                showStartGameOverlay();
+                clearChildrenOfElementById("endGameStatsContainer");
+            };
+        }
+        else {
+            let viewController = this;
+            buttonText = this.isMultiplayer ? this.localisationManager.getLocalisedString("markAsReadyButton")
                                             : this.localisationManager.getLocalisedString("startNextRoundButtonText");
-        this.showEndOfHandOrGameStats(eventDetails.sortedPlayers, false, true, buttonText, function() {
-            if (viewController.isMultiplayer == false) {
-                hideAllOverlays();
+            buttonFunc = function() {
+                if (viewController.isMultiplayer == false) {
+                    hideAllOverlays();
+                }
+                viewController.eventsHandler.sendEventToGameContext('startNextRound', {});
             }
-            viewController.eventsHandler.sendEventToGameContext('startNextRound', { "startingPlayerId": eventDetails.sortedPlayers[0].id });
-        });
+        }
+
+        if (isTeams) {
+            this.buildAndshowEndOfHandOrGameStats_teams(teamPlayersInfos, gameFinished, true, buttonText, buttonFunc);
+        }
+        else {
+            this.buildAndshowEndOfHandOrGameStats_noTeams(sortedPlayers, gameFinished, true, buttonText, buttonFunc);
+        }
     }
 
     cardDragStartHandler(ev) {
@@ -334,7 +398,7 @@ class ViewController {
         return trumpCardContainer;
     }
 
-    buildPlayedCardPlaceholder(player, extraCardClasses) {
+    buildPlayedCardPlaceholder(player, positioningClasses, styleClasses) {
         let playedCardContainer = document.createElement("span");
         playedCardContainer.id = 'playedCard_' + player.id;
         
@@ -351,14 +415,18 @@ class ViewController {
 
         playedCardContainer.classList.add('CardContainer');
         playedCardContainer.classList.add('PlayedCardContainer');
-        for (let cardClassName of extraCardClasses) {
+        for (let cardClassName of positioningClasses) {
             playedCardContainer.classList.add(cardClassName);
+        }
+
+        for (let styleClass of styleClasses) {
+            playedCardContainer.classList.add(styleClass);
         }
 
         return playedCardContainer;
     }
 
-    drawPlayedCardsPlaceholders(players) {
+    drawPlayedCardsPlaceholders(players, teams) {
         let playedCardArea = document.getElementById("playedCardsContainer");
 
         let trumpCardContainer = this.buildTrumpCardPlaceholder();
@@ -368,8 +436,21 @@ class ViewController {
         let cardAnglesClassNames = getCardAnglesClassNames(players.length);
         var classNamesIndex = (cardAnglesClassNames.length - selfPlayerIndex) % cardAnglesClassNames.length;
 
+        let useTeams = teams ? teams.length > 0 : false;
+        document.getElementById("selfTeamIndicator").hidden = !useTeams;
+
         for (let player of players) {
-            let playedCardContainer = this.buildPlayedCardPlaceholder(player, cardAnglesClassNames[classNamesIndex]);
+            var styleClasses = [];
+            if (useTeams) {
+                let teamIndex = teams.findIndex(t => t.playerIds.findIndex(pId => pId == player.id) != -1);
+                let styleClass = "team_" + teamIndex;
+                styleClasses.push(styleClass);
+                if (player.isSelfPlayer == true) {
+                    document.getElementById("selfTeamIndicator").classList.add(styleClass);
+                    document.getElementById("selfTeamIndicator").textContent = window.localisationManager.getLocalisedString("selfTeamIndicator", [ teams[teamIndex].totalScore ]);
+                }
+            }
+            let playedCardContainer = this.buildPlayedCardPlaceholder(player, cardAnglesClassNames[classNamesIndex], styleClasses);
             playedCardArea.appendChild(playedCardContainer);
 
             classNamesIndex = (classNamesIndex + 1) % cardAnglesClassNames.length;
@@ -516,11 +597,11 @@ class ViewController {
         });
     }
 
-    async setupInitialState(isSelfPlayerCardsEnabled, players, trumpCard) {
+    async setupInitialState(isSelfPlayerCardsEnabled, players, trumpCard, teams) {
         hideAllOverlays();
         this.setSelfPlayerCardsEnabled(isSelfPlayerCardsEnabled);
         this.resetPlayedCardsState();
-        this.drawPlayedCardsPlaceholders(players);
+        this.drawPlayedCardsPlaceholders(players, teams);
         this.redrawTrumpCard(trumpCard);
     }
 
@@ -557,7 +638,7 @@ class ViewController {
     updateMultiplayerWaitingScreen(waitingPlayers, needMorePlayers, gameUrl, buttonsEnabled, continueFunc) {
         let buttonText = needMorePlayers ? this.localisationManager.getLocalisedString("addAIsButton")
                                          : this.localisationManager.getLocalisedString("startGameButton");
-        this.showEndOfHandOrGameStats(waitingPlayers, false, false, buttonText, function() {
+        this.buildAndshowEndOfHandOrGameStats_noTeams(waitingPlayers, false, false, buttonText, function() {
             hideAllOverlays();
             continueFunc();
         });
@@ -602,13 +683,12 @@ class ViewController {
         showStartGameOverlay();
     }
 
-    handlePlayersReadyForNextRoundChanged(readyPlayerIds, disableButtons) {
-        for (let playerId of readyPlayerIds) {
-            let nameCtr = document.getElementById("PlayerNameCtr_" + playerId);
-            let playerInfoCtr = document.getElementById("EndGamePlayerStatusInfoContainer_" + playerId);
-            if (playerInfoCtr && nameCtr) {
-                playerInfoCtr.textContent = "✔️";
-                playerInfoCtr.title = this.localisationManager.getLocalisedString("playerReady", [nameCtr.textContent]);
+    handlePlayersReadyForNextRoundChanged(readyPlayers, disableButtons) { // get names
+        for (let player of readyPlayers) {
+            let playerReadyIcon = document.getElementById("EndGamePlayerStatusInfo_" + player.id);
+            if (playerReadyIcon) {
+                playerReadyIcon.textContent = "✔️";
+                playerReadyIcon.title = this.localisationManager.getLocalisedString("playerReady", [player.name]);
             }
         }
 
@@ -618,7 +698,7 @@ class ViewController {
     async handleEvent(eventName, eventDetails) {
         // console.log("ViewController received event: "+ eventName);
         if (eventName == 'setupInitialState') {
-            await this.setupInitialState(eventDetails.isSelfPlayerCardsEnabled, eventDetails.players, eventDetails.trumpCard);
+            await this.setupInitialState(eventDetails.isSelfPlayerCardsEnabled, eventDetails.players, eventDetails.trumpCard, eventDetails.teams);
         } else if (eventName == 'redrawTrumpCard') {
             this.redrawTrumpCard(eventDetails.trumpCard);
         } else if (eventName == 'showGameEndScreen') {
@@ -634,7 +714,7 @@ class ViewController {
         } else if (eventName == 'playCard') {
             this.playCard(eventDetails.player, eventDetails.playedCard);
         } else if (eventName == 'showEndOfHandStats') {
-            this.showEndOfHandStats(eventDetails);
+            this.showEndOfHandStats(eventDetails.sortedPlayers);
         } else if (eventName == 'showSelfPlayerRobbingDialog') {
             this.showSelfPlayerRobbingDialog(eventDetails.trumpCard, eventDetails.skipButtonDisabled, eventDetails.skipButtonDisabledReason);
         } else if (eventName == 'updateCurrentWinningCard') {
@@ -650,7 +730,9 @@ class ViewController {
         } else if (eventName == 'multiplayerErrorHappened') {
             this.handleMultiplayerError();
         } else if (eventName == 'playersReadyForNextRoundChanged') {
-            this.handlePlayersReadyForNextRoundChanged(eventDetails.readyPlayerIds, eventDetails.disableButtons);
+            this.handlePlayersReadyForNextRoundChanged(eventDetails.readyPlayers, eventDetails.disableButtons);
+        } else if (eventName == 'showEndOfHandOrGameStats_teams') {
+            this.showEndOfHandOrGameStats_teams(eventDetails.teamPlayersInfos, eventDetails.gameFinished);
         }
     }
 

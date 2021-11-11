@@ -178,6 +178,10 @@ function getLocalisedStrings() {
             "translator note": "indicate that this player is an automatically generated AI",
             "en": "{{param}} is a robot"
         },
+        "playersAreAisTooltip": {
+            "translator note": "indicate that the players listed are automatically generated AIs",
+            "en": "{{param}} are robots"
+        },
         "playerIsWinnerTooltip": {
             "translator note": "indicate that this player is the winner of the game",
             "en": "{{param}} is the winner!"
@@ -185,6 +189,22 @@ function getLocalisedStrings() {
         "multiplayerLobbyButtonDisabledTooltip": {
             "translator note": "indicate that the button to add AIs or start the game in multiplayer is disabled because the player is not the host",
             "en": "Only the first player can add AIs or start the game"
+        },
+        "winningScoreSelect": {
+            "translator note": "label for drop-down menu selecting the winning score for the game",
+            "en": "Winning score"
+        },
+        "useTeamsCheckBox": {
+            "translator note": "label for checkbox to play as part of a team or individually",
+            "en": "Use Teams?"
+        },
+        "n_n_teamConfig": {
+            "translator note": "dropdown menu item for n teams of n players each",
+            "en": "{{param}} teams of {{param}} players"
+        },
+        "selfTeamIndicator": {
+            "translator note": "label showing the player's team color and score",
+            "en": "Your Team's Score: {{param}}"
         }
     }
 }

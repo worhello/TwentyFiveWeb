@@ -11,7 +11,7 @@ function getPlayerModule() {
 }
 
 class MultiPlayerGameContext extends GameContext {
-    constructor(eventsHandler, numPlayers) {
+    constructor(eventsHandler, numPlayers, gameRules) {
         super(eventsHandler);
         this.eventsHandler = eventsHandler;
         this.numPlayers = numPlayers;
@@ -20,6 +20,7 @@ class MultiPlayerGameContext extends GameContext {
         this.gameId = "";
         this.gameUrl = "";
         this.selfPlayer = {};
+        this.gameRules = gameRules;
 
         // this.websocket = new WebSocket('ws://localhost:3000');
         this.websocket = new WebSocket('ws://twentyfive-env.eba-jrs4p3fm.eu-west-1.elasticbeanstalk.com/');
@@ -83,11 +84,7 @@ class MultiPlayerGameContext extends GameContext {
                 name: playerName,
                 userId: this.userId
             },
-            gameRules: {
-                "winningScore": 25,
-                "renegingAllowed": true,
-                "useTeams": null
-            }
+            gameRules: this.gameRules
         };
         this.websocket.send(JSON.stringify(data));
     }
@@ -158,7 +155,7 @@ class MultiPlayerGameContext extends GameContext {
         if (eventName == 'playSelfCard') {
             await this.playSelfCard(eventDetails.cardName);
         } else if (eventName == 'startNextRound') {
-            await this.startNextRound(eventDetails.startingPlayerId);
+            await this.startNextRound();
         } else if (eventName == 'selfPlayerRobTrumpCard') {
             await this.selfPlayerRobTrumpCard(eventDetails.droppedCardName);
         } else if (eventName == 'skipRobbingTrumpCard') {
