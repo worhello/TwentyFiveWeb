@@ -197,6 +197,10 @@ function getLocalisedStrings() {
         "n_n_teamConfig": {
             "translator note": "dropdown menu item for n teams of n players each",
             "en": "{{param}} teams of {{param}} players"
+        },
+        "selfTeamIndicator": {
+            "translator note": "label showing the player's team color and score",
+            "en": "Your Team's Score: {{param}}"
         }
     }
 }

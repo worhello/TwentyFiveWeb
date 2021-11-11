@@ -213,6 +213,18 @@ a {
     animation-iteration-count: infinite;
 }
 
+.team_0 {
+    background-color:blue;
+}
+
+.team_1 {
+    background-color:grey;
+}
+
+.team_2 {
+    background-color:darkmagenta;
+}
+
 #currentCardsInfo {
     display: flex;
     flex-direction: row;
@@ -224,6 +236,11 @@ a {
 #currentCardIndicator {
     outline: 3px solid;
     outline-color: rgba(51, 255, 5, 0.9);
+    padding: 2px;
+}
+
+#selfTeamIndicator {
+    outline: 3px;
     padding: 2px;
 }
 

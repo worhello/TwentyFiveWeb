@@ -53,7 +53,7 @@ class StateMachineGameContext {
         
         await this.eventsHandler.sendEventToViewController('resetSelfPlayerState', {});
         await this.eventsHandler.sendEventToViewController('showSelfPlayerHand', { "selfPlayer": this.selfPlayer, "isEnabled": false });
-        await this.eventsHandler.sendEventToViewController('setupInitialState', { "isSelfPlayerCardsEnabled": false, "players": this.game.players, "trumpCard": this.game.trumpCard });
+        await this.eventsHandler.sendEventToViewController('setupInitialState', { "isSelfPlayerCardsEnabled": false, "players": this.game.players, "trumpCard": this.game.trumpCard, "teams": this.game.teams });
 
         await this.updateGameState();
     }
@@ -88,9 +88,8 @@ class StateMachineGameContext {
     }
 
     async handleCardsDealt() {
-        // TODO - update this to show your team
         await this.eventsHandler.sendEventToViewController('showSelfPlayerHand', { "selfPlayer": this.selfPlayer, "isEnabled": false });
-        await this.eventsHandler.sendEventToViewController('setupInitialState', { "isSelfPlayerCardsEnabled": false, "players": this.game.players, "trumpCard": this.game.trumpCard });
+        await this.eventsHandler.sendEventToViewController('setupInitialState', { "isSelfPlayerCardsEnabled": false, "players": this.game.players, "trumpCard": this.game.trumpCard, "teams": this.game.teams });
         await this.updateGameState();
     }
 
@@ -171,7 +170,7 @@ class StateMachineGameContext {
         }
         else {
             await this.defaultSleep();
-            await this.eventsHandler.sendEventToViewController('setupInitialState', { "isSelfPlayerCardsEnabled": false, "players": this.game.players, "trumpCard": this.game.trumpCard });
+            await this.eventsHandler.sendEventToViewController('setupInitialState', { "isSelfPlayerCardsEnabled": false, "players": this.game.players, "trumpCard": this.game.trumpCard, "teams": this.game.teams });
             await this.updateGameState();
         }
     }
