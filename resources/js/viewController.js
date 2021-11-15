@@ -615,10 +615,18 @@ class ViewController {
     showMultiplayerNameInput(continueFunc) {
         this.isMultiplayer = true;
         let container = document.createElement("div");
-        let textElem = document.createElement("span");
+
+        let textElem = document.createElement("div");
         textElem.textContent = this.localisationManager.getLocalisedString("multiplayerGetNameReason");
         container.appendChild(textElem);
         container.appendChild(document.createElement("br"));
+
+        let disclaimerElem = document.createElement("div");
+        disclaimerElem.textContent = this.localisationManager.getLocalisedString("multiplayerDisclaimerLabel");
+        disclaimerElem.classList.add("disclaimerText");
+        container.appendChild(disclaimerElem);
+        container.appendChild(document.createElement("br"));
+
         let input = document.createElement("input");
         input.type = "text";
         input.placeholder = this.localisationManager.getLocalisedString("inputNamePlaceholder");
@@ -631,7 +639,7 @@ class ViewController {
 
         document.getElementById("endGameStatsContainer_button").disabled = true;
         input.addEventListener("keyup", function() {
-            document.getElementById("endGameStatsContainer_button").disabled = input.value.length < 3;
+            document.getElementById("endGameStatsContainer_button").disabled = input.value.length < 3 || input.value.length > 20;
         });
     }
 

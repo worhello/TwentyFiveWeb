@@ -205,6 +205,14 @@ function getLocalisedStrings() {
         "selfTeamIndicator": {
             "translator note": "label showing the player's team color and score",
             "en": "Your Team's Score: {{param}}"
+        },
+        "gameProjectLinkLabel": {
+            "translator note": "label for the Github Project URL",
+            "en": "Github Project"
+        },
+        "multiplayerDisclaimerLabel": {
+            "translator note": "label showing how the player name will be used on the server",
+            "en": "The player name(s) will be stored on the server, but not processed or used in any way beyond displaying onscreen"
         }
     }
 }
