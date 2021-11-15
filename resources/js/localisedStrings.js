@@ -213,6 +213,10 @@ function getLocalisedStrings() {
         "multiplayerDisclaimerLabel": {
             "translator note": "label showing how the player name will be used on the server",
             "en": "The player name(s) will be stored on the server, but not processed or used in any way beyond displaying onscreen"
+        },
+        "multiplayerNameInputButtonDisabledReason": {
+            "translator note": "tooltip on start multiplayer game button when inputted name is not valid",
+            "en": "Player name must contain at least 3 characters, no more than 20 characters, and only letters or numbers"
         }
     }
 }

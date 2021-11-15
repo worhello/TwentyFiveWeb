@@ -612,6 +612,18 @@ class ViewController {
         this.showEndGameStats(orderedPlayers);
     }
 
+    checkIsValidName(input) {
+        let getHelpersModule = () => {
+            if (typeof module !== 'undefined' && module.exports != null) {
+                return require("./twentyfive-js/helpers");
+            }
+            else {
+                return window.helpers;
+            }
+        };
+        return getHelpersModule().Helpers.isValidName(input);
+    }
+
     showMultiplayerNameInput(continueFunc) {
         this.isMultiplayer = true;
         let container = document.createElement("div");
@@ -637,9 +649,17 @@ class ViewController {
             continueFunc(input.value);
         });
 
+        let updateButtonTooltip = (showTooltip) => {
+            document.getElementById("endGameStatsContainer_button").title = showTooltip ? this.localisationManager.getLocalisedString("multiplayerNameInputButtonDisabledReason") : "";
+        };
+
         document.getElementById("endGameStatsContainer_button").disabled = true;
+        updateButtonTooltip(true);
+        let vc = this;
         input.addEventListener("keyup", function() {
-            document.getElementById("endGameStatsContainer_button").disabled = input.value.length < 3 || input.value.length > 20;
+            let isValid = vc.checkIsValidName(input.value);
+            document.getElementById("endGameStatsContainer_button").disabled = !isValid;
+            updateButtonTooltip(!isValid);
         });
     }
 
