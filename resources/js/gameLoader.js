@@ -130,6 +130,7 @@ function initLocalisation() {
     document.getElementById("connectingLabel").textContent     = window.localisationManager.getLocalisedString("connectingLabel");
 
     document.getElementById("gameRulesLabel").textContent = window.localisationManager.getLocalisedString("gameRulesLabel");
+    document.getElementById("gameProjectLinkLabel").textContent = window.localisationManager.getLocalisedString("gameProjectLinkLabel");
 
     document.getElementById("currentCardIndicator").textContent        = window.localisationManager.getLocalisedString("currentCardIndicator");
     document.getElementById("currentWinningCardIndicator").textContent = window.localisationManager.getLocalisedString("currentWinningCardIndicator");

@@ -33,6 +33,10 @@ a {
     text-align: right;
 }
 
+.disclaimerText {
+    font-style: italic;
+}
+
 #startGameContainer {
     display: flex;
     flex-direction: column;
@@ -108,6 +112,12 @@ a {
 #gameInfoContainer {
     display: grid;
     grid-template-columns: auto 108px;
+}
+
+#gameMetaInfoContainer {
+    display: grid;
+    justify-content: space-between;
+    grid-template-columns: auto auto;
 }
 
 #trumpCardContainer {
