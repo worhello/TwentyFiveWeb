@@ -25,9 +25,13 @@ class GameContext {
         this.players = json.players;
         this.teams = json.teams;
         this.setSelfPlayer(this.players);
+        await this.notifyGameInitialState(this.selfPlayer, this.players, this.trumpCard, this.teams);
+    }
+
+    async notifyGameInitialState(selfPlayer, players, trumpCard, teams) {
         var promises = [
-            this.eventsHandler.sendEventToViewController('showSelfPlayerHand', { "selfPlayer": this.selfPlayer, "isEnabled": false }),
-            this.eventsHandler.sendEventToViewController('setupInitialState', { "isSelfPlayerCardsEnabled": false, "players": this.players, "trumpCard": this.trumpCard, "teams": this.teams })
+            this.eventsHandler.sendEventToViewController('showSelfPlayerHand', { "selfPlayer": selfPlayer, "isEnabled": false }),
+            this.eventsHandler.sendEventToViewController('setupInitialState', { "isSelfPlayerCardsEnabled": false, "players": players, "trumpCard": trumpCard, "teams": teams })
         ];
         for (let p of promises) {
             await p;

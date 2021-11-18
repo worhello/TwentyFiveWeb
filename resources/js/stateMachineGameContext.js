@@ -29,8 +29,9 @@ class StateMachineGameContextModuleHelper {
     }
 }
 
-class StateMachineGameContext {
+class StateMachineGameContext extends GameContext {
     constructor(eventsHandler, numPlayers, localisationManager, gameRules) {
+        super(eventsHandler);
         this.eventsHandler = eventsHandler;
         this.gameId = "StateMachineGameId";
 
@@ -50,10 +51,8 @@ class StateMachineGameContext {
         this.gameStateMachine.fillWithAIs(this.game);
         await this.updateGameState();
         await this.updateGameState();
-        
-        await this.eventsHandler.sendEventToViewController('resetSelfPlayerState', {});
-        await this.eventsHandler.sendEventToViewController('showSelfPlayerHand', { "selfPlayer": this.selfPlayer, "isEnabled": false });
-        await this.eventsHandler.sendEventToViewController('setupInitialState', { "isSelfPlayerCardsEnabled": false, "players": this.game.players, "trumpCard": this.game.trumpCard, "teams": this.game.teams });
+
+        await this.notifyGameInitialState(this.selfPlayer, this.game.players, this.game.trumpCard, this.game.teams);
 
         await this.updateGameState();
     }
@@ -88,8 +87,7 @@ class StateMachineGameContext {
     }
 
     async handleCardsDealt() {
-        await this.eventsHandler.sendEventToViewController('showSelfPlayerHand', { "selfPlayer": this.selfPlayer, "isEnabled": false });
-        await this.eventsHandler.sendEventToViewController('setupInitialState', { "isSelfPlayerCardsEnabled": false, "players": this.game.players, "trumpCard": this.game.trumpCard, "teams": this.game.teams });
+        await this.notifyGameInitialState(this.selfPlayer, this.game.players, this.game.trumpCard, this.game.teams);
         await this.updateGameState();
     }
 
@@ -170,7 +168,7 @@ class StateMachineGameContext {
         }
         else {
             await this.defaultSleep();
-            await this.eventsHandler.sendEventToViewController('setupInitialState', { "isSelfPlayerCardsEnabled": false, "players": this.game.players, "trumpCard": this.game.trumpCard, "teams": this.game.teams });
+            await this.notifyGameInitialState(this.selfPlayer, this.game.players, this.game.trumpCard, this.game.teams);
             await this.updateGameState();
         }
     }
