@@ -188,7 +188,7 @@ class MultiPlayerGameContext extends GameContext {
         });
 
         if (!this.selfPlayer) {
-            this.selfPlayer = this.players.find(function (p) { p.id == this.userId });
+            this.selfPlayer = this.players.find((p) =>p.isSelfPlayer == true);
         }
     }
 
