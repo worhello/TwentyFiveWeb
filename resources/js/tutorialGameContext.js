@@ -268,7 +268,7 @@ class TutorialGameContext extends (TutorialModulesAccessor.getStateMachineContex
 
     // override
     async handleSelfPlayerRobbing() {
-        await this.eventsHandler.sendEventToViewController('showSelfPlayerHand', { "selfPlayer": this.selfPlayer, "isEnabled": true });
+        await this.notifySelfPlayerShowHand(this.selfPlayer, true);
         await this.eventsHandler.sendEventToViewController('showSelfPlayerRobbingDialog', 
         { 
             "trumpCard": this.game.trumpCard, 

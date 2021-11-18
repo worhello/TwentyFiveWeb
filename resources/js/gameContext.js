@@ -30,7 +30,7 @@ class GameContext {
 
     async notifyGameInitialState(selfPlayer, players, trumpCard, teams) {
         var promises = [
-            this.eventsHandler.sendEventToViewController('showSelfPlayerHand', { "selfPlayer": selfPlayer, "isEnabled": false }),
+            this.notifySelfPlayerShowHand(selfPlayer, false),
             this.eventsHandler.sendEventToViewController('setupInitialState', { "isSelfPlayerCardsEnabled": false, "players": players, "trumpCard": trumpCard, "teams": teams })
         ];
         for (let p of promises) {
@@ -40,17 +40,29 @@ class GameContext {
 
     async handleCurrentPlayerMovePending(userId) {
         let player = this.players.find(function (p) { return p.id == userId; });
+        await this.notifyHighlightCurrentPlayer(player);
+    }
+
+    async notifyHighlightCurrentPlayer(player) {
         await this.eventsHandler.sendEventToViewController('highlightCurrentPlayer', { "player": player });
     }
 
     async handlePlayerMoveRequested(userId) {
         if (userId == this.selfPlayer.id) {
-            await this.eventsHandler.sendEventToViewController('showSelfPlayerHand', { "selfPlayer": this.selfPlayer, "isEnabled": true });
+            await this.notifySelfPlayerShowHand(this.selfPlayer, true);
         }
+    }
+
+    async notifySelfPlayerShowHand(selfPlayer, isEnabled) {
+        await this.eventsHandler.sendEventToViewController('showSelfPlayerHand', { "selfPlayer": selfPlayer, "isEnabled": isEnabled });
     }
 
     async handleCardPlayed(userId, playedCard, isNewWinningCard) {
         let player = this.players.find(function (p) { return p.id == userId; });
+        await this.notifyCardPlayed(player, playedCard, isNewWinningCard);
+    }
+
+    async notifyCardPlayed(player, playedCard, isNewWinningCard) {
         await this.eventsHandler.sendEventToViewController('playCard', { "player": player, "playedCard": playedCard });
         if (isNewWinningCard == true) {
             await this.eventsHandler.sendEventToViewController('updateCurrentWinningCard', { "player": player, "card": playedCard });
@@ -60,7 +72,7 @@ class GameContext {
     async handleCardsUpdated(userId, cards) {
         if (userId == this.selfPlayer.id) {
             this.selfPlayer.cards = cards;
-            await this.eventsHandler.sendEventToViewController('showSelfPlayerHand', { "selfPlayer": this.selfPlayer, "isEnabled": false });
+            await this.notifySelfPlayerShowHand(this.selfPlayer, false);
         }
     }
 
@@ -99,11 +111,15 @@ class GameContext {
             promises.push(this.eventsHandler.sendEventToViewController('showEndOfHandStats', { "sortedPlayers": orderedPlayers }));
         }
         else {
-            await this.handleTeamGameEndOfHandOrGame(teams, orderedPlayers, false);
+            promises.push(this.handleTeamGameEndOfHandOrGame(teams, orderedPlayers, false));
         }
         for (let p of promises) {
             await p;
         }
+    }
+
+    async notifyRedrawTrumpCard(trumpCard) {
+        await this.eventsHandler.sendEventToViewController('redrawTrumpCard', { "trumpCard": trumpCard });
     }
 
     handleScoresUpdated(orderedPlayers) {
