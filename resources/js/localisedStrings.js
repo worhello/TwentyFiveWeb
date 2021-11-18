@@ -192,7 +192,7 @@ function getLocalisedStrings() {
         },
         "winningScoreSelect": {
             "translator note": "label for drop-down menu selecting the winning score for the game",
-            "en": "Winning score"
+            "en": "Winning Score:"
         },
         "useTeamsCheckBox": {
             "translator note": "label for checkbox to play as part of a team or individually",
@@ -217,6 +217,14 @@ function getLocalisedStrings() {
         "multiplayerNameInputButtonDisabledReason": {
             "translator note": "tooltip on start multiplayer game button when inputted name is not valid",
             "en": "Player name must contain at least 3 characters, no more than 20 characters, and only letters or numbers"
+        },
+        "renegingAllowedCheckbox": {
+            "translator note": "label text for checkbox enabling/disabling reneging in a game",
+            "en": "Reneging Allowed?"
+        },
+        "dealerAceTrumpsBonusCheckbox": {
+            "translator note": "label text for checkbox enabling/disabling whether the dealer gets 5 points if the trump card is an ace",
+            "en": "Dealer gets 5 points if Trump Card is Ace?"
         }
     }
 }
