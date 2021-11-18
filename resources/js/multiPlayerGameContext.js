@@ -76,7 +76,6 @@ class MultiPlayerGameContext extends GameContext {
     }
 
     createGameWithName(playerName) {
-        // TODO - input validation needed for playerName
         let data = {
             type: "createGame",
             numberOfPlayers: this.numPlayers,
