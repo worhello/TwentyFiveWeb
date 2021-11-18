@@ -33,26 +33,40 @@
                     <div>
                         <h2>Welcome to the Twenty Five card game!</h2>
                     </div>
-                    <div>
-                        <button id="startTutorialButton"></button>
+                    <div id="numPlayersSelectCtr">
+                        <div>
+                            <label id="useTeamsCheckBoxLabel" for="useTeamsCheckBox"></label>
+                            <input type="checkbox" id="useTeamsCheckBox"></input><br>
+                        </div>
+                        <div>
+                            <select name="numPlayers" id="numPlayersSelect"></select>
+                        </div>
+                    </div>
+                    <div id="houseRulesOuterContainer">
+                        <div id="houseRulesContainer">
+                            <div class="houseRule">
+                                <label id="winningScoreSelectLabel" for="winningScoreSelect"></label>
+                                <select name="winningScore" id="winningScoreSelect"></select>
+                            </div>
+                            <div class="houseRule">
+                                <label id="renegingAllowedLabel" for="renegingAllowedCheckbox"></label>
+                                <input type="checkbox" id="renegingAllowedCheckbox" checked></input>
+                            </div>
+                            <div class="houseRule" hidden>
+                                <label id="dealerAceTrumpsBonusLabel" for="dealerAceTrumpsBonusCheckbox"></label>
+                                <input type="checkbox" id="dealerAceTrumpsBonusCheckbox"></input>
+                            </div>
+                        </div>
                     </div>
                     <div>
                         <input type="radio" id="singlePlayer" value="singlePlayer" name="playMode" checked>
-                        <label id="singlePlayerLabel" for="singlePlayer"></label>
+                        <label id="singlePlayerLabel" for="singlePlayer"></label><br>
                         <input type="radio" id="multiPlayer" name="playMode" value="multiPlayer" >
                         <label id="multiPlayerLabel" for="multiPlayer"></label>
                     </div>
-                    <div>
-                        <input type="checkbox" id="useTeamsCheckBox"></input>
-                        <label id="useTeamsCheckBoxLabel" for="useTeamsCheckBox"></label><br>
-                        <select name="numPlayers" id="numPlayersSelect"></select>
-                    </div>
-                    <div>
-                        <label id="winningScoreSelectLabel" for="winningScoreSelect">Winning Score</label>
-                        <select name="winningScore" id="winningScoreSelect"></select>
-                    </div>
-                    <div>
+                    <div id="startGameButtonsContainer">
                         <button id="startGameButton"></button>
+                        <button id="startTutorialButton"></button>
                         <p id="connectingLabel"></p>
                     </div>
                 </div>

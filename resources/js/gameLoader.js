@@ -37,9 +37,10 @@ function onStartButtonClicked() {
 
 function getGameRules() {
     let winningScoreSelect = document.getElementById("winningScoreSelect");
+    let renegingAllowed = document.getElementById("renegingAllowedCheckbox").checked;
     let rules = {
         "winningScore": winningScoreSelect.options[winningScoreSelect.selectedIndex].value,
-        "renegingAllowed": true,
+        "renegingAllowed": renegingAllowed,
         "useTeams": null
     };
 
@@ -122,8 +123,10 @@ function initLocalisation() {
     document.getElementById("singlePlayerLabel").textContent = window.localisationManager.getLocalisedString("singlePlayer");
     document.getElementById("multiPlayerLabel").textContent  = window.localisationManager.getLocalisedString("multiPlayer");
 
-    document.getElementById("useTeamsCheckBoxLabel").textContent   = window.localisationManager.getLocalisedString("useTeamsCheckBox");
-    document.getElementById("winningScoreSelectLabel").textContent = window.localisationManager.getLocalisedString("winningScoreSelect");
+    document.getElementById("useTeamsCheckBoxLabel").textContent     = window.localisationManager.getLocalisedString("useTeamsCheckBox");
+    document.getElementById("winningScoreSelectLabel").textContent   = window.localisationManager.getLocalisedString("winningScoreSelect");
+    document.getElementById("renegingAllowedLabel").textContent      = window.localisationManager.getLocalisedString("renegingAllowedCheckbox");
+    document.getElementById("dealerAceTrumpsBonusLabel").textContent = window.localisationManager.getLocalisedString("dealerAceTrumpsBonusCheckbox");
     
     document.getElementById("startGameButton").textContent     = window.localisationManager.getLocalisedString("startGameButton");
     document.getElementById("startTutorialButton").textContent = window.localisationManager.getLocalisedString("startTutorialButton");
