@@ -38,10 +38,14 @@ function onStartButtonClicked() {
 function getGameRules() {
     let winningScoreSelect = document.getElementById("winningScoreSelect");
     let renegingAllowed = document.getElementById("renegingAllowedCheckbox").checked;
+    let dealerBonusIfTrumpIsAce = document.getElementById("dealerAceTrumpsBonusCheckbox").checked;
     let rules = {
         "winningScore": winningScoreSelect.options[winningScoreSelect.selectedIndex].value,
         "renegingAllowed": renegingAllowed,
-        "useTeams": null
+        "useTeams": null,
+        "customRules": {
+            "dealerBonusIfTrumpIsAce": dealerBonusIfTrumpIsAce
+        }
     };
 
     if (document.getElementById("useTeamsCheckBox").checked) {
@@ -60,7 +64,8 @@ function buildTutorialRules() {
     return {
         "winningScore": 25,
         "renegingAllowed": true,
-        "useTeams": null
+        "useTeams": null,
+        "customRules": null
     };
 }
 
