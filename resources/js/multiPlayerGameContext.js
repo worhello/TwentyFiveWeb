@@ -191,8 +191,8 @@ class MultiPlayerGameContext extends GameContext {
         }
     }
 
-    async handleGameFinished(json) {
-        await super.handleGameFinished(json);
+    async handleGameFinished(teams, orderedPlayers) {
+        await super.handleGameFinished(teams, orderedPlayers);
         this.websocket.onclose = function(event) { /* no-op */ };
         this.websocket.close();
     }
