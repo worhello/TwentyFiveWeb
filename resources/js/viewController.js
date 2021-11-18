@@ -173,11 +173,18 @@ class ViewController {
         innerPlayerInfoContainer.classList.add("EndGameInnerPlayerInfoContainer");
         outer.appendChild(innerPlayerInfoContainer);
 
-        var aggregateNames = players[0].name;
+        let getName = (p) => {
+            if (this.isMultiplayer == true && p.isSelfPlayer == true) {
+                return this.localisationManager.getLocalisedString("selfPlayerInListofPlayersName", [ p.name ]);
+            }
+            return p.name;
+        }
+
+        var aggregateNames = getName(players[0]);
         var aggregateIds = players[0].id;
         for (var i = 1; i < players.length; i++) {
             aggregateIds += "_" + players[i].id;
-            aggregateNames += ", " + players[i].name;
+            aggregateNames += ", " + getName(players[i]);
         }
 
         let rightIcon = document.createElement("div");

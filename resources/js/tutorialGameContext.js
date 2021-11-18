@@ -75,7 +75,7 @@ class TutorialManager {
             return "tutorialIntroThree";
         }
 
-        return "defaultTutorialMesssage";
+        return "defaultTutorialMessage";
     }
 
     getNextWinningMessageType() {
