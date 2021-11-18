@@ -2,9 +2,7 @@
 
 function clearChildrenOfElementById(elementId) {
     let node = document.getElementById(elementId);
-    while (node && node.lastChild) {
-        node.removeChild(node.lastChild);
-    }
+    node.textContent = "";
 }
 
 function getCardUrl(card) {

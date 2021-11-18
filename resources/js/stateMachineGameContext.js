@@ -29,8 +29,9 @@ class StateMachineGameContextModuleHelper {
     }
 }
 
-class StateMachineGameContext {
+class StateMachineGameContext extends GameContext {
     constructor(eventsHandler, numPlayers, localisationManager, gameRules) {
+        super(eventsHandler);
         this.eventsHandler = eventsHandler;
         this.gameId = "StateMachineGameId";
 
@@ -50,10 +51,8 @@ class StateMachineGameContext {
         this.gameStateMachine.fillWithAIs(this.game);
         await this.updateGameState();
         await this.updateGameState();
-        
-        await this.eventsHandler.sendEventToViewController('resetSelfPlayerState', {});
-        await this.eventsHandler.sendEventToViewController('showSelfPlayerHand', { "selfPlayer": this.selfPlayer, "isEnabled": false });
-        await this.eventsHandler.sendEventToViewController('setupInitialState', { "isSelfPlayerCardsEnabled": false, "players": this.game.players, "trumpCard": this.game.trumpCard, "teams": this.game.teams });
+
+        await this.notifyGameInitialState(this.selfPlayer, this.game.players, this.game.trumpCard, this.game.teams);
 
         await this.updateGameState();
     }
@@ -88,17 +87,12 @@ class StateMachineGameContext {
     }
 
     async handleCardsDealt() {
-        await this.eventsHandler.sendEventToViewController('showSelfPlayerHand', { "selfPlayer": this.selfPlayer, "isEnabled": false });
-        await this.eventsHandler.sendEventToViewController('setupInitialState', { "isSelfPlayerCardsEnabled": false, "players": this.game.players, "trumpCard": this.game.trumpCard, "teams": this.game.teams });
+        await this.notifyGameInitialState(this.selfPlayer, this.game.players, this.game.trumpCard, this.game.teams);
         await this.updateGameState();
     }
 
     async handleSelfPlayerRobbing() {
-        await this.eventsHandler.sendEventToViewController('showSelfPlayerRobbingDialog', { 
-            "trumpCard": this.game.trumpCard, 
-            "skipButtonDisabled": false,
-            "skipButtonDisabledReason": ""
-        });
+        await this.handleRobTrumpCardAvailable(this.game.trumpCard);
     }
 
     async handlePlayerRobbing() {
@@ -113,12 +107,12 @@ class StateMachineGameContext {
     }
 
     async handleWaitingForSelfPlayerMove() {
-        await this.eventsHandler.sendEventToViewController('showSelfPlayerHand', { "selfPlayer": this.selfPlayer, "isEnabled": true });
+        await this.notifySelfPlayerShowHand(this.selfPlayer, true);
     }
 
     async handleWaitingForPlayerMove() {
         let player = this.game.players[this.game.currentHandInfo.currentPlayerIndex];
-        await this.eventsHandler.sendEventToViewController('highlightCurrentPlayer', { "player": player });
+        await this.notifyHighlightCurrentPlayer(player);
 
         if (player.id == this.selfPlayer.id) {
             await this.handleWaitingForSelfPlayerMove();
@@ -134,43 +128,20 @@ class StateMachineGameContext {
 
     async handleCardPlayed(player, isNewWinningCard) {
         let playedCard = this.game.currentHandInfo.roundPlayerAndCards[this.game.currentHandInfo.roundPlayerAndCards.length - 1].card;
-        await this.eventsHandler.sendEventToViewController('playCard', { "player": player, "playedCard": playedCard });
-        if (isNewWinningCard == true) {
-            await this.eventsHandler.sendEventToViewController('updateCurrentWinningCard', { "player": player, "card": playedCard });
-        }
-    }
-
-    async handleShowEndOfRoundOrGame(gameFinished) {
-        if (this.game.teams.length == 0) {
-            await this.eventsHandler.sendEventToViewController(gameFinished ? 'showGameEndScreen' : 'showEndOfHandStats', { "sortedPlayers": this.game.endOfHandInfo.orderedPlayers });
-        }
-        else {
-            let teamPlayersInfos = [];
-            for (let team of this.game.teams) {
-                let teamPlayersInfo = {};
-                teamPlayersInfo.teamId = team.id;
-                teamPlayersInfo.totalScore = team.totalScore;
-                teamPlayersInfo.players = [];
-                for (let playerId of team.playerIds) {
-                    teamPlayersInfo.players.push(this.game.players.find(p => p.id == playerId));
-                }
-                teamPlayersInfos.push(teamPlayersInfo);
-            }
-            await this.eventsHandler.sendEventToViewController('showEndOfHandOrGameStats_teams', { "teamPlayersInfos": teamPlayersInfos, "gameFinished": gameFinished });
-        }
+        await this.notifyCardPlayed(player, playedCard, isNewWinningCard);
     }
 
     async handleRoundFinished() {
         this.gameStateMachine.updateToNextGameState(this.game);
         if (this.game.endOfHandInfo.gameFinished == true) {
-            await this.handleShowEndOfRoundOrGame(true);
+            await super.handleGameFinished(this.game.teams, this.game.endOfHandInfo.orderedPlayers);
         }
         else if (this.game.currentHandInfo.needMoreCardsDealt) {
-            await this.handleShowEndOfRoundOrGame(false);
+            await super.handleRoundFinished(this.game.teams, this.game.endOfHandInfo.orderedPlayers);
         }
         else {
             await this.defaultSleep();
-            await this.eventsHandler.sendEventToViewController('setupInitialState', { "isSelfPlayerCardsEnabled": false, "players": this.game.players, "trumpCard": this.game.trumpCard, "teams": this.game.teams });
+            await this.notifyGameInitialState(this.selfPlayer, this.game.players, this.game.trumpCard, this.game.teams);
             await this.updateGameState();
         }
     }
@@ -184,7 +155,7 @@ class StateMachineGameContext {
         let player = this.game.players[this.game.currentHandInfo.currentPlayerIndex];
         let isNewWinningCard = this.gameStateMachine.playCard(this.game, player, cardName);
         await this.handleCardPlayed(player, isNewWinningCard);
-        await this.eventsHandler.sendEventToViewController('showSelfPlayerHand', { "selfPlayer": this.selfPlayer, "isEnabled": false });
+        await this.notifySelfPlayerShowHand(this.selfPlayer, false)
         await this.updateGameState();
     }
 
@@ -196,13 +167,13 @@ class StateMachineGameContext {
         let player = this.game.players[this.game.roundRobbingInfo.playerCanRobIndex];
         this.gameStateMachine.robCard(this.game, player, droppedCardName);
         await this.updateGameState();
-        await this.eventsHandler.sendEventToViewController('redrawTrumpCard', { "trumpCard": this.game.trumpCard });
+        await this.notifyRedrawTrumpCard(this.game.trumpCard);
     }
 
     async skipRobbingTrumpCard() {
         this.gameStateMachine.skipRobbing(this.game);
         await this.updateGameState();
-        await this.eventsHandler.sendEventToViewController('redrawTrumpCard', { "trumpCard": this.game.trumpCard });
+        await this.notifyRedrawTrumpCard(this.game.trumpCard);
     }
 
     async handleEvent(eventName, eventDetails) {
