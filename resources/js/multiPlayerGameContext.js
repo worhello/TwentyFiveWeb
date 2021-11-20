@@ -23,7 +23,7 @@ class MultiPlayerGameContext extends GameContext {
         this.gameRules = gameRules;
 
         // this.websocket = new WebSocket('ws://localhost:3000');
-        this.websocket = new WebSocket('ws://twentyfive-env.eba-jrs4p3fm.eu-west-1.elasticbeanstalk.com/');
+        this.websocket = new WebSocket('wss://server.twentyfivecardgame.com');
         let gameContext = this;
         this.websocket.onmessage = function (event) {
             gameContext.handleWebsocketEvent(event).finally(function() {});
@@ -32,6 +32,7 @@ class MultiPlayerGameContext extends GameContext {
             gameContext.handleWebsocketConnected();
         };
         this.websocket.onerror = function(event) {
+            console.log(event);
             gameContext.handleWebsocketError();
         }
         this.websocket.onclose = function(event) {
