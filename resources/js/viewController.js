@@ -291,7 +291,6 @@ class ViewController {
             buttonText = this.localisationManager.getLocalisedString("startNewGameButtonText");
             buttonFunc = function() {
                 showStartGameOverlay();
-                clearChildrenOfElementById("endGameStatsContainer");
             };
         }
         else {
@@ -650,7 +649,6 @@ class ViewController {
         container.appendChild(input);
 
         this.showOverlayWithButton(container, this.localisationManager.getLocalisedString("tutorialContinueToNextHand"), function() {
-            hideAllOverlays();
             continueFunc(input.value);
         });
 
@@ -672,7 +670,6 @@ class ViewController {
         let buttonText = needMorePlayers ? this.localisationManager.getLocalisedString("addAIsButton")
                                          : this.localisationManager.getLocalisedString("startGameButton");
         this.buildAndshowEndOfHandOrGameStats_noTeams(waitingPlayers, false, false, buttonText, function() {
-            hideAllOverlays();
             continueFunc();
         });
         let gameUrlContainer = document.createElement("div");
