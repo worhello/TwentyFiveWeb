@@ -314,7 +314,7 @@ class ViewController {
     }
 
     cardDragStartHandler(ev) {
-        if (this.selfPlayerCardsEnabled && ev.target.disabled === false) {
+        if (this.selfPlayerCardsEnabled) {
             document.getElementById("playedCardsContainer").classList.add("DroppableTargetHighlight");
             ev.dataTransfer.effectAllowed = "move";
             ev.dataTransfer.setData("text", ev.target.parentElement.id);
@@ -331,7 +331,7 @@ class ViewController {
     }
     
     cardDropHandler(ev) {
-        if (this.selfPlayerCardsEnabled && ev.target.disabled === false && document.getElementById("playedCardsContainer").contains(ev.target)) {
+        if (this.selfPlayerCardsEnabled && document.getElementById("playedCardsContainer").contains(ev.target)) {
             ev.preventDefault();
             this.cardDragEndHandler();
             let cardName = ev.dataTransfer.getData("text");
