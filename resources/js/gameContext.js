@@ -92,7 +92,7 @@ class GameContext {
     }
 
     async handleGameFinished(teams, orderedPlayers) {
-        if (this.teams.length == 0) {
+        if (teams.length == 0) {
             await this.eventsHandler.sendEventToViewController('showGameEndScreen', { "sortedPlayers": orderedPlayers });
         }
         else {
@@ -107,7 +107,7 @@ class GameContext {
     async handleRoundFinished(teams, orderedPlayers) {
         this.setSelfPlayer(orderedPlayers);
         var promises = [ this.handleScoresUpdated(orderedPlayers) ];
-        if (this.teams.length == 0) {
+        if (teams.length == 0) {
             promises.push(this.eventsHandler.sendEventToViewController('showEndOfHandStats', { "sortedPlayers": orderedPlayers }));
         }
         else {
