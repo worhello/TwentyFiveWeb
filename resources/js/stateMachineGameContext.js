@@ -136,7 +136,7 @@ class StateMachineGameContext extends GameContext {
         if (this.game.endOfHandInfo.gameFinished == true) {
             await super.handleGameFinished(this.game.teams, this.game.endOfHandInfo.orderedPlayers);
         }
-        else if (this.game.currentHandInfo.needMoreCardsDealt) {
+        else if (this.game.currentHandInfo.needMoreCardsDealt == true) {
             await super.handleRoundFinished(this.game.teams, this.game.endOfHandInfo.orderedPlayers);
         }
         else {
