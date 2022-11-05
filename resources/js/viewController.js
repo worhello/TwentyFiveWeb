@@ -315,9 +315,16 @@ class ViewController {
 
     cardDragStartHandler(ev) {
         if (this.selfPlayerCardsEnabled) {
-            document.getElementById("playedCardsContainer").classList.add("DroppableTargetHighlight");
-            ev.dataTransfer.effectAllowed = "move";
-            ev.dataTransfer.setData("text", ev.target.parentElement.id);
+            if (ev.target.parentElement.draggable === true) {
+                document.getElementById("playedCardsContainer").classList.add("DroppableTargetHighlight");
+                ev.dataTransfer.effectAllowed = "move";
+                ev.dataTransfer.setData("text", ev.target.parentElement.id);
+            }
+            else {
+                ev.preventDefault();
+                ev.dataTransfer.effectAllowed = "none";
+                ev.dataTransfer.setData("text", "");
+            }
         }
     }
     
@@ -484,16 +491,16 @@ class ViewController {
                 }
             });
             gameContainer.addEventListener("dragstart", function(ev) {
-                viewController.cardDragStartHandler(ev);
+                    viewController.cardDragStartHandler(ev);
             });
             gameContainer.addEventListener("dragover", function(ev) {
-                viewController.cardDragOverHandler(ev);
+                    viewController.cardDragOverHandler(ev);
             });
             gameContainer.addEventListener("drop", function(ev) {
-                viewController.cardDropHandler(ev);
+                    viewController.cardDropHandler(ev);
             });
             gameContainer.addEventListener("dragend", function() {
-                viewController.cardDragEndHandler();
+                    viewController.cardDragEndHandler();
             });
 
             document.getElementById("playerCardsContainer").appendChild(cardNode);
