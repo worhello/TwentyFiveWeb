@@ -256,7 +256,8 @@ class TutorialGameContext extends (TutorialModulesAccessor.getStateMachineContex
             callParentFunc = false;
             await this.handleTutorialRoundFinished();
         }
-        else if (this.game.currentState2 == gameModule.GameState2.waitingForPlayerMove) {
+        else if (this.game.currentState2 == gameModule.GameState2.waitingForPlayerToRobTrumpCard || 
+                this.game.currentState2 == gameModule.GameState2.waitingForPlayerMove) {
             let player = this.game.players[this.game.currentHandInfo.currentPlayerIndex];
             this.tutorialGameManager.enableCardsForPlay(player.cards);
         }
