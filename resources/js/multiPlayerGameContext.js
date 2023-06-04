@@ -21,6 +21,8 @@ class MultiPlayerGameContext extends GameContext {
         this.gameUrl = "";
         this.selfPlayer = {};
         this.gameRules = gameRules;
+        this.heartbeatIntervalId = null;
+        this.heartbeatInterval = 30000;
 
         // this.websocket = new WebSocket('ws://localhost:3000');
         this.websocket = new WebSocket('ws://twentyfive-env.eba-jrs4p3fm.eu-west-1.elasticbeanstalk.com');
@@ -248,6 +250,10 @@ class MultiPlayerGameContext extends GameContext {
         let json = JSON.parse(event.data);
         if (json.type == "wsConnectionAck") {
             this.userId = json.userId;
+            this.startHeartbeat();
+        }
+        else if (json.type == "heartbeatAck") {
+            this.ackHeartbeatAck(json);
         }
         else if (json.type == "createGameAck" || json.type == "joinGameAck") {
             this.gameId = json.gameId;
@@ -274,5 +280,27 @@ class MultiPlayerGameContext extends GameContext {
 
     handleWebsocketError() {
         this.eventsHandler.sendEventToViewController('multiplayerErrorHappened', {});
+        clearInterval(this.heartbeatIntervalId);
+        this.heartbeatIntervalId = null;
+    }
+
+    startHeartbeat() {
+        if (this.heartbeatIntervalId != null) {
+            console.error("trying to start heartbeat again");
+            return;
+        }
+
+        let that = this;
+        this.heartbeatIntervalId = setInterval(() => {
+            console.log("sending heartbeat for user " + that.userId);
+            var heartbeatEvent = {};
+            heartbeatEvent.type = "heartbeat";
+            heartbeatEvent.userId = that.userId;
+            that.websocket.send(JSON.stringify(heartbeatEvent));
+        }, this.heartbeatInterval);
+    }
+
+    ackHeartbeatAck(json) {
+        // no-op
     }
 }
