@@ -25,7 +25,7 @@ class MultiPlayerGameContext extends GameContext {
         this.heartbeatInterval = 30000;
 
         // this.websocket = new WebSocket('ws://localhost:3000');
-        this.websocket = new WebSocket('ws://twentyfive-env.eba-jrs4p3fm.eu-west-1.elasticbeanstalk.com');
+        this.websocket = new WebSocket('ws://Twentyfive-env-20231125.eba-jrs4p3fm.eu-west-1.elasticbeanstalk.com');
         let gameContext = this;
         this.websocket.onmessage = function (event) {
             gameContext.handleWebsocketEvent(event).finally(function() {});
