@@ -6,11 +6,11 @@ function getLocalisedStrings() {
             "translator note" : "play a game with {{param}} players",
             "en": "{{param}} players"
         },
-        "singlePlayer":{
+        "singlePlayerLabel":{
             "translator note": "text for the label beside the radio button option for a single player game",
             "en": "Single Player"
         },
-        "multiPlayer":{
+        "multiPlayerLabel":{
             "translator note": "text for the label beside the radio button option for a multiplayer game",
             "en": "Multiplayer"
         },
@@ -25,6 +25,14 @@ function getLocalisedStrings() {
         "gameRulesLabel": {
             "translator note": "text for link to game rules",
             "en": "Game Rules"
+        },
+        "gameProjectLinkLabel": {
+            "translator note": "label for the Github Project URL",
+            "en": "Github Project"
+        },
+        "mainMenuTitleHeader": {
+            "translator note": "text for the main header on the main menu",
+            "en": "Twenty Five"
         },
         "currentCardIndicator": {
             "translator note": "text for legend for current card indicator",
@@ -190,11 +198,11 @@ function getLocalisedStrings() {
             "translator note": "indicate that the button to add AIs or start the game in multiplayer is disabled because the player is not the host",
             "en": "Only the first player can add AIs or start the game"
         },
-        "winningScoreSelect": {
+        "winningScoreSelectLabel": {
             "translator note": "label for drop-down menu selecting the winning score for the game",
             "en": "Winning Score:"
         },
-        "useTeamsCheckBox": {
+        "useTeamsCheckBoxLabel": {
             "translator note": "label for checkbox to play as part of a team or individually",
             "en": "Use Teams?"
         },
@@ -206,10 +214,6 @@ function getLocalisedStrings() {
             "translator note": "label showing the player's team color and score",
             "en": "Your Team's Score: {{param}}"
         },
-        "gameProjectLinkLabel": {
-            "translator note": "label for the Github Project URL",
-            "en": "Github Project"
-        },
         "multiplayerDisclaimerLabel": {
             "translator note": "label showing how the player name will be used on the server",
             "en": "The player name(s) will be stored on the server, but not processed or used in any way beyond displaying onscreen"
@@ -218,11 +222,11 @@ function getLocalisedStrings() {
             "translator note": "tooltip on start multiplayer game button when inputted name is not valid",
             "en": "Player name must contain at least 3 characters, no more than 20 characters, and only letters or numbers"
         },
-        "renegingAllowedCheckbox": {
+        "renegingAllowedLabel": {
             "translator note": "label text for checkbox enabling/disabling reneging in a game",
             "en": "Reneging Allowed?"
         },
-        "dealerAceTrumpsBonusCheckbox": {
+        "dealerAceTrumpsBonusLabel": {
             "translator note": "label text for checkbox enabling/disabling whether the dealer gets 5 points if the trump card is an ace",
             "en": "Dealer gets 5 points if Trump Card is Ace?"
         }

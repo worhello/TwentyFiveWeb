@@ -27,11 +27,15 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
+        <div id="gameMetaInfoContainer">
+            <span><a id="gameRulesLabel" href="https://github.com/worhello/twentyfive-js/wiki/Game-Rules" target="_blank"></a></span>
+            <span><a id="gameProjectLinkLabel" href="https://github.com/users/worhello/projects/3" target="_blank"></a></span>
+        </div>
         <div id="contentContainer">
             <div id="menuContainer" class="Overlay">
                 <div id="startGameContainer">
                     <div>
-                        <h2>Welcome to the Twenty Five card game!</h2>
+                        <h2 id="mainMenuTitleHeader"></h2>
                     </div>
                     <div id="numPlayersSelectCtr">
                         <div>
@@ -74,10 +78,6 @@
             <div id="endGameStatsContainer" class="Overlay">
             </div>
             <div id="gameContainer">
-                <div id="gameMetaInfoContainer">
-                    <span><a id="gameRulesLabel" href="https://github.com/worhello/TwentyFiveWeb/wiki/Game-Rules" target="_blank"></a></span>
-                    <span><a id="gameProjectLinkLabel" href="https://github.com/users/worhello/projects/2" target="_blank"></a></span>
-                </div>
                 <div id="playedCardsBackgroundContainer"></div>
                 <div id="playedCardsContainerWrapper">
                     <div id="playedCardsContainer"></div>
