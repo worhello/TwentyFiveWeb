@@ -133,6 +133,7 @@ class ViewController {
         this.selfPlayerCardsEnabled = false;
         this.isRobbing = false;
         this.isMultiplayer = false;
+        this.dragAndDropSetupComplete = false;
         //this.debug_printAllAngles();
     }
 
@@ -157,6 +158,8 @@ class ViewController {
         startNewGameButton.addEventListener("click", buttonFunc);
         startButtonCtr.appendChild(startNewGameButton);
         document.getElementById("endGameStatsContainer").appendChild(startButtonCtr);
+
+        startNewGameButton.focus();
     }
 
     buildRosterEntry(players, totalScore, isWinner) {
@@ -337,12 +340,12 @@ class ViewController {
         }
     }
     
-    cardDropHandler(ev) {
+    async cardDropHandler(ev) {
         if (this.selfPlayerCardsEnabled && document.getElementById("playedCardsContainer").contains(ev.target)) {
             ev.preventDefault();
             this.cardDragEndHandler();
             let cardName = ev.dataTransfer.getData("text");
-            this.playSelfCard(cardName);
+            await this.playSelfCard(cardName);
         }
     }
     
@@ -361,8 +364,7 @@ class ViewController {
     }
 
     async playSelfCard(cardName) {
-        if (this.selfPlayerCardsEnabled)
-        {
+        if (this.selfPlayerCardsEnabled) {
             if (this.isRobbing) {
                 hideAllOverlays();
                 await this.eventsHandler.sendEventToGameContext('selfPlayerRobTrumpCard', { "droppedCardName": cardName });
@@ -476,12 +478,38 @@ class ViewController {
         clearChildrenOfElementById("playerCardsContainer");
     }
 
+    setupDragAndDropIfNeeded() {
+        if (this.dragAndDropSetupComplete) {
+            return;
+        }
+
+        let gameContainer = document.getElementById("gameContainer");
+        let viewController = this;
+
+
+        gameContainer.addEventListener("dragstart", function(ev) {
+            viewController.cardDragStartHandler(ev);
+        });
+        gameContainer.addEventListener("dragover", function(ev) {
+            viewController.cardDragOverHandler(ev);
+        });
+        gameContainer.addEventListener("drop", async function(ev) {
+            await viewController.cardDropHandler(ev);
+        });
+        gameContainer.addEventListener("dragend", function() {
+                viewController.cardDragEndHandler();
+        });
+
+        this.dragAndDropSetupComplete = true;
+    }
+
     showSelfPlayerHand(selfPlayer, cardsEnabled) {
         this.resetSelfPlayerState();
 
         let cards = selfPlayer.cards;
-        let gameContainer = document.getElementById("gameContainer");
         let viewController = this;
+
+        this.setupDragAndDropIfNeeded();
 
         cards.forEach(function(card) {
             let cardNode = buildCardNode(selfPlayer.id, card);
@@ -489,18 +517,6 @@ class ViewController {
                 if (cardNode.disabled === false) {
                     viewController.playSelfCard(card.cardName);
                 }
-            });
-            gameContainer.addEventListener("dragstart", function(ev) {
-                    viewController.cardDragStartHandler(ev);
-            });
-            gameContainer.addEventListener("dragover", function(ev) {
-                    viewController.cardDragOverHandler(ev);
-            });
-            gameContainer.addEventListener("drop", function(ev) {
-                    viewController.cardDropHandler(ev);
-            });
-            gameContainer.addEventListener("dragend", function() {
-                    viewController.cardDragEndHandler();
             });
 
             document.getElementById("playerCardsContainer").appendChild(cardNode);
