@@ -6,13 +6,13 @@ function getLocalisedStrings() {
             "translator note" : "play a game with {{param}} players",
             "en": "{{param}} players"
         },
-        "singlePlayerLabel":{
+        "singlePlayerGameButton":{
             "translator note": "text for the label beside the radio button option for a single player game",
-            "en": "Single Player"
+            "en": "Play with AIs"
         },
-        "multiPlayerLabel":{
+        "multiPlayerGameButton":{
             "translator note": "text for the label beside the radio button option for a multiplayer game",
-            "en": "Multiplayer"
+            "en": "Play with your friends"
         },
         "startGameButton": {
             "translator note": "text for button to start the game",
@@ -20,7 +20,11 @@ function getLocalisedStrings() {
         },
         "startTutorialButton": {
             "translator note": "text for button to start the tutorial",
-            "en": "Tutorial"
+            "en": "New to the game? Try this tutorial"
+        },
+        "houseRulesContainerHeaderLabel": {
+            "translator note": "header for the section containing ways to customise the game before starting",
+            "en": "Customise your game"
         },
         "gameRulesLabel": {
             "translator note": "text for link to game rules",
@@ -200,15 +204,15 @@ function getLocalisedStrings() {
         },
         "winningScoreSelectLabel": {
             "translator note": "label for drop-down menu selecting the winning score for the game",
-            "en": "Winning Score:"
+            "en": "Winning Score"
         },
-        "useTeamsCheckBoxLabel": {
+        "numPlayersSelectLabel": {
             "translator note": "label for checkbox to play as part of a team or individually",
-            "en": "Use Teams?"
+            "en": "Number of players"
         },
         "n_n_teamConfig": {
-            "translator note": "dropdown menu item for n teams of n players each",
-            "en": "{{param}} teams of {{param}} players"
+            "translator note": "dropdown menu item for n teams of n players each, then stating the total number of players involved",
+            "en": "{{param}} teams of {{param}} players ({{param}} players total)"
         },
         "selfTeamIndicator": {
             "translator note": "label showing the player's team color and score",

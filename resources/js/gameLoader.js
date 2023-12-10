@@ -18,7 +18,8 @@ async function startGame(numPlayers, isSinglePlayer, isTutorial, gameId, gameRul
         window.gameViewController.hideStartGameOverlay();
     }
     else {
-        document.getElementById("startGameButton").disabled = true;
+        document.getElementById("singlePlayerGameButton").disabled = true;
+        document.getElementById("multiPlayerGameButton").disabled = true;
         document.getElementById("connectingLabel").hidden = false;
     }
 
@@ -48,9 +49,9 @@ function getGameRules() {
         }
     };
 
-    if (document.getElementById("useTeamsCheckBox").checked) {
-        let raw = numPlayersSelect.options[numPlayersSelect.selectedIndex].value;
-        let values = raw.split("_", 2);
+    let raw = numPlayersSelect.options[numPlayersSelect.selectedIndex].value;
+    let values = raw.split("_", 2);
+    if (values.length == 2) {
         rules.useTeams = {
             "numTeams": parseInt(values[0]),
             "teamSize": parseInt(values[1])
@@ -67,6 +68,10 @@ function buildTutorialRules() {
         "useTeams": null,
         "customRules": null
     };
+}
+
+function joinMultiPlayerGame(gameId) {
+    startGame(0, false, false, gameId, getGameRules());
 }
 
 function createGame(isSinglePlayer, gameId) {
@@ -126,13 +131,13 @@ function initLocalisation() {
     window.localisationManager = new window.localisedStringManager.LocalisedStringManager(locale, localisedStrings);
 
     let localizableElementIds = [
-        "singlePlayerLabel",
-        "multiPlayerLabel",
-        "useTeamsCheckBoxLabel",
+        "singlePlayerGameButton",
+        "multiPlayerGameButton",
+        "numPlayersSelectLabel",
         "winningScoreSelectLabel",
         "renegingAllowedLabel",
         "dealerAceTrumpsBonusLabel",
-        "startGameButton",
+        "houseRulesContainerHeaderLabel",
         "startTutorialButton",
         "connectingLabel",
         "gameRulesLabel",
@@ -157,25 +162,27 @@ function getGameIdParam() {
 window.onload = function() {
     preloadCards();
 
-    this.document.getElementById("startGameButton").addEventListener("click", function() {
-        onStartButtonClicked();
+    this.document.getElementById("singlePlayerGameButton").addEventListener("click", function() {
+        createGame(true, null);
+    });
+    this.document.getElementById("multiPlayerGameButton").addEventListener("click", function() {
+        createGame(false, null);
     });
     this.document.getElementById("startTutorialButton").addEventListener("click", function() {
         onTutorialButtonClicked();
     });
-    this.document.getElementById("useTeamsCheckBox").addEventListener('change', function() {
-        onUseTeamsChanged(this.checked);
-    });
+
+    createDefaultHouseRules();
 
     initLocalisation();
     populateLocalisedOptions();
 
-    onUseTeamsChanged(this.document.getElementById("useTeamsCheckBox").checked);
+    populateNumberOfPlayersOptions();
     populateWinningScoreOptions();
 
     let gameId = getGameIdParam();
     if (gameId) {
-        createGame(false, gameId);
+        joinMultiPlayerGame(gameId);
     } else {
         showStartGameOverlay();
     }
