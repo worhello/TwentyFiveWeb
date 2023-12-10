@@ -125,23 +125,26 @@ function initLocalisation() {
     let localisedStrings = window.localisedStrings.getLocalisedStrings();
     window.localisationManager = new window.localisedStringManager.LocalisedStringManager(locale, localisedStrings);
 
-    document.getElementById("singlePlayerLabel").textContent = window.localisationManager.getLocalisedString("singlePlayer");
-    document.getElementById("multiPlayerLabel").textContent  = window.localisationManager.getLocalisedString("multiPlayer");
+    let localizableElementIds = [
+        "singlePlayerLabel",
+        "multiPlayerLabel",
+        "useTeamsCheckBoxLabel",
+        "winningScoreSelectLabel",
+        "renegingAllowedLabel",
+        "dealerAceTrumpsBonusLabel",
+        "startGameButton",
+        "startTutorialButton",
+        "connectingLabel",
+        "gameRulesLabel",
+        "gameProjectLinkLabel",
+        "mainMenuTitleHeader",
+        "currentCardIndicator",
+        "currentWinningCardIndicator"
+    ];
 
-    document.getElementById("useTeamsCheckBoxLabel").textContent     = window.localisationManager.getLocalisedString("useTeamsCheckBox");
-    document.getElementById("winningScoreSelectLabel").textContent   = window.localisationManager.getLocalisedString("winningScoreSelect");
-    document.getElementById("renegingAllowedLabel").textContent      = window.localisationManager.getLocalisedString("renegingAllowedCheckbox");
-    document.getElementById("dealerAceTrumpsBonusLabel").textContent = window.localisationManager.getLocalisedString("dealerAceTrumpsBonusCheckbox");
-    
-    document.getElementById("startGameButton").textContent     = window.localisationManager.getLocalisedString("startGameButton");
-    document.getElementById("startTutorialButton").textContent = window.localisationManager.getLocalisedString("startTutorialButton");
-    document.getElementById("connectingLabel").textContent     = window.localisationManager.getLocalisedString("connectingLabel");
-
-    document.getElementById("gameRulesLabel").textContent = window.localisationManager.getLocalisedString("gameRulesLabel");
-    document.getElementById("gameProjectLinkLabel").textContent = window.localisationManager.getLocalisedString("gameProjectLinkLabel");
-
-    document.getElementById("currentCardIndicator").textContent        = window.localisationManager.getLocalisedString("currentCardIndicator");
-    document.getElementById("currentWinningCardIndicator").textContent = window.localisationManager.getLocalisedString("currentWinningCardIndicator");
+    for (let localizableElementId of localizableElementIds) {
+        document.getElementById(localizableElementId).textContent = window.localisationManager.getLocalisedString(localizableElementId);
+    }
 
 }
 
@@ -152,6 +155,8 @@ function getGameIdParam() {
 }
 
 window.onload = function() {
+    preloadCards();
+
     this.document.getElementById("startGameButton").addEventListener("click", function() {
         onStartButtonClicked();
     });
@@ -168,11 +173,11 @@ window.onload = function() {
     onUseTeamsChanged(this.document.getElementById("useTeamsCheckBox").checked);
     populateWinningScoreOptions();
 
-    showStartGameOverlay();
-    preloadCards();
-
     let gameId = getGameIdParam();
-    if (gameId != null) {
+    if (gameId) {
         createGame(false, gameId);
+    } else {
+        showStartGameOverlay();
     }
+
 }
