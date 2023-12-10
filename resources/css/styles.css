@@ -152,7 +152,6 @@ a {
 
 #playedCardsBackgroundContainer {
     position: absolute;
-    top: 18px;
     width: 650px;
     height: 650px;
     border-radius: 50%;
@@ -391,6 +390,5 @@ a {
 
     .PlayerCardsContainerEnabled {
         position: absolute;
-        top: 85vh !important;
     }
 }

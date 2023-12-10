@@ -41,8 +41,7 @@ function onUseTeamsChanged(isChecked) {
     clearChildrenOfElementById("numPlayersSelect");
     if (isChecked) {
         populateOptions("numPlayersSelect", validTeamOptions);
-    }
-    else {
+    } else {
         populateOptions("numPlayersSelect", validNoTeamOptions);
     }
 }
