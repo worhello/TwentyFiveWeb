@@ -19,6 +19,7 @@
         <script src="resources/js/multiPlayerGameContext.js"></script>
         <script src="resources/js/tutorialGameContext.js"></script>
         <script src="resources/js/startGameViewController.js"></script>
+        <script src="resources/js/houseRulesViewController.js"></script>
         <script src="resources/js/viewController.js"></script>
         <script src="resources/js/eventsHandler.js"></script>
         <script src="resources/js/localisedStringsManager.js"></script>
@@ -37,46 +38,22 @@
                     <div>
                         <h2 id="mainMenuTitleHeader"></h2>
                     </div>
-                    <div id="numPlayersSelectCtr">
-                        <div>
-                            <label id="useTeamsCheckBoxLabel" for="useTeamsCheckBox"></label>
-                            <input type="checkbox" id="useTeamsCheckBox"></input><br>
-                        </div>
-                        <div>
-                            <select name="numPlayers" id="numPlayersSelect"></select>
-                        </div>
-                    </div>
-                    <div id="houseRulesOuterContainer">
-                        <div id="houseRulesContainer">
-                            <div class="houseRule">
-                                <label id="winningScoreSelectLabel" for="winningScoreSelect"></label>
-                                <select name="winningScore" id="winningScoreSelect"></select>
-                            </div>
-                            <div class="houseRule">
-                                <label id="renegingAllowedLabel" for="renegingAllowedCheckbox"></label>
-                                <input type="checkbox" id="renegingAllowedCheckbox" checked></input>
-                            </div>
-                            <div class="houseRule">
-                                <label id="dealerAceTrumpsBonusLabel" for="dealerAceTrumpsBonusCheckbox"></label>
-                                <input type="checkbox" id="dealerAceTrumpsBonusCheckbox"></input>
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <input type="radio" id="singlePlayer" value="singlePlayer" name="playMode" checked>
-                        <label id="singlePlayerLabel" for="singlePlayer"></label><br>
-                        <input type="radio" id="multiPlayer" name="playMode" value="multiPlayer" >
-                        <label id="multiPlayerLabel" for="multiPlayer"></label>
-                    </div>
-                    <div id="startGameButtonsContainer">
-                        <button id="startGameButton"></button>
+                    <div id="tutorialGameButtonsContainer">
                         <button id="startTutorialButton"></button>
+                    </div>
+                    <table id="houseRulesContainer" cellspacing="0">
+                        <tr>
+                            <th colspan="2" class="houseRulesHeader" id="houseRulesContainerHeaderLabel"></th>
+                        </tr>
+                    </table>
+                    <div id="startGameButtonsContainer">
+                        <button id="singlePlayerGameButton"></button>
+                        <button id="multiPlayerGameButton"></button>
                         <p id="connectingLabel"></p>
                     </div>
                 </div>
             </div>
-            <div id="endGameStatsContainer" class="Overlay">
-            </div>
+            <div id="endGameStatsContainer" class="Overlay"></div>
             <div id="gameContainer">
                 <div id="playedCardsBackgroundContainer"></div>
                 <div id="playedCardsContainerWrapper">

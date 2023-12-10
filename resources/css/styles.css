@@ -48,17 +48,7 @@ a {
     align-items: center;
     flex-wrap: wrap;
     align-content: space-evenly;
-    gap: 20px;
-}
-
-#numPlayersSelectCtr {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-#numPlayersSelectCtr div {
-    padding: 4px;
+    gap: 15px;
 }
 
 #numPlayersSelect {
@@ -334,27 +324,34 @@ a {
     width: min(650px, 100vw);
 }
 
-#houseRulesOuterContainer {
-    display: grid;
-    grid-template-rows: auto auto auto;
-    grid-row-gap: 10px;
-}
-
-#houseRulesTitleLabel {
-    justify-self: center;
-}
-
 #houseRulesContainer {
-    margin: 10px 50px 0px 50px;
-    display: flex;
-    flex-direction: column;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-evenly;
+    margin-left: 60px;
+    margin-right: 60px;
 }
 
-.houseRule {
-    margin: 5px;
+table #houseRulesContainer {
+    border-collapse: collapse;
+}
+
+th.houseRulesHeader, td.houseRuleLabel, td.houseRuleValue {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #8ebf42;
+}
+
+.houseRulesHeader {
+    text-align: center;
+}
+
+.houseRuleLabel {
+    width: 100%;
+    text-align: center;
+}
+
+.houseRuleValue {
+    width: auto;
+    text-align: center;
+    white-space: nowrap;
 }
 
 #startGameButtonsContainer {
