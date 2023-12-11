@@ -1,9 +1,6 @@
-@media (prefers-color-scheme: dark) {
-    body { background-color: rgb(0, 60, 18); color:  white; }
-}
-
-@media (prefers-color-scheme: light) {
-    body { background-color: rgb(0, 175, 38); color:  black; }
+body {
+    background-color: rgb(0, 60, 18);
+    color:  white; 
 }
 
 * {
@@ -125,6 +122,7 @@ a {
     display: grid;
     justify-content: space-between;
     grid-template-columns: auto auto;
+    padding: 10px;
 }
 
 #trumpCardContainer {
@@ -336,7 +334,7 @@ table #houseRulesContainer {
 th.houseRulesHeader, td.houseRuleLabel, td.houseRuleValue {
     padding-top: 10px;
     padding-bottom: 10px;
-    border-bottom: 2px solid #8ebf42;
+    border-bottom: 2px solid rgb(0, 60, 18);
 }
 
 .houseRulesHeader {
