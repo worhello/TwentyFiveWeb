@@ -43,7 +43,7 @@ function showStartGameOverlay() {
     hideAllOverlays();
     document.getElementById("menuContainer").style.display = "block";
     document.getElementById("singlePlayerGameButton").disabled = false;
-    document.getElementById("multiPlayerGameButton").disabled = false;
+    // document.getElementById("multiPlayerGameButton")?.disabled = false;
     document.getElementById("connectingLabel").hidden = true;
     document.getElementById("selfTeamIndicator").hidden = true;
 }

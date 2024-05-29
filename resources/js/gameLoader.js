@@ -19,7 +19,7 @@ async function startGame(numPlayers, isSinglePlayer, isTutorial, gameId, gameRul
     }
     else {
         document.getElementById("singlePlayerGameButton").disabled = true;
-        document.getElementById("multiPlayerGameButton").disabled = true;
+        // document.getElementById("multiPlayerGameButton").disabled = true;
         document.getElementById("connectingLabel").hidden = false;
     }
 
@@ -132,7 +132,7 @@ function initLocalisation() {
 
     let localizableElementIds = [
         "singlePlayerGameButton",
-        "multiPlayerGameButton",
+        // "multiPlayerGameButton",
         "numPlayersSelectLabel",
         "winningScoreSelectLabel",
         "renegingAllowedLabel",
@@ -165,9 +165,9 @@ window.onload = function() {
     this.document.getElementById("singlePlayerGameButton").addEventListener("click", function() {
         createGame(true, null);
     });
-    this.document.getElementById("multiPlayerGameButton").addEventListener("click", function() {
-        createGame(false, null);
-    });
+    // this.document.getElementById("multiPlayerGameButton").addEventListener("click", function() {
+    //     createGame(false, null);
+    // });
     this.document.getElementById("startTutorialButton").addEventListener("click", function() {
         onTutorialButtonClicked();
     });

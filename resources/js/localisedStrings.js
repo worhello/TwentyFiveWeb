@@ -8,7 +8,7 @@ function getLocalisedStrings() {
         },
         "singlePlayerGameButton":{
             "translator note": "text for the label beside the radio button option for a single player game",
-            "en": "Play with AIs"
+            "en": "Start Game"
         },
         "multiPlayerGameButton":{
             "translator note": "text for the label beside the radio button option for a multiplayer game",
