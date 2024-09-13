@@ -2,7 +2,7 @@
   "name": "twentyfiveweb",
   "version": "0.1.1",
   "license": "MIT",
-  "dependencies": {
+  "devDependencies": {
     "assert": "latest",
     "mocha": "latest",
     "nyc": "latest",
