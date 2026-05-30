@@ -4,8 +4,7 @@
   "license": "MIT",
   "devDependencies": {
     "assert": "latest",
-    "mocha": "latest",
-    "nyc": "latest",
+    "mocha": "^11.3.0",
     "sinon": "latest"
   },
   "repository": {
